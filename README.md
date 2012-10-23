@@ -16,7 +16,7 @@
 
 ### Usage
 
-    var phonegapBuild = require('phonegap-build');
+    var build = require('phonegap-build');
 
 [travis-ci-img]: https://secure.travis-ci.org/mwbrooks/phonegap-build-cli.png
 [travis-ci-url]: http://travis-ci.org/mwbrooks/phonegap-build-cli
