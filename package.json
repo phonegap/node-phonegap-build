@@ -1,6 +1,6 @@
 {
-    "name": "phonegap-build",
-    "description": "PhoneGap Build command-line interface and node.js library.",
+    "name": "phonegap-build-cli",
+    "description": "PhoneGap Build command-line interface and Node.js library.",
     "version": "0.0.1",
     "homepage": "http://github.com/mwbrooks/phonegap-build-cli",
     "repository": {
@@ -9,13 +9,12 @@
     },
     "keywords": [
         "phonegap",
-        "phonegap build"
+        "phonegap-build",
+        "cordova"
     ],
     "preferGlobal": "true",
     "main": "./lib/phonegap-build.js",
-    "bin": {
-        "phonegap-build": "./bin/phonegap-build.js"
-    },
+    "bin": "./bin/phonegap-build.js",
     "scripts": {
         "test": "./node_modules/.bin/jasmine-node --color --verbose spec"
     },
@@ -29,11 +28,9 @@
     },
     "optionalDependencies": {
     },
-    "author": {
+    "contributors": [{
         "name": "Michael Brooks",
         "email": "michael@michaelbrooks.ca",
         "url": "http://michaelbrooks.ca/"
-    },
-    "contributors": [
-    ]
+    }]
 }

@@ -6,17 +6,27 @@
 
 ### Install
 
-    $ sudo npm install -g phonegap-build
+    $ sudo npm install -g phonegap-build-cli
 
 ### Usage
 
     $ phonegap-build help
 
-## Node.js
+## Getting Started with Node.js
+
+### Install
+
+`package.json`:
+
+    {
+        "dependencies": {
+            "phonegap-build-cli": "*"
+        }
+    }
 
 ### Usage
 
-    var build = require('phonegap-build');
+    var build = require('phonegap-build-cli');
 
 [travis-ci-img]: https://secure.travis-ci.org/mwbrooks/phonegap-build-cli.png
 [travis-ci-url]: http://travis-ci.org/mwbrooks/phonegap-build-cli
