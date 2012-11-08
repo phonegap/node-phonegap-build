@@ -50,4 +50,18 @@ describe('Command-line', function() {
             expect(process.output).toMatch('Usage:');
         });
     });
+
+    describe('$ phonegap-build --version', function() {
+        it('should display version', function() {
+            var process = shell.exec(cli + ' --version', { silent: true });
+            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
+        });
+    });
+
+    describe('$ phonegap-build -V', function() {
+        it('should display version', function() {
+            var process = shell.exec(cli + ' -V', { silent: true });
+            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
+        });
+    });
 });
