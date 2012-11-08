@@ -4,11 +4,6 @@ var cli = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-bui
 
 describe('Command-line', function() {
     describe('$ phonegap-build', function() {
-        it('should exist', function() {
-            var process = shell.exec(cli + '', { silent: true });
-            expect(process.code).toEqual(0);
-        });
-
         it('should display help information', function() {
             var process = shell.exec(cli + '', { silent: true });
             expect(process.output).toMatch('Usage:');
@@ -16,11 +11,6 @@ describe('Command-line', function() {
     });
 
     describe('$ phonegap-build help', function() {
-        it('should exist', function() {
-            var process = shell.exec(cli + ' help', { silent: true });
-            expect(process.code).toEqual(0);
-        });
-
         it('should display help information', function() {
             var process = shell.exec(cli + ' help', { silent: true });
             expect(process.output).toMatch('Usage:');
@@ -28,11 +18,6 @@ describe('Command-line', function() {
     });
 
     describe('$ phonegap-build --help', function() {
-        it('should exist', function() {
-            var process = shell.exec(cli + ' --help', { silent: true });
-            expect(process.code).toEqual(0);
-        });
-
         it('should be display help information', function() {
             var process = shell.exec(cli + ' --help', { silent: true });
             expect(process.output).toMatch('Usage:');
@@ -40,11 +25,6 @@ describe('Command-line', function() {
     });
 
     describe('$ phonegap-build -h', function() {
-        it('should exist', function() {
-            var process = shell.exec(cli + ' -h', { silent: true });
-            expect(process.code).toEqual(0);
-        });
-
         it('should be display help information', function() {
             var process = shell.exec(cli + ' -h', { silent: true });
             expect(process.output).toMatch('Usage:');
