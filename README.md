@@ -12,6 +12,18 @@
 
     $ phonegap-build help
 
+    Usage: phonegap-build [options] [command]
+
+    Commands:
+
+        help
+        display help
+
+    Options:
+
+        -h, --help     output usage information
+        -V, --version  output the version number
+
 ## Getting Started with Node.js
 
 ### Install
