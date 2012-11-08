@@ -9,7 +9,7 @@ describe('Command-line', function() {
             expect(process.code).toEqual(0);
         });
 
-        it('should be displayed', function() {
+        it('should display help information', function() {
             var process = shell.exec(cli + ' help', { silent: true });
             expect(process.output).toMatch('Usage:');
         });
@@ -21,7 +21,7 @@ describe('Command-line', function() {
             expect(process.code).toEqual(0);
         });
 
-        it('should be displayed', function() {
+        it('should be display help information', function() {
             var process = shell.exec(cli + ' --help', { silent: true });
             expect(process.output).toMatch('Usage:');
         });
@@ -33,7 +33,7 @@ describe('Command-line', function() {
             expect(process.code).toEqual(0);
         });
 
-        it('should be displayed', function() {
+        it('should be display help information', function() {
             var process = shell.exec(cli + ' -h', { silent: true });
             expect(process.output).toMatch('Usage:');
         });
