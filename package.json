@@ -22,9 +22,11 @@
         "node": ">=0.8.0"
     },
     "dependencies": {
+        "commander": ">=1.0.0"
     },
     "devDependencies": {
-        "jasmine-node": "1.x.x"
+        "jasmine-node": "1.x.x",
+        "shelljs": "0.0.x"
     },
     "optionalDependencies": {
     },

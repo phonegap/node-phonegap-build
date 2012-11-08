@@ -1,4 +1,17 @@
-var cli = '../bin/phonegap-build.js';
+var shell = require('shelljs');
+var path = require('path');
+var cli = 'node ' + path.resolve('./bin/phonegap-build.js');
 
-describe('command line', function() {
+describe('Command-line', function() {
+    describe('$ phonegap-build help', function() {
+        it('should exist', function() {
+            var process = shell.exec(cli + ' help', { silent: true });
+            expect(process.code).toEqual(0);
+        });
+
+        it('should be displayed', function() {
+            var process = shell.exec(cli + ' help', { silent: true });
+            expect(process.output).toMatch('Usage:');
+        });
+    });
 });
