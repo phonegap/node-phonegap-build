@@ -14,4 +14,16 @@ describe('Command-line', function() {
             expect(process.output).toMatch('Usage:');
         });
     });
+
+    describe('$ phonegap-build --help', function() {
+        it('should exist', function() {
+            var process = shell.exec(cli + ' --help', { silent: true });
+            expect(process.code).toEqual(0);
+        });
+
+        it('should be displayed', function() {
+            var process = shell.exec(cli + ' --help', { silent: true });
+            expect(process.output).toMatch('Usage:');
+        });
+    });
 });
