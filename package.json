@@ -22,7 +22,7 @@
         "node": ">=0.8.0"
     },
     "dependencies": {
-        "commander": ">=1.0.0"
+        "optimist": "0.3.x"
     },
     "devDependencies": {
         "jasmine-node": "1.x.x",

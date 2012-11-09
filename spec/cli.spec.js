@@ -38,9 +38,9 @@ describe('Command-line', function() {
         });
     });
 
-    describe('$ phonegap-build -V', function() {
+    describe('$ phonegap-build -v', function() {
         it('should display version', function() {
-            var process = shell.exec(cli + ' -V', { silent: true });
+            var process = shell.exec(cli + ' -v', { silent: true });
             expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
         });
     });

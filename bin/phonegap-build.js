@@ -6,7 +6,8 @@
 
 var fs = require('fs');
 var path = require('path');
-var program = require('commander');
+var argv = require('optimist').argv;
+var phonegap = require('../lib/phonegap-build');
 
 /*
  * Load package.json
@@ -18,25 +19,51 @@ var packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname,'..','package.j
  * Version
  */
 
-program.version(packageJSON.version);
+phonegap.version = function() {
+    console.log(packageJSON.version);
+};
 
 /*
- * Command-line help
+ * Help
  */
 
-program
-    .command('help')
-    .description('display help')
-    .action(function(){
-        program.help();
-    });
+phonegap.help = function() {
+    var exec = path.basename(process.argv[1]);
+    var output = [
+        '',
+        '  Usage: ' + exec +' [options] [commands]',
+        '',
+        '  Commands:',
+        '',
+        '    help                 output usage information',
+        '',
+        '  Options:',
+        '',
+        '    -v, --version        output version number',
+        '    -h, --help           output usage information',
+        ''
+    ];
 
-/*
- * Parse the command-line arguments
- */
+    console.log(output.join('\n'));
+};
 
-program.parse(process.argv);
+if (argv.version || argv.v) {
+    phonegap.version();
+    process.exit();
+}
 
-if (!program.args.length) {
-    program.outputHelp();
+if (argv.help || argv.h) {
+    phonegap.help();
+    process.exit();
+}
+
+if (!argv._.length) {
+    phonegap.help();
+    process.exit();
+}
+
+try {
+    phonegap[argv._[0]]();
+} catch(e) {
+    console.log('Unknown command:', argv._.join(' '));
 }
