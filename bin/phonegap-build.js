@@ -35,6 +35,7 @@ phonegap.help = function() {
         '',
         '  Commands:',
         '',
+        '    login                log into PhoneGap Build',
         '    help                 output usage information',
         '',
         '  Options:',
