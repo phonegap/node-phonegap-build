@@ -15,7 +15,7 @@ describe('phonegap-build', function() {
 
     describe('app', function() {
         it('should be an object', function() {
-            expect(phonegap.app).toEqual(jasmine.any(Function));
+            expect(phonegap.app).toEqual(jasmine.any(Object));
         });
     });
 });
