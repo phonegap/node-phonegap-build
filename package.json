@@ -22,7 +22,8 @@
         "node": ">=0.8.0"
     },
     "dependencies": {
-        "optimist": "0.3.x"
+        "optimist": "0.3.x",
+        "phonegap-build-rest": "0.1.x"
     },
     "devDependencies": {
         "jasmine-node": "1.x.x",
