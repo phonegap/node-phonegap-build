@@ -2,7 +2,7 @@ var shell = require('shelljs');
 var path = require('path');
 var cli = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js'));
 
-describe('Command-line', function() {
+describe('$', function() {
     describe('$ phonegap-build', function() {
         it('should display help information', function() {
             var process = shell.exec(cli + '', { silent: true });
