@@ -1,7 +1,7 @@
 var shell = require('shelljs'),
     path = require('path'),
     bin = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js')),
-    CLI = require('../lib/phonegap-build-cli'),
+    CLI = require('../lib/cli'),
     cli;
 
 describe('$', function() {

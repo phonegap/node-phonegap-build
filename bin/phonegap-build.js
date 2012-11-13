@@ -5,7 +5,7 @@
  */
 
 var argv = require('optimist').argv;
-var CLI = require('../lib/phonegap-build-cli');
+var CLI = require('../lib/cli');
 
 /*
  * Run the command-line client

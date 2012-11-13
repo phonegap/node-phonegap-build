@@ -1,4 +1,4 @@
-var CLI = require('../lib/phonegap-build-cli'),
+var CLI = require('../lib/cli'),
     cli;
 
 describe('$', function() {
