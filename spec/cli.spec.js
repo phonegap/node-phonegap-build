@@ -24,6 +24,14 @@ describe('CLI', function() {
         });
     });
 
+    describe('unknown', function() {
+        it('should output the unknown command', function() {
+            spyOn(process.stdout, 'write');
+            cli.unknown('noop');
+            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/unknown command:/i);
+        });
+    });
+
     describe('login', function() {
         beforeEach(function() {
             spyOn(prompt, 'get').andCallFake(function(options, callback) {

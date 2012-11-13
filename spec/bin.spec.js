@@ -83,10 +83,10 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build noop', function() {
-        it('should display unknown command', function() {
-            spyOn(console, 'log');
+        it('should call CLI unknown', function() {
+            spyOn(cli, 'unknown');
             cli.parse({ _: [ 'noop' ] });
-            expect(console.log.mostRecentCall.args[0]).toMatch(/unknown command:/i);
+            expect(cli.unknown).toHaveBeenCalled();
         });
     });
 });
