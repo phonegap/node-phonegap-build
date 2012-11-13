@@ -1,6 +1,11 @@
-var phonegap = require('../lib/phonegap-build');
+var PhoneGap = require('../lib/phonegap-build');
+var phonegap;
 
 describe('phonegap-build', function() {
+    beforeEach(function() {
+        phonegap = new PhoneGap();
+    });
+
     describe('login', function() {
         it('should be a function', function() {
             expect(phonegap.login).toEqual(jasmine.any(Function));
