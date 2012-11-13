@@ -1,12 +1,12 @@
 var CLI = require('../lib/phonegap-build-cli'),
     cli;
 
-describe('CLI', function() {
+describe('$', function() {
     beforeEach(function() {
         cli = new CLI();
     });
 
-    describe('no arguments', function() {
+    describe('$ phonegap-build', function() {
         it('should display help information', function() {
             spyOn(cli, 'help');
             cli.parse({ _: [] });
