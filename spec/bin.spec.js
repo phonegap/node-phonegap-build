@@ -44,4 +44,11 @@ describe('$', function() {
             expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
         });
     });
+
+    describe('$ phonegap-build noop', function() {
+        it('should display unknown command', function() {
+            var process = shell.exec(cli + ' noop', { silent: true });
+            expect(process.output).toMatch('Unknown command:');
+        });
+    });
 });
