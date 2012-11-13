@@ -54,6 +54,14 @@ describe('$', function() {
         });
     });
 
+    describe('$ phonegap-build login', function() {
+        it('should call login action', function() {
+            spyOn(cli, 'login');
+            cli.parse({ _: ['login'] });
+            expect(cli.login).toHaveBeenCalled();
+        });
+    });
+
     describe('$ phonegap-build noop', function() {
         it('should display unknown command', function() {
             spyOn(console, 'log');
