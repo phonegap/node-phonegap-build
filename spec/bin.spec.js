@@ -27,7 +27,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build', function() {
-        it('should display help information', function() {
+        it('should call CLI help', function() {
             spyOn(cli, 'help');
             cli.parse({ _: [] });
             expect(cli.help).toHaveBeenCalled();
@@ -35,7 +35,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build help', function() {
-        it('should display help information', function() {
+        it('should call CLI help', function() {
             spyOn(cli, 'help');
             cli.parse({ _: [ 'help' ] });
             expect(cli.help).toHaveBeenCalled();
@@ -43,7 +43,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build --help', function() {
-        it('should be display help information', function() {
+        it('should call CLI help', function() {
             spyOn(cli, 'help');
             cli.parse({ _: [], help: true });
             expect(cli.help).toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build -h', function() {
-        it('should be display help information', function() {
+        it('should call CLI help', function() {
             spyOn(cli, 'help');
             cli.parse({ _: [], h: true });
             expect(cli.help).toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build --version', function() {
-        it('should display version', function() {
+        it('should call CLI version', function() {
             spyOn(cli, 'version');
             cli.parse({ _: [], version: true });
             expect(cli.version).toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build -v', function() {
-        it('should display version', function() {
+        it('should call CLI version', function() {
             spyOn(cli, 'version');
             cli.parse({ _: [], v: true });
             expect(cli.version).toHaveBeenCalled();
@@ -75,7 +75,7 @@ describe('$', function() {
     });
 
     describe('$ phonegap-build login', function() {
-        it('should call login action', function() {
+        it('should call CLI login', function() {
             spyOn(cli, 'login');
             cli.parse({ _: ['login'] });
             expect(cli.login).toHaveBeenCalled();
