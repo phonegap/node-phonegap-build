@@ -13,4 +13,12 @@ describe('CLI', function() {
             expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/\d+\.\d+\.\d+/);
         });
     });
+
+    describe('help', function() {
+        it('should output the usage information', function() {
+            spyOn(process.stdout, 'write');
+            cli.help();
+            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+        });
+    });
 });
