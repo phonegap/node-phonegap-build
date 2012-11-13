@@ -2,53 +2,21 @@ var shell = require('shelljs');
 var path = require('path');
 var cli = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js'));
 
-describe('$', function() {
-    describe('$ phonegap-build', function() {
-        it('should display help information', function() {
+describe('bin', function() {
+    describe('delegation', function() {
+        it('should support no arguments', function() {
             var process = shell.exec(cli + '', { silent: true });
             expect(process.output).toMatch('Usage:');
         });
-    });
 
-    describe('$ phonegap-build help', function() {
-        it('should display help information', function() {
-            var process = shell.exec(cli + ' help', { silent: true });
-            expect(process.output).toMatch('Usage:');
+        it('should support commands', function() {
+            var process = shell.exec(cli + ' version', { silent: true });
+            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
         });
-    });
 
-    describe('$ phonegap-build --help', function() {
-        it('should be display help information', function() {
-            var process = shell.exec(cli + ' --help', { silent: true });
-            expect(process.output).toMatch('Usage:');
-        });
-    });
-
-    describe('$ phonegap-build -h', function() {
-        it('should be display help information', function() {
-            var process = shell.exec(cli + ' -h', { silent: true });
-            expect(process.output).toMatch('Usage:');
-        });
-    });
-
-    describe('$ phonegap-build --version', function() {
-        it('should display version', function() {
+        it('should support options', function() {
             var process = shell.exec(cli + ' --version', { silent: true });
             expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
-        });
-    });
-
-    describe('$ phonegap-build -v', function() {
-        it('should display version', function() {
-            var process = shell.exec(cli + ' -v', { silent: true });
-            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
-        });
-    });
-
-    describe('$ phonegap-build noop', function() {
-        it('should display unknown command', function() {
-            var process = shell.exec(cli + ' noop', { silent: true });
-            expect(process.output).toMatch('Unknown command:');
         });
     });
 });
