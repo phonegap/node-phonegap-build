@@ -29,7 +29,7 @@ describe('$', function() {
     describe('$ phonegap-build', function() {
         it('should call CLI help', function() {
             spyOn(cli, 'help');
-            cli.parse({ _: [] });
+            cli.argv({ _: [] });
             expect(cli.help).toHaveBeenCalled();
         });
     });
@@ -37,7 +37,7 @@ describe('$', function() {
     describe('$ phonegap-build help', function() {
         it('should call CLI help', function() {
             spyOn(cli, 'help');
-            cli.parse({ _: [ 'help' ] });
+            cli.argv({ _: [ 'help' ] });
             expect(cli.help).toHaveBeenCalled();
         });
     });
@@ -45,7 +45,7 @@ describe('$', function() {
     describe('$ phonegap-build --help', function() {
         it('should call CLI help', function() {
             spyOn(cli, 'help');
-            cli.parse({ _: [], help: true });
+            cli.argv({ _: [], help: true });
             expect(cli.help).toHaveBeenCalled();
         });
     });
@@ -53,7 +53,7 @@ describe('$', function() {
     describe('$ phonegap-build -h', function() {
         it('should call CLI help', function() {
             spyOn(cli, 'help');
-            cli.parse({ _: [], h: true });
+            cli.argv({ _: [], h: true });
             expect(cli.help).toHaveBeenCalled();
         });
     });
@@ -61,7 +61,7 @@ describe('$', function() {
     describe('$ phonegap-build --version', function() {
         it('should call CLI version', function() {
             spyOn(cli, 'version');
-            cli.parse({ _: [], version: true });
+            cli.argv({ _: [], version: true });
             expect(cli.version).toHaveBeenCalled();
         });
     });
@@ -69,7 +69,7 @@ describe('$', function() {
     describe('$ phonegap-build -v', function() {
         it('should call CLI version', function() {
             spyOn(cli, 'version');
-            cli.parse({ _: [], v: true });
+            cli.argv({ _: [], v: true });
             expect(cli.version).toHaveBeenCalled();
         });
     });
@@ -77,7 +77,7 @@ describe('$', function() {
     describe('$ phonegap-build login', function() {
         it('should call CLI login', function() {
             spyOn(cli, 'login');
-            cli.parse({ _: ['login'] });
+            cli.argv({ _: ['login'] });
             expect(cli.login).toHaveBeenCalled();
         });
     });
@@ -85,7 +85,7 @@ describe('$', function() {
     describe('$ phonegap-build noop', function() {
         it('should call CLI unknown', function() {
             spyOn(cli, 'unknown');
-            cli.parse({ _: [ 'noop' ] });
+            cli.argv({ _: [ 'noop' ] });
             expect(cli.unknown).toHaveBeenCalled();
         });
     });
