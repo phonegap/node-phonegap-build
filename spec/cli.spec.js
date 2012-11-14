@@ -33,26 +33,42 @@ describe('CLI', function() {
     });
 
     describe('login', function() {
-        beforeEach(function() {
-            spyOn(prompt, 'get').andCallFake(function(options, callback) {
-                callback(null, { username: 'zelda', password: 'tr1force' });
-            });
-        });
-
         describe('prompt', function() {
-            it('should be called when not logged in', function() {
-                spyOn(client, 'auth');
-                cli.login();
-                expect(prompt.get).toHaveBeenCalled();
+            describe('valid input', function() {
+                beforeEach(function() {
+                    spyOn(prompt, 'get').andCallFake(function(options, callback) {
+                        callback(null, { username: 'zelda', password: 'tr1force' });
+                    });
+                });
+
+                it('should be called when not logged in', function() {
+                    spyOn(client, 'auth');
+                    cli.login();
+                    expect(prompt.get).toHaveBeenCalled();
+                });
+
+                it('should pass input to login', function() {
+                    spyOn(client, 'auth');
+                    cli.login();
+                    expect(client.auth).toHaveBeenCalledWith(
+                        { username: 'zelda', password: 'tr1force' },
+                        jasmine.any(Function)
+                    );
+                });
             });
 
-            it('should pass information to login', function() {
-                spyOn(client, 'auth');
-                cli.login();
-                expect(client.auth).toHaveBeenCalledWith(
-                    { username: 'zelda', password: 'tr1force' },
-                    jasmine.any(Function)
-                );
+            describe('invalid input', function() {
+                beforeEach(function() {
+                    spyOn(prompt, 'get').andCallFake(function(options, callback) {
+                        callback(new Error('cancelled'), null);
+                    });
+                });
+
+                it('should halt when input is invalid', function() {
+                    spyOn(client, 'auth');
+                    cli.login();
+                    expect(client.auth).not.toHaveBeenCalled();
+                });
             });
         });
     });
