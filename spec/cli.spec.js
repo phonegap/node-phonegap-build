@@ -1,7 +1,8 @@
 var prompt = require('prompt'),
     client = require('phonegap-build-rest'),
     CLI = require('../lib/cli'),
-    cli;
+    cli,
+    spy;
 
 describe('CLI', function() {
     beforeEach(function() {
@@ -33,41 +34,51 @@ describe('CLI', function() {
     });
 
     describe('login', function() {
-        describe('prompt', function() {
-            describe('valid input', function() {
-                beforeEach(function() {
-                    spyOn(prompt, 'get').andCallFake(function(options, callback) {
-                        callback(null, { username: 'zelda', password: 'tr1force' });
-                    });
-                });
+        it('should be a function', function() {
+            expect(cli.login).toEqual(jasmine.any(Function));
+        });
 
-                it('should be called when not logged in', function() {
-                    spyOn(client, 'auth');
-                    cli.login();
-                    expect(prompt.get).toHaveBeenCalled();
-                });
+        describe('defaults', function() {
+            beforeEach(function() {
+                spy = spyOn(prompt, 'get');
+            });
 
-                it('should pass input to login', function() {
-                    spyOn(client, 'auth');
-                    cli.login();
-                    expect(client.auth).toHaveBeenCalledWith(
-                        { username: 'zelda', password: 'tr1force' },
-                        jasmine.any(Function)
-                    );
+            it('should be a function', function() {
+                expect(cli.login.defaults).toEqual(jasmine.any(Function));
+            });
+
+            it('should prompt for username and password', function() {
+                cli.login.defaults(function(){});
+                expect(prompt.get).toHaveBeenCalled();
+            });
+
+            it('should return username and password with callback', function(done) {
+                spy.andCallFake(function(properties, callback) {
+                    callback(null, { username: 'zelda', password: 'tr1force' });
+                });
+                cli.login.defaults(function(result) {
+                    expect(result).toEqual({ username: 'zelda', password: 'tr1force' });
+                    done();
                 });
             });
 
-            describe('invalid input', function() {
-                beforeEach(function() {
-                    spyOn(prompt, 'get').andCallFake(function(options, callback) {
-                        callback(new Error('cancelled'), null);
-                    });
+            it('should default username to an empty string', function(done) {
+                spy.andCallFake(function(properties, callback) {
+                    callback(new Error('oops!'), { password: 'tr1force' });
                 });
+                cli.login.defaults(function(result) {
+                    expect(result).toEqual({ username: '', password: 'tr1force' });
+                    done();
+                });
+            });
 
-                it('should halt when input is invalid', function() {
-                    spyOn(client, 'auth');
-                    cli.login();
-                    expect(client.auth).not.toHaveBeenCalled();
+            it('should default password to an empty string', function(done) {
+                spy.andCallFake(function(properties, callback) {
+                    callback(new Error('oops!'), { username: 'zelda' });
+                });
+                cli.login.defaults(function(result) {
+                    expect(result).toEqual({ username: 'zelda', password: '' });
+                    done();
                 });
             });
         });
