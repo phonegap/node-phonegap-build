@@ -1,85 +1,108 @@
-var prompt = require('prompt'),
-    client = require('phonegap-build-rest'),
+var shell = require('shelljs'),
+    path = require('path'),
+    bin = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js')),
     CLI = require('../lib/cli'),
-    cli,
-    spy;
+    cli;
 
-describe('CLI', function() {
-    beforeEach(function() {
-        cli = new CLI();
-        spyOn(process.stdout, 'write');
-    });
+describe('$', function() {
+    describe('shell delegation', function() {
+        it('should support no arguments', function() {
+            var process = shell.exec(bin + '', { silent: true });
+            expect(process.output).toMatch('Usage:');
+        });
 
-    describe('version', function() {
-        it('should output with the format x.x.x', function() {
-            cli.version();
-            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/\d+\.\d+\.\d+/);
+        it('should support commands', function() {
+            var process = shell.exec(bin + ' version', { silent: true });
+            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
+        });
+
+        it('should support options', function() {
+            var process = shell.exec(bin + ' --version', { silent: true });
+            expect(process.output).toMatch(/^\w+\.\w+\.\w+/);
         });
     });
 
     describe('help', function() {
-        it('should output the usage information', function() {
-            cli.help();
-            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+        beforeEach(function() {
+            cli = new CLI();
+            spyOn(process.stdout, 'write');
+        });
+
+        describe('$ phonegap-build', function() {
+            it('should output the usage information', function() {
+                cli.argv({ _: [] });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+            });
+        });
+
+        describe('$ phonegap-build help', function() {
+            it('should output the usage information', function() {
+                cli.argv({ _: [ 'help' ] });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+            });
+        });
+
+        describe('$ phonegap-build --help', function() {
+            it('should output the usage information', function() {
+                cli.argv({ _: [], help: true });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+            });
+        });
+
+        describe('$ phonegap-build -h', function() {
+            it('should output the usage information', function() {
+                cli.argv({ _: [], h: true });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
+            });
+        });
+    });
+
+    describe('version', function() {
+        beforeEach(function() {
+            cli = new CLI();
+            spyOn(process.stdout, 'write');
+        });
+
+        describe('$ phonegap-build --version', function() {
+            it('should output with the format x.x.x', function() {
+                cli.argv({ _: [], version: true });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/\d+\.\d+\.\d+/);
+            });
+        });
+
+        describe('$ phonegap-build -v', function() {
+            it('should output with the format x.x.x', function() {
+                cli.argv({ _: [], v: true });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/\d+\.\d+\.\d+/);
+            });
         });
     });
 
     describe('login', function() {
-        it('should be a function', function() {
-            expect(cli.login).toEqual(jasmine.any(Function));
+        beforeEach(function() {
+            cli = new CLI();
         });
 
-        describe('defaults', function() {
-            beforeEach(function() {
-                spy = spyOn(prompt, 'get');
-            });
-
-            it('should be a function', function() {
-                expect(cli.login.defaults).toEqual(jasmine.any(Function));
-            });
-
-            it('should prompt for username and password', function() {
-                cli.login.defaults(function(){});
-                expect(prompt.get).toHaveBeenCalled();
-            });
-
-            it('should return username and password with callback', function(done) {
-                spy.andCallFake(function(properties, callback) {
-                    callback(null, { username: 'zelda', password: 'tr1force' });
-                });
-                cli.login.defaults(function(result) {
-                    expect(result).toEqual({ username: 'zelda', password: 'tr1force' });
-                    done();
-                });
-            });
-
-            it('should default username to an empty string', function(done) {
-                spy.andCallFake(function(properties, callback) {
-                    callback(new Error('oops!'), { password: 'tr1force' });
-                });
-                cli.login.defaults(function(result) {
-                    expect(result).toEqual({ username: '', password: 'tr1force' });
-                    done();
-                });
-            });
-
-            it('should default password to an empty string', function(done) {
-                spy.andCallFake(function(properties, callback) {
-                    callback(new Error('oops!'), { username: 'zelda' });
-                });
-                cli.login.defaults(function(result) {
-                    expect(result).toEqual({ username: 'zelda', password: '' });
-                    done();
-                });
+        describe('$ phonegap-build login', function() {
+            it('should delegate to CLI login', function() {
+                spyOn(cli, 'login');
+                cli.argv({ _: ['login'] });
+                expect(cli.login).toHaveBeenCalled();
             });
         });
     });
 
     describe('unknown', function() {
-        it('should output the unknown command', function() {
-            cli.unknown('noop');
-            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/unknown command:/i);
+        beforeEach(function() {
+            cli = new CLI();
+            spyOn(process.stdout, 'write');
+        });
+
+        describe('$ phonegap-build noop', function() {
+            it('should output the unknown command', function() {
+                cli.argv({ _: [ 'noop' ] });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/unknown command:/i);
+            });
         });
     });
-
 });
