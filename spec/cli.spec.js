@@ -7,11 +7,11 @@ var prompt = require('prompt'),
 describe('CLI', function() {
     beforeEach(function() {
         cli = new CLI();
+        spyOn(process.stdout, 'write');
     });
 
     describe('version', function() {
         it('should output with the format x.x.x', function() {
-            spyOn(process.stdout, 'write');
             cli.version();
             expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/\d+\.\d+\.\d+/);
         });
@@ -19,17 +19,8 @@ describe('CLI', function() {
 
     describe('help', function() {
         it('should output the usage information', function() {
-            spyOn(process.stdout, 'write');
             cli.help();
             expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/usage:/i);
-        });
-    });
-
-    describe('unknown', function() {
-        it('should output the unknown command', function() {
-            spyOn(process.stdout, 'write');
-            cli.unknown('noop');
-            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/unknown command:/i);
         });
     });
 
@@ -83,4 +74,12 @@ describe('CLI', function() {
             });
         });
     });
+
+    describe('unknown', function() {
+        it('should output the unknown command', function() {
+            cli.unknown('noop');
+            expect(process.stdout.write.mostRecentCall.args[0]).toMatch(/unknown command:/i);
+        });
+    });
+
 });
