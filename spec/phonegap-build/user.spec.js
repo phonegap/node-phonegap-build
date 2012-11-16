@@ -48,7 +48,9 @@ describe('user', function() {
 
         describe('with using defaults', function() {
             beforeEach(function() {
-                user.defaults = { username: 'rick', password: 'z0mb1es' };
+                user.defaults = function(callback) {
+                    callback({ username: 'rick', password: 'z0mb1es' });
+                };
             });
 
             it('should authenticate with the defaults', function(done) {

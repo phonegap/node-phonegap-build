@@ -1,4 +1,6 @@
-var shell = require('shelljs'),
+var prompt = require('prompt'),
+    client = require('phonegap-build-rest'),
+    shell = require('shelljs'),
     path = require('path'),
     bin = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js')),
     CLI = require('../lib/cli'),
@@ -76,13 +78,30 @@ describe('$', function() {
     describe('login', function() {
         describe('not logged in', function() {
             describe('$ phonegap-build login', function() {
-                it('should prompt for username and password', function() {
+                describe('success', function() {
+                    beforeEach(function() {
+                        spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                            fn(null, {});
+                        });
+                        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                            fn(null, { username: 'zelda', password: 'tr1force' });
+                        });
+                    });
+
+                    it('should prompt for username and password', function() {
+                        cli.argv({ _: [ 'login' ] });
+                        var args = prompt.get.mostRecentCall.args;
+                        expect(args[0].properties.username).toBeDefined();
+                        expect(args[0].properties.password).toBeDefined();
+                    });
+
+                    it('should output username when account is valid ', function() {
+                    });
                 });
 
-                it('should output username when account is valid ', function() {
-                });
-
-                it('should output error when account is invalid', function() {
+                describe('error', function() {
+                    it('should output error when account is invalid', function() {
+                    });
                 });
             });
 
