@@ -5,6 +5,11 @@ var shell = require('shelljs'),
     cli;
 
 describe('$', function() {
+    beforeEach(function() {
+        cli = new CLI();
+        spyOn(process.stdout, 'write');
+    });
+
     describe('shell delegation', function() {
         it('should support no arguments', function() {
             var process = shell.exec(bin + '', { silent: true });
@@ -23,11 +28,6 @@ describe('$', function() {
     });
 
     describe('help', function() {
-        beforeEach(function() {
-            cli = new CLI();
-            spyOn(process.stdout, 'write');
-        });
-
         describe('$ phonegap-build', function() {
             it('should output the usage information', function() {
                 cli.argv({ _: [] });
@@ -58,11 +58,6 @@ describe('$', function() {
     });
 
     describe('version', function() {
-        beforeEach(function() {
-            cli = new CLI();
-            spyOn(process.stdout, 'write');
-        });
-
         describe('$ phonegap-build --version', function() {
             it('should output with the format x.x.x', function() {
                 cli.argv({ _: [], version: true });
@@ -79,10 +74,6 @@ describe('$', function() {
     });
 
     describe('login', function() {
-        beforeEach(function() {
-            cli = new CLI();
-        });
-
         describe('$ phonegap-build login', function() {
             it('should delegate to CLI login', function() {
                 spyOn(cli, 'login');
@@ -93,11 +84,6 @@ describe('$', function() {
     });
 
     describe('unknown', function() {
-        beforeEach(function() {
-            cli = new CLI();
-            spyOn(process.stdout, 'write');
-        });
-
         describe('$ phonegap-build noop', function() {
             it('should output the unknown command', function() {
                 cli.argv({ _: [ 'noop' ] });
