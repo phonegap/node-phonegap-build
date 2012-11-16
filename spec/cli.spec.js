@@ -74,11 +74,52 @@ describe('$', function() {
     });
 
     describe('login', function() {
-        describe('$ phonegap-build login', function() {
-            it('should delegate to CLI login', function() {
-                spyOn(cli, 'login');
-                cli.argv({ _: ['login'] });
-                expect(cli.login).toHaveBeenCalled();
+        describe('not logged in', function() {
+            describe('$ phonegap-build login', function() {
+                it('should prompt for username and password', function() {
+                });
+
+                it('should output username when account is valid ', function() {
+                });
+
+                it('should output error when account is invalid', function() {
+                });
+            });
+
+            describe('$ phonegap-build login --username zelda', function() {
+                it('should prompt for password', function() {
+                });
+            });
+
+            describe('$ phonegap-build login -u zelda', function() {
+                it('should prompt for password', function() {
+                });
+            });
+        });
+
+        describe('logged in', function() {
+            describe('$ phonegap-build login', function() {
+                it('should not prompt for username and password', function() {
+                });
+
+                it('should output username', function() {
+                });
+            });
+
+            describe('$ phonegap-build login --username zelda', function() {
+                it('should prompt for password', function() {
+                });
+
+                it('should output username when account is valid ', function() {
+                });
+
+                it('should not be logged in after error', function() {
+                });
+            });
+
+            describe('$ phonegap-build login -u zelda', function() {
+                it('should prompt for password', function() {
+                });
             });
         });
     });
