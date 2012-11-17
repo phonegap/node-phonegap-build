@@ -48,8 +48,10 @@ describe('user', function() {
 
         describe('with using defaults', function() {
             beforeEach(function() {
-                user.defaults = function(callback) {
-                    callback({ username: 'rick', password: 'z0mb1es' });
+                user.defaults = {
+                    options: function(callback) {
+                        callback({ username: 'rick', password: 'z0mb1es' });
+                    }
                 };
             });
 

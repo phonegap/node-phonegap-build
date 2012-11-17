@@ -96,6 +96,8 @@ describe('$', function() {
                     });
 
                     it('should output username when account is valid ', function() {
+                        cli.argv({ _: [ 'login' ] });
+                        expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
                     });
                 });
 
