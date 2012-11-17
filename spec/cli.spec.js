@@ -102,7 +102,18 @@ describe('$', function() {
                 });
 
                 describe('error', function() {
+                    beforeEach(function() {
+                        spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                            fn(new Error('Account does not exist'));
+                        });
+                        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                            fn(null, { username: 'zelda', password: 'tr1force' });
+                        });
+                    });
+
                     it('should output error when account is invalid', function() {
+                        cli.argv({ _: [ 'login' ] });
+                        expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
                     });
                 });
             });
