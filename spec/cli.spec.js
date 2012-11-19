@@ -120,11 +120,13 @@ describe('$', function() {
 
             describe('$ phonegap-build login --username zelda', function() {
                 it('should prompt for password', function() {
+                    // @TODO
                 });
             });
 
             describe('$ phonegap-build login -u zelda', function() {
                 it('should prompt for password', function() {
+                    // @TODO
                 });
             });
         });
@@ -154,6 +156,7 @@ describe('$', function() {
 
             describe('$ phonegap-build login --username zelda', function() {
                 it('should prompt for password', function() {
+                    // @TODO
                 });
 
                 it('should output username when account is valid ', function() {
@@ -165,6 +168,7 @@ describe('$', function() {
 
             describe('$ phonegap-build login -u zelda', function() {
                 it('should prompt for password', function() {
+                    // @TODO
                 });
             });
         });
