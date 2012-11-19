@@ -130,8 +130,20 @@ describe('$', function() {
         });
 
         describe('logged in', function() {
+            beforeEach(function() {
+                spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                    fn(null, {});
+                });
+                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                    fn(null, { username: 'zelda', password: 'tr1force' });
+                });
+                cli.argv({ _: [ 'login' ] });
+            });
+
             describe('$ phonegap-build login', function() {
                 it('should not prompt for username and password', function() {
+                    cli.argv({ _: [ 'login' ] });
+                    expect(prompt.get.calls.length).toEqual(1);
                 });
 
                 it('should output username', function() {
