@@ -13,7 +13,7 @@ describe('command-line login', function() {
     });
 
     describe('$ phonegap-build login', function() {
-        describe('account does not exist', function() {
+        describe('not currently logged into an account', function() {
             it('should prompt for username and password', function() {
                 spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
                 cli.argv({ _: [ 'login' ] });
@@ -41,7 +41,7 @@ describe('command-line login', function() {
             });
         });
 
-        describe('account exists', function() {
+        describe('currently logged into an account', function() {
             beforeEach(function() {
                 spyOn(client, 'auth').andCallFake(function(obj, fn) {
                     fn(null, {});
