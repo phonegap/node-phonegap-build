@@ -66,16 +66,42 @@ describe('command-line login', function() {
             // @TODO
         });
 
-        it('should output username when account is valid ', function() {
+        describe('login is successful', function() {
+            it('should output username', function() {
+                // @TODO
+            });
         });
 
-        it('should not be logged in after error', function() {
+        describe('login is unsuccessful', function() {
+            it('should output error message', function() {
+                // @TODO
+            });
+
+            it('should be logged out', function() {
+                // @TODO
+            });
         });
     });
 
     describe('$ phonegap-build login -u zelda', function() {
         it('should prompt for password', function() {
             // @TODO
+        });
+
+        describe('login is successful', function() {
+            it('should output username', function() {
+                // @TODO
+            });
+        });
+
+        describe('login is unsuccessful', function() {
+            it('should output error message', function() {
+                // @TODO
+            });
+
+            it('should be logged out', function() {
+                // @TODO
+            });
         });
     });
 });
