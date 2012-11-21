@@ -7,6 +7,9 @@ describe('command-line login', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');
+        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+            fn(null, { username: 'zelda', password: 'tr1force' });
+        });
     });
 
     describe('$ phonegap-build login', function() {
@@ -15,9 +18,6 @@ describe('command-line login', function() {
                 beforeEach(function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
                         fn(null, {});
-                    });
-                    spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                        fn(null, { username: 'zelda', password: 'tr1force' });
                     });
                 });
 
@@ -39,9 +39,6 @@ describe('command-line login', function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
                         fn(new Error('Account does not exist'));
                     });
-                    spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                        fn(null, { username: 'zelda', password: 'tr1force' });
-                    });
                 });
 
                 it('should output error when account is invalid', function() {
@@ -55,9 +52,6 @@ describe('command-line login', function() {
             beforeEach(function() {
                 spyOn(client, 'auth').andCallFake(function(obj, fn) {
                     fn(null, {});
-                });
-                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                    fn(null, { username: 'zelda', password: 'tr1force' });
                 });
                 cli.argv({ _: [ 'login' ] });
             });
