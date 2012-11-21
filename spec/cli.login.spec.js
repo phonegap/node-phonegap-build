@@ -23,7 +23,7 @@ describe('command-line login', function() {
             });
 
             describe('login is successful', function() {
-                it('should output username when account is valid ', function() {
+                it('should output username', function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
                     cli.argv({ _: [ 'login' ] });
                     expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
@@ -31,7 +31,7 @@ describe('command-line login', function() {
             });
 
             describe('login is unsuccessful', function() {
-                it('should output error when account is invalid', function() {
+                it('should output error message', function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
                         fn(new Error('Account does not exist'));
                     });
