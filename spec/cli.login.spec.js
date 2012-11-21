@@ -13,8 +13,8 @@ describe('command-line login', function() {
     });
 
     describe('$ phonegap-build login', function() {
-        describe('no existing account', function() {
-            describe('successful login', function() {
+        describe('account does not exist', function() {
+            describe('login is successful', function() {
                 beforeEach(function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
                         fn(null, {});
@@ -34,7 +34,7 @@ describe('command-line login', function() {
                 });
             });
 
-            describe('unsuccessful login', function() {
+            describe('login is unsuccessful', function() {
                 beforeEach(function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
                         fn(new Error('Account does not exist'));
@@ -48,7 +48,7 @@ describe('command-line login', function() {
             });
         });
 
-        describe('existing account', function() {
+        describe('account exists', function() {
             beforeEach(function() {
                 spyOn(client, 'auth').andCallFake(function(obj, fn) {
                     fn(null, {});
