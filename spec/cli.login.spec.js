@@ -7,12 +7,15 @@ describe('command-line login', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');
-        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-            fn(null, { username: 'zelda', password: 'tr1force' });
-        });
     });
 
     describe('$ phonegap-build login', function() {
+        beforeEach(function() {
+            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                fn(null, { username: 'zelda', password: 'tr1force' });
+            });
+        });
+
         describe('not currently logged into an account', function() {
             it('should prompt for username and password', function() {
                 spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
@@ -62,45 +65,69 @@ describe('command-line login', function() {
     });
 
     describe('$ phonegap-build login --username zelda', function() {
+        beforeEach(function() {
+            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                fn(null, { password: 'tr1force' });
+            });
+        });
+
         it('should prompt for password', function() {
-            // @TODO
+            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
+            cli.argv({ _: [ 'login' ], username: 'zelda' });
+            var args = prompt.get.mostRecentCall.args;
+            expect(args[0].properties.username).not.toBeDefined();
+            expect(args[0].properties.password).toBeDefined();
         });
 
         describe('login is successful', function() {
             it('should output username', function() {
-                // @TODO
+                spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
+                cli.argv({ _: [ 'login' ], username: 'zelda' });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
             });
         });
 
         describe('login is unsuccessful', function() {
             it('should output error message', function() {
-                // @TODO
-            });
-
-            it('should be logged out', function() {
-                // @TODO
+                spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                    fn(new Error('Invalid login'));
+                });
+                cli.argv({ _: [ 'login' ], username: 'zelda' });
+                expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
             });
         });
     });
 
     describe('$ phonegap-build login -u zelda', function() {
+        beforeEach(function() {
+            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                fn(null, { password: 'tr1force' });
+            });
+        });
+
         it('should prompt for password', function() {
-            // @TODO
+            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
+            cli.argv({ _: [ 'login' ], u: 'zelda' });
+            var args = prompt.get.mostRecentCall.args;
+            expect(args[0].properties.username).not.toBeDefined();
+            expect(args[0].properties.password).toBeDefined();
         });
 
         describe('login is successful', function() {
             it('should output username', function() {
-                // @TODO
+                spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
+                cli.argv({ _: [ 'login' ], username: 'zelda' });
+                expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
             });
         });
 
         describe('login is unsuccessful', function() {
             it('should output error message', function() {
-                // @TODO
-            });
-
-            it('should be logged out', function() {
-                // @TODO
+                spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                    fn(new Error('Invalid login'));
+                });
+                cli.argv({ _: [ 'login' ], username: 'zelda' });
+                expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
             });
         });
     });
