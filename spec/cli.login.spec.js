@@ -9,6 +9,14 @@ describe('command-line login', function() {
         spyOn(process.stdout, 'write');
     });
 
+    describe('$ phonegap-build help', function() {
+        it('outputs info on the login command', function() {
+            cli.argv({ _: [ 'help' ] });
+            expect(process.stdout.write.mostRecentCall.args[0])
+                .toMatch(/Commands:[\w\W]*\s+login/i);
+        });
+    });
+
     describe('$ phonegap-build login', function() {
         beforeEach(function() {
             spyOn(prompt, 'get').andCallFake(function(obj, fn) {
