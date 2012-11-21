@@ -9,8 +9,8 @@ describe('command-line login', function() {
         spyOn(process.stdout, 'write');
     });
 
-    describe('not logged in', function() {
-        describe('$ phonegap-build login', function() {
+    describe('$ phonegap-build login', function() {
+        describe('not logged in', function() {
             describe('success', function() {
                 beforeEach(function() {
                     spyOn(client, 'auth').andCallFake(function(obj, fn) {
@@ -50,32 +50,32 @@ describe('command-line login', function() {
                 });
             });
         });
+    });
 
-        describe('$ phonegap-build login --username zelda', function() {
-            it('should prompt for password', function() {
-                // @TODO
-            });
-        });
-
-        describe('$ phonegap-build login -u zelda', function() {
-            it('should prompt for password', function() {
-                // @TODO
-            });
+    describe('$ phonegap-build login --username zelda', function() {
+        it('should prompt for password', function() {
+            // @TODO
         });
     });
 
-    describe('logged in', function() {
-        beforeEach(function() {
-            spyOn(client, 'auth').andCallFake(function(obj, fn) {
-                fn(null, {});
-            });
-            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                fn(null, { username: 'zelda', password: 'tr1force' });
-            });
-            cli.argv({ _: [ 'login' ] });
+    describe('$ phonegap-build login -u zelda', function() {
+        it('should prompt for password', function() {
+            // @TODO
         });
+    });
 
-        describe('$ phonegap-build login', function() {
+    describe('$ phonegap-build login', function() {
+        describe('logged in', function() {
+            beforeEach(function() {
+                spyOn(client, 'auth').andCallFake(function(obj, fn) {
+                    fn(null, {});
+                });
+                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                    fn(null, { username: 'zelda', password: 'tr1force' });
+                });
+                cli.argv({ _: [ 'login' ] });
+            });
+
             it('should not prompt for username and password', function() {
                 cli.argv({ _: [ 'login' ] });
                 expect(prompt.get.calls.length).toEqual(1);
@@ -86,23 +86,23 @@ describe('command-line login', function() {
                 expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
             });
         });
+    });
 
-        describe('$ phonegap-build login --username zelda', function() {
-            it('should prompt for password', function() {
-                // @TODO
-            });
-
-            it('should output username when account is valid ', function() {
-            });
-
-            it('should not be logged in after error', function() {
-            });
+    describe('$ phonegap-build login --username zelda', function() {
+        it('should prompt for password', function() {
+            // @TODO
         });
 
-        describe('$ phonegap-build login -u zelda', function() {
-            it('should prompt for password', function() {
-                // @TODO
-            });
+        it('should output username when account is valid ', function() {
+        });
+
+        it('should not be logged in after error', function() {
+        });
+    });
+
+    describe('$ phonegap-build login -u zelda', function() {
+        it('should prompt for password', function() {
+            // @TODO
         });
     });
 });
