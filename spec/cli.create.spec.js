@@ -92,8 +92,16 @@ describe('command-line create', function() {
         });
 
         describe('not logged in', function() {
+            beforeEach(function() {
+                spyOn(fs, 'existsSync').andReturn(false);
+                spyOn(prompt, 'get');
+            });
+
             it('should prompt for username and password', function() {
-                // @TODO
+                cli.argv({ _: ['create', './my-app'] });
+                expect(prompt.get).toHaveBeenCalled();
+                expect(prompt.get.mostRecentCall.args[0].properties.username).toBeDefined();
+                expect(prompt.get.mostRecentCall.args[0].properties.password).toBeDefined();
             });
 
             describe('successful authentication', function() {
