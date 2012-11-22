@@ -53,7 +53,17 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create ./my-app', function() {
+        beforeEach(function() {
+            spyOn(shell, 'mkdir');
+        });
+
         describe('path exists', function() {
+            it('should not create the project locally', function() {
+                spyOn(fs, 'existsSync').andReturn(true);
+                cli.argv({ _: ['create', './my-app'] });
+                expect(shell.mkdir).not.toHaveBeenCalled();
+            });
+
             it('should output an error', function() {
                 spyOn(fs, 'existsSync').andReturn(true);
                 cli.argv({ _: ['create', './my-app'] });
@@ -67,25 +77,28 @@ describe('command-line create', function() {
                     fn(null, { name: 'My App' });
                 });
                 spyOn(fs, 'existsSync').andReturn(false);
-                spyOn(shell, 'mkdir');
                 cli.argv({ _: ['create', './my-app'] });
             });
 
             describe('currently logged in', function() {
-                it('should create the path', function() {
-                    expect(shell.mkdir).toHaveBeenCalled();
+                describe('create app remotely', function() {
+                    it('should prompt for "app name"', function() {
+                        expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
+                    });
+
+                    it('should require "app name"', function() {
+                        expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
+                    });
                 });
 
-                it('should output the created path', function() {
-                    expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
-                });
+                describe('create app locally', function() {
+                    it('should create the path', function() {
+                        expect(shell.mkdir).toHaveBeenCalled();
+                    });
 
-                it('should prompt for "app name"', function() {
-                    expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
-                });
-
-                it('should require "app name"', function() {
-                    expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
+                    it('should output the created path', function() {
+                        expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
+                    });
                 });
             });
         });
