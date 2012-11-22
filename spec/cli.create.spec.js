@@ -5,7 +5,8 @@ var fs = require('fs'),
     CLI = require('../lib/cli'),
     cli,
     stdout,
-    stderr;
+    stderr,
+    spy;
 
 describe('command-line create', function() {
     beforeEach(function() {
@@ -94,7 +95,9 @@ describe('command-line create', function() {
         describe('not logged in', function() {
             beforeEach(function() {
                 spyOn(fs, 'existsSync').andReturn(false);
-                spyOn(prompt, 'get');
+                spyOn(prompt, 'get').andCallFake(function(data, callback) {
+                    callback(null, { name: "My App" });
+                });
             });
 
             it('should prompt for username and password', function() {
@@ -104,12 +107,16 @@ describe('command-line create', function() {
             });
 
             describe('successful authentication', function() {
-                it('should output the username', function() {
-                    // @TODO
+                beforeEach(function() {
+                    spy = jasmine.createSpyObj('api', ['get', 'post', 'put', 'del']);
+                    spyOn(cli.user, 'login').andCallFake(function(callback) {
+                        callback(null, {});
+                    });
+                    cli.argv({ _: ['create', './my-app'] });
                 });
 
                 it('should create the project locally', function() {
-                    // @TODO
+                    expect(shell.mkdir).toHaveBeenCalled();
                 });
 
                 it('should create the project remotely', function() {
