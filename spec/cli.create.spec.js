@@ -1,5 +1,6 @@
 var fs = require('fs'),
     shell = require('shelljs'),
+    prompt = require('prompt'),
     CLI = require('../lib/cli'),
     cli,
     stdout,
@@ -62,17 +63,30 @@ describe('command-line create', function() {
 
         describe('path does not exist', function() {
             beforeEach(function() {
+                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                    fn(null, { name: 'My App' });
+                });
                 spyOn(fs, 'existsSync').andReturn(false);
                 spyOn(shell, 'mkdir');
                 cli.argv({ _: ['create', './my-app'] });
             });
 
-            it('should create the path', function() {
-                expect(shell.mkdir).toHaveBeenCalled();
-            });
+            describe('currently logged in', function() {
+                it('should create the path', function() {
+                    expect(shell.mkdir).toHaveBeenCalled();
+                });
 
-            it('should output the created path', function() {
-                expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
+                it('should output the created path', function() {
+                    expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
+                });
+
+                it('should prompt for "app name"', function() {
+                    expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
+                });
+
+                it('should require "app name"', function() {
+                    expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
+                });
             });
         });
     });
