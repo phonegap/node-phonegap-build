@@ -24,7 +24,6 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create', function() {
-        // Usage: phonegap-build.js create <path> [options]
         it('should output the create help dialog', function() {
             cli.argv({ _: ['create'] });
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
@@ -63,6 +62,10 @@ describe('command-line create', function() {
                 cli.argv({ _: ['create', './my-app'] });
             });
 
+            it('should output an error', function() {
+                expect(stderr).toHaveBeenCalled();
+            });
+
             it('should not create the project locally', function() {
                 expect(shell.mkdir).not.toHaveBeenCalled();
             });
@@ -70,13 +73,57 @@ describe('command-line create', function() {
             it('should not create the project remotely', function() {
                 // @TODO
             });
-
-            it('should output an error', function() {
-                expect(stderr).toHaveBeenCalled();
-            });
         });
 
         describe('logged in', function() {
+            it('should not prompt for username and password', function() {
+                // @TODO
+            });
+
+            it('should create the project locally', function() {
+                // @TODO
+            });
+
+            it('should create the project remotely', function() {
+                // @TODO
+            });
+        });
+
+        describe('not logged in', function() {
+            it('should prompt for username and password', function() {
+                // @TODO
+            });
+
+            describe('successful authentication', function() {
+                it('should output the username', function() {
+                    // @TODO
+                });
+
+                it('should create the project locally', function() {
+                    // @TODO
+                });
+
+                it('should create the project remotely', function() {
+                    // @TODO
+                });
+            });
+
+            describe('failed authentication', function() {
+                it('should output an error', function() {
+                    // @TODO
+                });
+
+                it('should not create the project locally', function() {
+                    //expect(shell.mkdir).not.toHaveBeenCalled();
+                });
+
+                it('should not create the project remotely', function() {
+                    // @TODO
+                });
+            });
+        });
+
+        describe('creating remote project', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
@@ -93,6 +140,44 @@ describe('command-line create', function() {
                 expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
             });
 
+            it('should request to create the project remotely', function() {
+                // @TODO
+            });
+
+            describe('successful API response', function() {
+                it('should output info on the created remote project', function() {
+                    // @TODO
+                });
+
+                it('should add remote project id to .cordova/config.json', function() {
+                    // @TODO
+                });
+            });
+
+            describe('unsuccessful API response', function() {
+                it('should output an error', function() {
+                    // @TODO
+                });
+
+                it('should not create the project locally', function() {
+                    // @TODO
+                });
+
+                it('should not create the project remotely', function() {
+                    // @TODO
+                });
+            });
+        });
+
+        describe('creating local project', function() {
+            beforeEach(function() {
+                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
+                    fn(null, { name: 'My App' });
+                });
+                spyOn(fs, 'existsSync').andReturn(false);
+                cli.argv({ _: ['create', './my-app'] });
+            });
+
             it('should create the project locally', function() {
                 expect(shell.mkdir).toHaveBeenCalled();
             });
@@ -101,19 +186,7 @@ describe('command-line create', function() {
                 expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
             });
 
-            it('should create the project remotely', function() {
-                // @TODO
-            });
-
-            it('should output the created remote project', function() {
-                // @TODO
-            });
-
-            it('should add remote project id to .cordova/config.json', function() {
-                // @TODO
-            });
-
-            describe('local project structure', function() {
+            describe('file structure', function() {
                 it('should have .cordova/config.json', function() {
                     // @TODO
                     // { "phonegapbuild": { "id": 10 } }
@@ -126,6 +199,22 @@ describe('command-line create', function() {
                 it('should have www/index.html', function() {
                     // @TODO
                 });
+            });
+        });
+    });
+
+    describe('$ phonegap-build create ./my-app --name "My App"', function() {
+        describe('creating remote project', function() {
+            it('should not prompt for app name', function() {
+                // @TODO
+            });
+        });
+    });
+
+    describe('$ phonegap-build create ./my-app -n "My App"', function() {
+        describe('creating remote project', function() {
+            it('should not prompt for app name', function() {
+                // @TODO
             });
         });
     });
