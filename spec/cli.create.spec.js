@@ -58,15 +58,16 @@ describe('command-line create', function() {
         });
 
         describe('path exists', function() {
-            it('should not create the project locally', function() {
+            beforeEach(function() {
                 spyOn(fs, 'existsSync').andReturn(true);
                 cli.argv({ _: ['create', './my-app'] });
+            });
+
+            it('should not create the project locally', function() {
                 expect(shell.mkdir).not.toHaveBeenCalled();
             });
 
             it('should output an error', function() {
-                spyOn(fs, 'existsSync').andReturn(true);
-                cli.argv({ _: ['create', './my-app'] });
                 expect(stderr).toHaveBeenCalled();
             });
         });
