@@ -72,7 +72,7 @@ describe('command-line create', function() {
             });
         });
 
-        describe('path does not exist', function() {
+        describe('currently logged in', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
@@ -81,26 +81,20 @@ describe('command-line create', function() {
                 cli.argv({ _: ['create', './my-app'] });
             });
 
-            describe('currently logged in', function() {
-                describe('create app remotely', function() {
-                    it('should prompt for "app name"', function() {
-                        expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
-                    });
+            it('should prompt for "app name"', function() {
+                expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
+            });
 
-                    it('should require "app name"', function() {
-                        expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
-                    });
-                });
+            it('should require "app name"', function() {
+                expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
+            });
 
-                describe('create app locally', function() {
-                    it('should create the path', function() {
-                        expect(shell.mkdir).toHaveBeenCalled();
-                    });
+            it('should create the project locally', function() {
+                expect(shell.mkdir).toHaveBeenCalled();
+            });
 
-                    it('should output the created path', function() {
-                        expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
-                    });
-                });
+            it('should output the created project path', function() {
+                expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
             });
         });
     });
