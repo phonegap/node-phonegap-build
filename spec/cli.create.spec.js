@@ -1,6 +1,7 @@
 var fs = require('fs'),
     shell = require('shelljs'),
     prompt = require('prompt'),
+    client = require('phonegap-build-rest'),
     CLI = require('../lib/cli'),
     cli,
     stdout,
@@ -59,6 +60,7 @@ describe('command-line create', function() {
         describe('path exists', function() {
             beforeEach(function() {
                 spyOn(fs, 'existsSync').andReturn(true);
+                spyOn(client, 'auth');
                 cli.argv({ _: ['create', './my-app'] });
             });
 
@@ -71,7 +73,7 @@ describe('command-line create', function() {
             });
 
             it('should not create the project remotely', function() {
-                // @TODO
+                expect(client.auth).not.toHaveBeenCalled();
             });
         });
 
