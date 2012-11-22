@@ -67,12 +67,16 @@ describe('command-line create', function() {
                 expect(shell.mkdir).not.toHaveBeenCalled();
             });
 
+            it('should not create the project remotely', function() {
+                // @TODO
+            });
+
             it('should output an error', function() {
                 expect(stderr).toHaveBeenCalled();
             });
         });
 
-        describe('currently logged in', function() {
+        describe('logged in', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
@@ -95,6 +99,33 @@ describe('command-line create', function() {
 
             it('should output the created project path', function() {
                 expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
+            });
+
+            it('should create the project remotely', function() {
+                // @TODO
+            });
+
+            it('should output the created remote project', function() {
+                // @TODO
+            });
+
+            it('should add remote project id to .cordova/config.json', function() {
+                // @TODO
+            });
+
+            describe('local project structure', function() {
+                it('should have .cordova/config.json', function() {
+                    // @TODO
+                    // { "phonegapbuild": { "id": 10 } }
+                });
+
+                it('should have www/config.xml', function() {
+                    // @TODO
+                });
+
+                it('should have www/index.html', function() {
+                    // @TODO
+                });
             });
         });
     });
