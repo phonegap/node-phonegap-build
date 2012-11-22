@@ -98,10 +98,9 @@ describe('command-line create', function() {
             });
 
             it('should prompt for username and password', function() {
+                spyOn(cli.user, 'login');
                 cli.argv({ _: ['create', './my-app'] });
-                expect(prompt.get).toHaveBeenCalled();
-                expect(prompt.get.mostRecentCall.args[0].properties.username).toBeDefined();
-                expect(prompt.get.mostRecentCall.args[0].properties.password).toBeDefined();
+                expect(cli.user.login).toHaveBeenCalled();
             });
 
             describe('successful authentication', function() {
