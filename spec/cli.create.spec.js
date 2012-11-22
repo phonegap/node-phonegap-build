@@ -51,10 +51,17 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create ./my-app', function() {
-        it('should output an error if directory exists', function() {
-            spyOn(fs, 'existsSync').andReturn(true);
-            cli.argv({ _: ['create', './my-app'] });
-            expect(stderr).toHaveBeenCalled();
+        describe('path exists', function() {
+            it('should output an error', function() {
+                spyOn(fs, 'existsSync').andReturn(true);
+                cli.argv({ _: ['create', './my-app'] });
+                expect(stderr).toHaveBeenCalled();
+            });
+        });
+
+        describe('path does not exist', function() {
+            it('should create the path', function() {
+            });
         });
     });
 });
