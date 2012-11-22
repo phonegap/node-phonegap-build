@@ -1,12 +1,16 @@
-var CLI = require('../lib/cli'),
+var fs = require('fs'),
+    CLI = require('../lib/cli'),
     cli,
-    stdout;
+    stdout,
+    stderr;
 
 describe('command-line create', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');
+        spyOn(process.stderr, 'write');
         stdout = process.stdout.write;
+        stderr = process.stderr.write;
     });
 
     describe('$ phonegap-build help', function() {
@@ -47,5 +51,10 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create ./my-app', function() {
+        it('should output an error if directory exists', function() {
+            spyOn(fs, 'existsSync').andReturn(true);
+            cli.argv({ _: ['create', './my-app'] });
+            expect(stderr).toHaveBeenCalled();
+        });
     });
 });
