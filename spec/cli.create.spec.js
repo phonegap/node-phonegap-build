@@ -1,4 +1,5 @@
 var fs = require('fs'),
+    shell = require('shelljs'),
     CLI = require('../lib/cli'),
     cli,
     stdout,
@@ -60,7 +61,18 @@ describe('command-line create', function() {
         });
 
         describe('path does not exist', function() {
+            beforeEach(function() {
+                spyOn(fs, 'existsSync').andReturn(false);
+                spyOn(shell, 'mkdir');
+                cli.argv({ _: ['create', './my-app'] });
+            });
+
             it('should create the path', function() {
+                expect(shell.mkdir).toHaveBeenCalled();
+            });
+
+            it('should output the created path', function() {
+                expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
             });
         });
     });
