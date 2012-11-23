@@ -223,25 +223,23 @@ describe('command-line create', function() {
 
         describe('creating local project', function() {
             beforeEach(function() {
-                cli.create.local.andCallThrough();
-                cli.create.remote.andCallFake(function(options, callback) {
-                    callback(null);
-                });
                 spyOn(cli.user, 'login').andCallFake(function(callback) {
                     callback(null, {});
                 });
-                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                    fn(null, { name: 'My App' });
+                cli.create.remote.andCallFake(function(options, callback) {
+                    callback(null);
                 });
+                cli.create.local.andCallThrough();
                 spyOn(fs, 'existsSync').andReturn(false);
-                cli.argv({ _: ['create', './my-app'] });
             });
 
             it('should create the project locally', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(cli.create.local).toHaveBeenCalled();
             });
 
             it('should output the created project path', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
             });
 
