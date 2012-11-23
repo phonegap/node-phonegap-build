@@ -15,6 +15,8 @@ describe('command-line create', function() {
         spyOn(process.stderr, 'write');
         stdout = process.stdout.write;
         stderr = process.stderr.write;
+        spyOn(cli.create, 'local');
+        spyOn(cli.create, 'remote');
     });
 
     describe('$ phonegap-build help', function() {
@@ -112,15 +114,19 @@ describe('command-line create', function() {
                     spyOn(cli.user, 'login').andCallFake(function(callback) {
                         callback(null, {});
                     });
-                    cli.argv({ _: ['create', './my-app'] });
-                });
-
-                it('should create the project locally', function() {
-                    expect(shell.mkdir).toHaveBeenCalled();
                 });
 
                 it('should create the project remotely', function() {
-                    // @TODO
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(cli.create.remote).toHaveBeenCalled();
+                });
+
+                it('should create the project locally', function() {
+                    cli.create.remote.andCallFake(function(options, callback) {
+                        callback(null);
+                    });
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(cli.create.local).toHaveBeenCalled();
                 });
             });
 
@@ -141,6 +147,7 @@ describe('command-line create', function() {
 
         describe('creating remote project', function() {
             beforeEach(function() {
+                cli.create.remote.andCallThrough();
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
                 });
@@ -187,6 +194,10 @@ describe('command-line create', function() {
 
         describe('creating local project', function() {
             beforeEach(function() {
+                cli.create.local.andCallThrough();
+                cli.create.remote.andCallFake(function(options, callback) {
+                    callback(null);
+                });
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
                 });
@@ -195,6 +206,7 @@ describe('command-line create', function() {
             });
 
             it('should create the project locally', function() {
+                expect(cli.create.local).toHaveBeenCalled();
                 expect(shell.mkdir).toHaveBeenCalled();
             });
 
