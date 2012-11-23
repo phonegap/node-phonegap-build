@@ -17,6 +17,7 @@ describe('command-line create', function() {
         stderr = process.stderr.write;
         spyOn(cli.create, 'local');
         spyOn(cli.create, 'remote');
+        spyOn(shell, 'mkdir');
     });
 
     describe('$ phonegap-build help', function() {
@@ -56,10 +57,6 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create ./my-app', function() {
-        beforeEach(function() {
-            spyOn(shell, 'mkdir');
-        });
-
         describe('path exists', function() {
             beforeEach(function() {
                 spyOn(fs, 'existsSync').andReturn(true);
@@ -261,9 +258,18 @@ describe('command-line create', function() {
     });
 
     describe('$ phonegap-build create ./my-app --name "My App"', function() {
+        beforeEach(function() {
+            apiSpy = jasmine.createSpyObj('apiSpy', ['post']);
+            spyOn(cli.user, 'login').andCallFake(function(callback) {
+                callback(null, apiSpy);
+            });
+            cli.create.remote.andCallThrough();
+        });
+
         describe('creating remote project', function() {
             it('should not prompt for app name', function() {
-                // @TODO
+                cli.argv({ _: ['create', './my-app'], name: 'My Unique App' });
+                expect(apiSpy.post).toHaveBeenCalled();
             });
         });
     });
