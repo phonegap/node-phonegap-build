@@ -64,18 +64,20 @@ describe('command-line create', function() {
             beforeEach(function() {
                 spyOn(fs, 'existsSync').andReturn(true);
                 spyOn(client, 'auth');
-                cli.argv({ _: ['create', './my-app'] });
             });
 
             it('should output an error', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(stderr).toHaveBeenCalled();
             });
 
             it('should not create the project locally', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(shell.mkdir).not.toHaveBeenCalled();
             });
 
             it('should not create the project remotely', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(client.auth).not.toHaveBeenCalled();
             });
         });
