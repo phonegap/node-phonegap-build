@@ -5,7 +5,8 @@ var fs = require('fs'),
     CLI = require('../lib/cli'),
     cli,
     stdout,
-    stderr;
+    stderr,
+    apiSpy;
 
 describe('command-line create', function() {
     beforeEach(function() {
@@ -156,27 +157,29 @@ describe('command-line create', function() {
 
         describe('creating remote project', function() {
             beforeEach(function() {
-                cli.create.remote.andCallThrough();
+                apiSpy = jasmine.createSpyObj('apiSpy', [ 'post' ]);
                 spyOn(cli.user, 'login').andCallFake(function(callback) {
-                    callback(null, {});
+                    callback(null, apiSpy);
                 });
+                cli.create.remote.andCallThrough();
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
                 });
-                spyOn(fs, 'existsSync').andReturn(false);
-                cli.argv({ _: ['create', './my-app'] });
             });
 
             it('should prompt for "app name"', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
             });
 
             it('should require "app name"', function() {
+                cli.argv({ _: ['create', './my-app'] });
                 expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
             });
 
             it('should request to create the project remotely', function() {
-                // @TODO
+                cli.argv({ _: ['create', './my-app'] });
+                expect(apiSpy.post).toHaveBeenCalled();
             });
 
             describe('successful API response', function() {
