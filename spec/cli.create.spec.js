@@ -270,14 +270,25 @@ describe('command-line create', function() {
             it('should not prompt for app name', function() {
                 cli.argv({ _: ['create', './my-app'], name: 'My Unique App' });
                 expect(apiSpy.post).toHaveBeenCalled();
+                expect(apiSpy.post.mostRecentCall.args[1].title).toEqual('My Unique App');
             });
         });
     });
 
     describe('$ phonegap-build create ./my-app -n "My App"', function() {
+        beforeEach(function() {
+            apiSpy = jasmine.createSpyObj('apiSpy', ['post']);
+            spyOn(cli.user, 'login').andCallFake(function(callback) {
+                callback(null, apiSpy);
+            });
+            cli.create.remote.andCallThrough();
+        });
+
         describe('creating remote project', function() {
             it('should not prompt for app name', function() {
-                // @TODO
+                cli.argv({ _: ['create', './my-app'], n: 'My Unique App' });
+                expect(apiSpy.post).toHaveBeenCalled();
+                expect(apiSpy.post.mostRecentCall.args[1].title).toEqual('My Unique App');
             });
         });
     });
