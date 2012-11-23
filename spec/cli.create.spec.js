@@ -111,9 +111,6 @@ describe('command-line create', function() {
                     spyOn(cli.user, 'login').andCallFake(function(callback) {
                         callback(null, {});
                     });
-                    spyOn(prompt, 'get').andCallFake(function(data, callback) {
-                        callback(null, { name: "My App" });
-                    });
                 });
 
                 it('should create the project remotely', function() {
@@ -131,16 +128,28 @@ describe('command-line create', function() {
             });
 
             describe('failed authentication', function() {
-                it('should output an error', function() {
-                    // @TODO
+                beforeEach(function() {
+                    spyOn(cli.user, 'login').andCallFake(function(callback) {
+                        callback(new Error('Invalid account'));
+                    });
                 });
 
-                it('should not create the project locally', function() {
-                    //expect(shell.mkdir).not.toHaveBeenCalled();
+                it('should output an error', function() {
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(stderr).toHaveBeenCalled();
                 });
 
                 it('should not create the project remotely', function() {
-                    // @TODO
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(cli.create.remote).not.toHaveBeenCalled();
+                });
+
+                it('should not create the project locally', function() {
+                    cli.create.remote.andCallFake(function(options, callback) {
+                        callback(null);
+                    });
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(cli.create.local).not.toHaveBeenCalled();
                 });
             });
         });
@@ -148,6 +157,9 @@ describe('command-line create', function() {
         describe('creating remote project', function() {
             beforeEach(function() {
                 cli.create.remote.andCallThrough();
+                spyOn(cli.user, 'login').andCallFake(function(callback) {
+                    callback(null, {});
+                });
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
                 });
@@ -197,6 +209,9 @@ describe('command-line create', function() {
                 cli.create.local.andCallThrough();
                 cli.create.remote.andCallFake(function(options, callback) {
                     callback(null);
+                });
+                spyOn(cli.user, 'login').andCallFake(function(callback) {
+                    callback(null, {});
                 });
                 spyOn(prompt, 'get').andCallFake(function(obj, fn) {
                     fn(null, { name: 'My App' });
