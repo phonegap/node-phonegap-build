@@ -183,8 +183,15 @@ describe('command-line create', function() {
             });
 
             describe('successful API response', function() {
+                beforeEach(function() {
+                    apiSpy.post.andCallFake(function(url, options, callback) {
+                        callback(null, {});
+                    });
+                });
+
                 it('should output info on the created remote project', function() {
-                    // @TODO
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(stdout).toHaveBeenCalled();
                 });
 
                 it('should add remote project id to .cordova/config.json', function() {
@@ -193,12 +200,19 @@ describe('command-line create', function() {
             });
 
             describe('unsuccessful API response', function() {
+                beforeEach(function() {
+                    apiSpy.post.andCallFake(function(url, options, callback) {
+                        callback(new Error('Duplicate title'));
+                    });
+                });
+
                 it('should output an error', function() {
-                    // @TODO
+                    cli.argv({ _: ['create', './my-app'] });
+                    expect(stderr).toHaveBeenCalled();
                 });
 
                 it('should not create the project locally', function() {
-                    // @TODO
+                    expect(cli.create.local).not.toHaveBeenCalled();
                 });
 
                 it('should not create the project remotely', function() {
@@ -225,7 +239,6 @@ describe('command-line create', function() {
 
             it('should create the project locally', function() {
                 expect(cli.create.local).toHaveBeenCalled();
-                expect(shell.mkdir).toHaveBeenCalled();
             });
 
             it('should output the created project path', function() {
