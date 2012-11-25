@@ -90,7 +90,7 @@ describe('$ phonegap-build create <path>', function() {
                         });
                     });
 
-                    it('should output a message about the created project', function() {
+                    it('should output a message about the uncreated project', function() {
                         // @TODO
                     });
                 });
