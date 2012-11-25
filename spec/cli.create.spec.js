@@ -1,11 +1,20 @@
+/*
+ * Module dependencies.
+ */
+
 var prompt = require('prompt'),
     CLI = require('../lib/cli'),
     cli;
+
+/*
+ * Create command specification.
+ */
 
 describe('$ phonegap-build create <path>', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(prompt, 'get');
+        spyOn(cli.phonegapbuild, 'create');
     });
 
     describe('$ phonegap-build create ./my-app', function() {
@@ -37,7 +46,6 @@ describe('$ phonegap-build create <path>', function() {
                 });
 
                 it('should try to create the project', function() {
-                    spyOn(cli.phonegapbuild, 'create');
                     cli.argv({ _: ['create', './my-app'] });
                     expect(cli.phonegapbuild.create).toHaveBeenCalledWith(
                         {
@@ -51,7 +59,7 @@ describe('$ phonegap-build create <path>', function() {
 
                 describe('successful project creation', function() {
                     beforeEach(function() {
-                        spyOn(cli.phonegapbuild, 'create').andCallFake(function(opts, callback) {
+                        cli.phonegapbuild.create.andCallFake(function(opts, callback) {
                             callback(null);
                         });
                     });
@@ -70,7 +78,7 @@ describe('$ phonegap-build create <path>', function() {
 
                 describe('failed project creation', function() {
                     beforeEach(function() {
-                        spyOn(cli.phonegapbuild, 'create').andCallFake(function(opts, callback) {
+                        cli.phonegapbuild.create.andCallFake(function(opts, callback) {
                             callback(new Error('Directory already exists'));
                         });
                     });
@@ -96,7 +104,6 @@ describe('$ phonegap-build create <path>', function() {
                 });
 
                 it('should not try to create the project', function() {
-                    spyOn(cli.phonegapbuild, 'create');
                     cli.argv({ _: ['create', './my-app'] });
                     expect(cli.phonegapbuild.create).not.toHaveBeenCalled();
                 });
@@ -118,7 +125,6 @@ describe('$ phonegap-build create <path>', function() {
             });
 
             it('should not create the project', function() {
-                spyOn(cli.phonegapbuild, 'create');
                 cli.argv({ _: ['create', './my-app'] });
                 expect(cli.phonegapbuild.create).not.toHaveBeenCalled();
             });
