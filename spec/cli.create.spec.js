@@ -148,7 +148,7 @@ describe('$ phonegap-build create <path>', function() {
 
             it('should not prompt for an app name', function() {
                 prompt.get.andCallThrough();
-                cli.argv({ _: ['create', './my-app'], name: "My App" });
+                cli.argv({ _: ['create', './my-app'], name: 'My App' });
                 expect(prompt.get).toHaveBeenCalled();
                 expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
                 expect(prompt.override.name).toEqual(jasmine.any(String));
@@ -157,7 +157,40 @@ describe('$ phonegap-build create <path>', function() {
             describe('successful prompt', function() {
                 it('should try to create the project', function() {
                     prompt.get.andCallThrough();
-                    cli.argv({ _: ['create', './my-app'], name: "My App" });
+                    cli.argv({ _: ['create', './my-app'], name: 'My App' });
+                    expect(cli.phonegapbuild.create).toHaveBeenCalledWith(
+                        {
+                            api: jasmine.any(Object),
+                            path: jasmine.any(String),
+                            name: 'My App'
+                        },
+                        jasmine.any(Function)
+                    );
+                });
+            });
+        });
+    });
+
+    describe('$ phonegap-build create ./my-app -n "My App"', function() {
+        describe('successful login', function() {
+            beforeEach(function() {
+                spyOn(cli, 'login').andCallFake(function(argv, callback) {
+                    callback(null, {});
+                });
+            });
+
+            it('should not prompt for an app name', function() {
+                prompt.get.andCallThrough();
+                cli.argv({ _: ['create', './my-app'], n: 'My App' });
+                expect(prompt.get).toHaveBeenCalled();
+                expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
+                expect(prompt.override.name).toEqual(jasmine.any(String));
+            });
+
+            describe('successful prompt', function() {
+                it('should try to create the project', function() {
+                    prompt.get.andCallThrough();
+                    cli.argv({ _: ['create', './my-app'], n: 'My App' });
                     expect(cli.phonegapbuild.create).toHaveBeenCalledWith(
                         {
                             api: jasmine.any(Object),
