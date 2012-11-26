@@ -1,9 +1,17 @@
+/*
+ * Module dependencies.
+ */
+
 var prompt = require('prompt'),
     client = require('phonegap-build-rest'),
     CLI = require('../../lib/cli'),
     cli;
 
-describe('command-line login', function() {
+/*
+ * Help command specification.
+ */
+
+describe('$ phonegap-build login', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');

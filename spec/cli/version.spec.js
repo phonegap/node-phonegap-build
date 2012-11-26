@@ -1,7 +1,15 @@
+/*
+ * Module dependencies.
+ */
+
 var CLI = require('../../lib/cli'),
     cli;
 
-describe('command-line version', function() {
+/*
+ * Version command specification.
+ */
+
+describe('$ phonegap-build --version', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');

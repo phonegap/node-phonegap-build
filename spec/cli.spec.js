@@ -2,7 +2,7 @@ var shell = require('shelljs'),
     path = require('path'),
     bin = 'node ' + path.resolve(path.join(__dirname, '..', 'bin', 'phonegap-build.js'));
 
-describe('command-line shell delegation', function() {
+describe('$ phonegap-build [options] commands', function() {
     beforeEach(function() {
         spyOn(process.stdout, 'write');
     });

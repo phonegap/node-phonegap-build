@@ -1,7 +1,15 @@
+/*
+ * Module dependencies.
+ */
+
 var CLI = require('../../lib/cli'),
     cli;
 
-describe('command-line unknown command', function() {
+/*
+ * Unknown command specification.
+ */
+
+describe('$ phonegap-build noop', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');
