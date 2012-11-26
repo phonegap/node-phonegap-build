@@ -1,6 +1,6 @@
 var prompt = require('prompt'),
     client = require('phonegap-build-rest'),
-    CLI = require('../lib/cli'),
+    CLI = require('../../lib/cli'),
     cli;
 
 describe('command-line login', function() {

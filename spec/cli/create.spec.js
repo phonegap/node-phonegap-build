@@ -3,7 +3,7 @@
  */
 
 var prompt = require('prompt'),
-    CLI = require('../lib/cli'),
+    CLI = require('../../lib/cli'),
     cli;
 
 /*

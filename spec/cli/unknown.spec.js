@@ -1,4 +1,4 @@
-var CLI = require('../lib/cli'),
+var CLI = require('../../lib/cli'),
     cli;
 
 describe('command-line unknown command', function() {
