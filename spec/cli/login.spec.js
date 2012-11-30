@@ -19,7 +19,7 @@ describe('$ phonegap-build login', function() {
 
     describe('$ phonegap-build help', function() {
         it('outputs info on the login command', function() {
-            cli.argv({ _: [ 'help' ] });
+            cli.argv({ _: ['help'] });
             expect(process.stdout.write.mostRecentCall.args[0])
                 .toMatch(/Commands:[\w\W]*\s+login/i);
         });
