@@ -7,7 +7,7 @@ var CLI = require('../../../lib/cli'),
     stdout;
 
 /*
- * Specs for command-line create help message.
+ * Create help command specification.
  */
 
 describe('$ phonegap-build create help', function() {
