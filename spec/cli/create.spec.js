@@ -17,6 +17,15 @@ describe('$ phonegap-build create <path>', function() {
         spyOn(cli.phonegapbuild, 'create');
     });
 
+    describe('$ phonegap-build help', function() {
+        it('outputs info on the create command', function() {
+            spyOn(process.stdout, 'write');
+            cli.argv({ _: ['help'] });
+            expect(process.stdout.write.mostRecentCall.args[0])
+                .toMatch(/Commands:[\w\W]*\s+create/i);
+        });
+    });
+
     describe('$ phonegap-build create ./my-app', function() {
         it('should try to login', function() {
             spyOn(cli, 'login');
