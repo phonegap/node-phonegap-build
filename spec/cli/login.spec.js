@@ -3,7 +3,6 @@
  */
 
 var prompt = require('prompt'),
-    client = require('phonegap-build-rest'),
     CLI = require('../../lib/cli'),
     cli;
 
@@ -14,11 +13,11 @@ var prompt = require('prompt'),
 describe('$ phonegap-build login', function() {
     beforeEach(function() {
         cli = new CLI();
-        spyOn(process.stdout, 'write');
     });
 
     describe('$ phonegap-build help', function() {
         it('outputs info on the login command', function() {
+            spyOn(process.stdout, 'write');
             cli.argv({ _: ['help'] });
             expect(process.stdout.write.mostRecentCall.args[0])
                 .toMatch(/Commands:[\w\W]*\s+login/i);
@@ -27,123 +26,102 @@ describe('$ phonegap-build login', function() {
 
     describe('$ phonegap-build login', function() {
         beforeEach(function() {
-            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                fn(null, { username: 'zelda', password: 'tr1force' });
-            });
+            spyOn(prompt, 'get');
+            spyOn(cli.phonegapbuild, 'login');
         });
 
-        describe('not currently logged into an account', function() {
-            it('should prompt for username and password', function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-                cli.argv({ _: [ 'login' ] });
-                var args = prompt.get.mostRecentCall.args;
-                expect(args[0].properties.username).toBeDefined();
-                expect(args[0].properties.password).toBeDefined();
-            });
-
-            describe('login is successful', function() {
-                it('should output username', function() {
-                    spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-                    cli.argv({ _: [ 'login' ] });
-                    expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-                });
-            });
-
-            describe('login is unsuccessful', function() {
-                it('should output error message', function() {
-                    spyOn(client, 'auth').andCallFake(function(obj, fn) {
-                        fn(new Error('Account does not exist'));
-                    });
-                    cli.argv({ _: [ 'login' ] });
-                    expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
-                });
-            });
+        it('should prompt for username', function() {
+            cli.argv({ _: ['login'] });
+            expect(prompt.get).toHaveBeenCalled();
+            expect(prompt.get.mostRecentCall.args[0].properties.username).toBeDefined();
+            expect(prompt.get.mostRecentCall.args[0].properties.username.required).toBe(true);
         });
 
-        describe('currently logged into an account', function() {
+        it('should prompt for password', function() {
+            cli.argv({ _: ['login'] });
+            expect(prompt.get).toHaveBeenCalled();
+            expect(prompt.get.mostRecentCall.args[0].properties.password).toBeDefined();
+            expect(prompt.get.mostRecentCall.args[0].properties.password.required).toBe(true);
+            expect(prompt.get.mostRecentCall.args[0].properties.password.hidden).toBe(true);
+        });
+
+        describe('successful prompt', function() {
             beforeEach(function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) {
-                    fn(null, {});
+                prompt.get.andCallFake(function(obj, fn) {
+                    fn(null, { username: 'zelda', password: 'tr1force' });
                 });
-                cli.argv({ _: [ 'login' ] });
             });
 
-            it('should not prompt for username and password', function() {
-                cli.argv({ _: [ 'login' ] });
-                expect(prompt.get.calls.length).toEqual(1);
+            it('should try to login', function() {
+                cli.argv({ _: ['login'] });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    { username: 'zelda', password: 'tr1force' },
+                    jasmine.any(Function)
+                );
             });
 
-            it('should output username', function() {
-                cli.argv({ _: [ 'login' ] });
-                expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-            });
-        });
-    });
-
-    describe('$ phonegap-build login --username zelda', function() {
-        beforeEach(function() {
-            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                fn(null, { password: 'tr1force' });
-            });
-        });
-
-        it('should prompt for password', function() {
-            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-            cli.argv({ _: [ 'login' ], username: 'zelda' });
-            var args = prompt.get.mostRecentCall.args;
-            expect(args[0].properties.username).not.toBeDefined();
-            expect(args[0].properties.password).toBeDefined();
-        });
-
-        describe('login is successful', function() {
-            it('should output username', function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-                cli.argv({ _: [ 'login' ], username: 'zelda' });
-                expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-            });
-        });
-
-        describe('login is unsuccessful', function() {
-            it('should output error message', function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) {
-                    fn(new Error('Invalid login'));
+            describe('successful login', function() {
+                beforeEach(function() {
+                    cli.phonegapbuild.login.andCallFake(function(argv, callback) {
+                        callback(null, {});
+                    });
                 });
-                cli.argv({ _: [ 'login' ], username: 'zelda' });
-                expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
-            });
-        });
-    });
 
-    describe('$ phonegap-build login -u zelda', function() {
-        beforeEach(function() {
-            spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-                fn(null, { password: 'tr1force' });
-            });
-        });
-
-        it('should prompt for password', function() {
-            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-            cli.argv({ _: [ 'login' ], u: 'zelda' });
-            var args = prompt.get.mostRecentCall.args;
-            expect(args[0].properties.username).not.toBeDefined();
-            expect(args[0].properties.password).toBeDefined();
-        });
-
-        describe('login is successful', function() {
-            it('should output username', function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-                cli.argv({ _: [ 'login' ], username: 'zelda' });
-                expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-            });
-        });
-
-        describe('login is unsuccessful', function() {
-            it('should output error message', function() {
-                spyOn(client, 'auth').andCallFake(function(obj, fn) {
-                    fn(new Error('Invalid login'));
+                it('should trigger callback without an error', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(e).toBeNull();
+                        done();
+                    });
                 });
-                cli.argv({ _: [ 'login' ], username: 'zelda' });
-                expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
+
+                it('should trigger callback with API object', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(api).toBeDefined();
+                        done();
+                    });
+                });
+            });
+
+            describe('failed login', function() {
+                beforeEach(function() {
+                    cli.phonegapbuild.login.andCallFake(function(argv, callback) {
+                        callback(new Error('Invalid password'));
+                    });
+                });
+
+                it('should trigger callback with an error', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(e).toBeDefined();
+                        done();
+                    });
+                });
+
+                it('should trigger callback without an API object', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(api).not.toBeDefined();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe('failed prompt', function() {
+            beforeEach(function() {
+                prompt.get.andCallFake(function(obj, fn) {
+                    fn(new Error('Invalid character'));
+                });
+            });
+
+            it('should not try to login', function() {
+                cli.argv({ _: ['login'] });
+                expect(cli.phonegapbuild.login).not.toHaveBeenCalled();
+            });
+
+            it('should trigger callback with an error', function(done) {
+                cli.argv({ _: ['login'] }, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
             });
         });
     });
