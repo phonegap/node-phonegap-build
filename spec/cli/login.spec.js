@@ -248,7 +248,7 @@ describe('$ phonegap-build login', function() {
             expect(prompt.override.username).not.toBeDefined();
         });
 
-        it('should prompt for password', function() {
+        it('should not prompt for password', function() {
             cli.argv({ _: ['login'], p: 'tr1force' });
             expect(prompt.override.password).toEqual('tr1force');
         });
