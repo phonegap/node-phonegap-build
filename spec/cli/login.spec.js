@@ -125,4 +125,41 @@ describe('$ phonegap-build login', function() {
             });
         });
     });
+
+    describe('$ phonegap-build login --username zelda', function() {
+        beforeEach(function() {
+            spyOn(prompt, 'get');
+            spyOn(cli.phonegapbuild, 'login');
+        });
+
+        it('should not prompt for username', function() {
+            cli.argv({ _: ['login'], username: 'zelda' });
+            expect(prompt.override.username).toEqual('zelda');
+        });
+
+        it('should prompt for password', function() {
+            cli.argv({ _: ['login'], username: 'zelda' });
+            expect(prompt.override.password).not.toBeDefined();
+        });
+
+        describe('successful prompt', function() {
+            beforeEach(function() {
+                prompt.get.andCallFake(function(obj, fn) {
+                    var o = {
+                        username: prompt.override.username || 'link',
+                        password: prompt.override.password || 'tr1force'
+                    };
+                    fn(null, o);
+                });
+            });
+
+            it('should try to login', function() {
+                cli.argv({ _: ['login'], username: 'zelda' });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    { username: 'zelda', password: 'tr1force' },
+                    jasmine.any(Function)
+                );
+            });
+        });
+    });
 });
