@@ -26,21 +26,21 @@ describe('$ phonegap-build create help', function() {
 
     describe('$ phonegap-build create help', function() {
         it('should output the create help dialog', function() {
-            cli.argv({ _: ['create'] });
+            cli.argv({ _: ['create', 'help'] });
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
         });
     });
 
     describe('$ phonegap-build create --help', function() {
         it('should output the create help dialog', function() {
-            cli.argv({ _: ['create'] });
+            cli.argv({ _: ['create'], help: true });
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
         });
     });
 
     describe('$ phonegap-build create -h', function() {
         it('should output the create help dialog', function() {
-            cli.argv({ _: ['create'] });
+            cli.argv({ _: ['create'], h: true });
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
         });
     });
