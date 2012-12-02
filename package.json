@@ -1,6 +1,6 @@
 {
-    "name": "phonegap-build-cli",
-    "description": "PhoneGap Build command-line interface and Node.js library.",
+    "name": "phonegap-build",
+    "description": "PhoneGap Build command-line interface and node.js library.",
     "version": "0.0.1",
     "homepage": "http://github.com/mwbrooks/phonegap-build-cli",
     "repository": {
