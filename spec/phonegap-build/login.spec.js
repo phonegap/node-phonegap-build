@@ -62,7 +62,7 @@ describe('login(options, callback)', function() {
             });
         });
 
-        it('should trigger callback an api object', function(done) {
+        it('should trigger callback with an api object', function(done) {
             login(options, function(e, api) {
                 expect(api).toBeDefined();
                 done();
