@@ -1,115 +1,94 @@
+/*
+ * Module dependencies.
+ */
 
-        //describe('not currently logged into an account', function() {
-        //    it('should prompt for username and password', function() {
-        //        spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-        //        cli.argv({ _: [ 'login' ] });
-        //        var args = prompt.get.mostRecentCall.args;
-        //        expect(args[0].properties.username).toBeDefined();
-        //        expect(args[0].properties.password).toBeDefined();
-        //    });
+var login = require('../../lib/phonegap-build/login'),
+    client = require('phonegap-build-rest'),
+    options;
 
-        //    describe('login is successful', function() {
-        //        it('should output username', function() {
-        //            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-        //            cli.argv({ _: [ 'login' ] });
-        //            expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-        //        });
-        //    });
+/*
+ * Specification for login.
+ */
 
-        //    describe('login is unsuccessful', function() {
-        //        it('should output error message', function() {
-        //            spyOn(client, 'auth').andCallFake(function(obj, fn) {
-        //                fn(new Error('Account does not exist'));
-        //            });
-        //            cli.argv({ _: [ 'login' ] });
-        //            expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
-        //        });
-        //    });
-        //});
+describe('login(options, callback)', function() {
+    beforeEach(function() {
+        options = { username: 'zelda', password: 'tr1force' };
+        spyOn(client, 'auth');
+    });
 
-        //describe('currently logged into an account', function() {
-        //    beforeEach(function() {
-        //        spyOn(client, 'auth').andCallFake(function(obj, fn) {
-        //            fn(null, {});
-        //        });
-        //        cli.argv({ _: [ 'login' ] });
-        //    });
+    it('should require option.username', function(done) {
+        options.username = undefined;
+        login(options, function(e, api) {
+            expect(e).toBeDefined();
+            expect(api).not.toBeDefined();
+            done();
+        });
+    });
 
-        //    it('should not prompt for username and password', function() {
-        //        cli.argv({ _: [ 'login' ] });
-        //        expect(prompt.get.calls.length).toEqual(1);
-        //    });
+    it('should require option.password', function(done) {
+        options.password = undefined;
+        login(options, function(e, api) {
+            expect(e).toBeDefined();
+            expect(api).not.toBeDefined();
+            done();
+        });
+    });
 
-        //    it('should output username', function() {
-        //        cli.argv({ _: [ 'login' ] });
-        //        expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-        //    });
-        //});
+    it('should not require callback', function() {
+        expect(function() {
+            login(options);
+        }).not.toThrow();
+    });
 
-    //describe('$ phonegap-build login --username zelda', function() {
-    //    beforeEach(function() {
-    //        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-    //            fn(null, { password: 'tr1force' });
-    //        });
-    //    });
+    it('should try to authenticate', function() {
+        login(options, function() {});
+        expect(client.auth).toHaveBeenCalledWith(
+            options,
+            jasmine.any(Function)
+        );
+    });
 
-    //    it('should prompt for password', function() {
-    //        spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-    //        cli.argv({ _: [ 'login' ], username: 'zelda' });
-    //        var args = prompt.get.mostRecentCall.args;
-    //        expect(args[0].properties.username).not.toBeDefined();
-    //        expect(args[0].properties.password).toBeDefined();
-    //    });
+    describe('successful authentication', function() {
+        beforeEach(function() {
+            client.auth.andCallFake(function(options, callback) {
+                callback(null, {});
+            });
+        });
 
-    //    describe('login is successful', function() {
-    //        it('should output username', function() {
-    //            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-    //            cli.argv({ _: [ 'login' ], username: 'zelda' });
-    //            expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-    //        });
-    //    });
+        it('should trigger callback without an error', function(done) {
+            login(options, function(e, api) {
+                expect(e).toBeNull();
+                done();
+            });
+        });
 
-    //    describe('login is unsuccessful', function() {
-    //        it('should output error message', function() {
-    //            spyOn(client, 'auth').andCallFake(function(obj, fn) {
-    //                fn(new Error('Invalid login'));
-    //            });
-    //            cli.argv({ _: [ 'login' ], username: 'zelda' });
-    //            expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
-    //        });
-    //    });
-    //});
+        it('should trigger callback an api object', function(done) {
+            login(options, function(e, api) {
+                expect(api).toBeDefined();
+                done();
+            });
+        });
+    });
 
-    //describe('$ phonegap-build login -u zelda', function() {
-    //    beforeEach(function() {
-    //        spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-    //            fn(null, { password: 'tr1force' });
-    //        });
-    //    });
+    describe('failed authentication', function() {
+        beforeEach(function() {
+            client.auth.andCallFake(function(options, callback) {
+                callback(new Error('account does not exist'));
+            });
+        });
 
-    //    it('should prompt for password', function() {
-    //        spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-    //        cli.argv({ _: [ 'login' ], u: 'zelda' });
-    //        var args = prompt.get.mostRecentCall.args;
-    //        expect(args[0].properties.username).not.toBeDefined();
-    //        expect(args[0].properties.password).toBeDefined();
-    //    });
+        it('should trigger callback an error', function(done) {
+            login(options, function(e, api) {
+                expect(e).toBeDefined();
+                done();
+            });
+        });
 
-    //    describe('login is successful', function() {
-    //        it('should output username', function() {
-    //            spyOn(client, 'auth').andCallFake(function(obj, fn) { fn(null, {}); });
-    //            cli.argv({ _: [ 'login' ], username: 'zelda' });
-    //            expect(process.stdout.write.mostRecentCall.args[0]).toMatch('zelda');
-    //        });
-    //    });
-
-    //    describe('login is unsuccessful', function() {
-    //        it('should output error message', function() {
-    //            spyOn(client, 'auth').andCallFake(function(obj, fn) {
-    //                fn(new Error('Invalid login'));
-    //            });
-    //            cli.argv({ _: [ 'login' ], username: 'zelda' });
-    //            expect(process.stdout.write.mostRecentCall.args[0]).not.toMatch('zelda');
-    //        });
-    //    });
-    //});
+        it('should trigger callback without an api object', function(done) {
+            login(options, function(e, api) {
+                expect(api).not.toBeDefined();
+                done();
+            });
+        });
+    });
+});
