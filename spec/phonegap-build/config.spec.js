@@ -3,6 +3,7 @@
  */
 
 var config = require('../../lib/phonegap-build/config'),
+    shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
     data;
@@ -20,6 +21,10 @@ describe('config', function() {
     });
 
     describe('config.load(callback)', function() {
+        beforeEach(function() {
+            spyOn(shell, 'mkdir');
+        });
+
         it('should require the callback function', function() {
             expect(function() { config.load(); }).toThrow();
         });
@@ -100,6 +105,7 @@ describe('config', function() {
             it('should try to create config file', function() {
                 spyOn(fs, 'writeFile');
                 config.load(function(e, data) {});
+                expect(shell.mkdir).toHaveBeenCalled();
                 expect(fs.writeFile).toHaveBeenCalled();
                 expect(fs.writeFile.mostRecentCall.args[0]).toMatch(
                     path.join(config.path, 'config.json')
