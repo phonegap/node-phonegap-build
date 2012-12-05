@@ -44,4 +44,11 @@ describe('$ phonegap-build create help', function() {
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
         });
     });
+
+    describe('$ phonegap-build help create', function() {
+        it('should output the create help dialog', function() {
+            cli.argv({ _: ['help', 'create'] });
+            expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ create/i);
+        });
+    });
 });

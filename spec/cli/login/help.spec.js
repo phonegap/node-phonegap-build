@@ -37,4 +37,11 @@ describe('$ phonegap-build login help', function() {
             expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ login/i);
         });
     });
+
+    describe('$ phonegap-build help login', function() {
+        it('should output the login help dialog', function() {
+            cli.argv({ _: ['help', 'login'] });
+            expect(stdout.mostRecentCall.args[0]).toMatch(/usage: [\S]+ login/i);
+        });
+    });
 });
