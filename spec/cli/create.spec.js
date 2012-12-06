@@ -13,13 +13,13 @@ var prompt = require('prompt'),
 describe('$ phonegap-build create <path>', function() {
     beforeEach(function() {
         cli = new CLI();
+        spyOn(process.stdout, 'write');
         spyOn(prompt, 'get');
         spyOn(cli.phonegapbuild, 'create');
     });
 
     describe('$ phonegap-build help', function() {
         it('outputs info on the create command', function() {
-            spyOn(process.stdout, 'write');
             cli.argv({ _: ['help'] });
             expect(process.stdout.write.mostRecentCall.args[0])
                 .toMatch(/Commands:[\w\W]*\s+create/i);

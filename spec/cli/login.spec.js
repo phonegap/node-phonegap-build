@@ -13,11 +13,11 @@ var prompt = require('prompt'),
 describe('$ phonegap-build login', function() {
     beforeEach(function() {
         cli = new CLI();
+        spyOn(process.stdout, 'write');
     });
 
     describe('$ phonegap-build help', function() {
         it('outputs info on the login command', function() {
-            spyOn(process.stdout, 'write');
             cli.argv({ _: ['help'] });
             expect(process.stdout.write.mostRecentCall.args[0])
                 .toMatch(/Commands:[\w\W]*\s+login/i);
