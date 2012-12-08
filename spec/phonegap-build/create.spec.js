@@ -1,263 +1,214 @@
-//var fs = require('fs'),
-//    shell = require('shelljs'),
-//    prompt = require('prompt'),
-//    client = require('phonegap-build-rest'),
-//    CLI = require('../lib/cli'),
-//    cli,
-//    stdout,
-//    stderr,
-//    apiSpy;
+/*
+ * Module dependencies.
+ */
 
-//describe('command-line create', function() {
-//    beforeEach(function() {
-//        cli = new CLI();
-//        spyOn(process.stdout, 'write');
-//        spyOn(process.stderr, 'write');
-//        stdout = process.stdout.write;
-//        stderr = process.stderr.write;
-//        spyOn(cli.create, 'local');
-//        spyOn(cli.create, 'remote');
-//        spyOn(shell, 'mkdir');
-//    });
+var create = require('../../lib/phonegap-build/create'),
+    shell = require('shelljs'),
+    path = require('path'),
+    fs = require('fs'),
+    options;
 
-//    describe('$ phonegap-build create ./my-app', function() {
-//        describe('path exists', function() {
-//            beforeEach(function() {
-//                spyOn(fs, 'existsSync').andReturn(true);
-//                spyOn(client, 'auth');
-//            });
+/*
+ * Specification for create.
+ */
 
-//            it('should output an error', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(stderr).toHaveBeenCalled();
-//            });
+describe('create(options, callback)', function() {
+    beforeEach(function() {
+        options = {
+            api: {},
+            path: '/some/path/to/my/app',
+            name: 'My App'
+        };
+        spyOn(create, 'remote');
+        spyOn(create, 'local');
+    });
 
-//            it('should not create the project locally', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(shell.mkdir).not.toHaveBeenCalled();
-//            });
+    it('should require options', function() {
+        expect(function() {
+            options = undefined;
+            create(options, function(e) {});
+        }).toThrow();
+    });
 
-//            it('should not create the project remotely', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(client.auth).not.toHaveBeenCalled();
-//            });
-//        });
+    it('should require options.api', function() {
+        expect(function() {
+            options.api = undefined;
+            create(options, function(e) {});
+        }).toThrow();
+    });
 
-//        describe('logged in', function() {
-//            it('should not prompt for username and password', function() {
-//                // @TODO
-//            });
+    it('should require options.path', function() {
+        expect(function() {
+            options.path = undefined;
+            create(options, function(e) {});
+        }).toThrow();
+    });
 
-//            it('should create the project locally', function() {
-//                // @TODO
-//            });
+    it('should require options.name', function() {
+        expect(function() {
+            options.name = undefined;
+            create(options, function(e) {});
+        }).toThrow();
+    });
 
-//            it('should create the project remotely', function() {
-//                // @TODO
-//            });
-//        });
+    it('should not require callback', function() {
+        expect(function() {
+            create(options);
+        }).not.toThrow();
+    });
 
-//        describe('not logged in', function() {
-//            beforeEach(function() {
-//                spyOn(cli, 'login');
-//            });
+    it('should try to create local project', function() {
+        create(options, function(e) {});
+        expect(create.local).toHaveBeenCalledWith(
+            { path: options.path },
+            jasmine.any(Function)
+        );
+    });
 
-//            it('should call login', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(cli.login).toHaveBeenCalled();
-//            });
-//            it('should prompt for username and password', function() {
-//                spyOn(cli.phonegapbuild, 'login');
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(cli.phonegapbuild.login).toHaveBeenCalled();
-//            });
+    describe('successfully created local project', function() {
+        beforeEach(function() {
+            create.local.andCallFake(function(options, callback) {
+                callback(null);
+            });
+        });
 
-//            describe('successful authentication', function() {
-//                beforeEach(function() {
-//                    spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                        callback(null, {});
-//                    });
-//                });
+        it('should try to create remote project', function() {
+            create(options, function(e) {});
+            expect(create.remote).toHaveBeenCalledWith(
+                { name: options.name, api: jasmine.any(Object) },
+                jasmine.any(Function)
+            );
+        });
 
-//                it('should create the project remotely', function() {
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(cli.create.remote).toHaveBeenCalled();
-//                });
+        describe('successfully created remote project', function() {
+            beforeEach(function() {
+                create.remote.andCallFake(function(options, callback) {
+                    callback(null);
+                });
+            });
 
-//                it('should create the project locally', function() {
-//                    cli.create.remote.andCallFake(function(options, callback) {
-//                        callback(null);
-//                    });
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(cli.create.local).toHaveBeenCalled();
-//                });
-//            });
+            it('should trigger called without an error', function(done) {
+                create(options, function(e) {
+                    expect(e).toBeNull();
+                    done();
+                });
+            });
+        });
 
-//            describe('failed authentication', function() {
-//                beforeEach(function() {
-//                    spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                        callback(new Error('Invalid account'));
-//                    });
-//                });
+        describe('failed to create remote project', function() {
+            beforeEach(function() {
+                create.remote.andCallFake(function(options, callback) {
+                    callback(new Error('server did not respond'));
+                });
+            });
 
-//                it('should output an error', function() {
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(stderr).toHaveBeenCalled();
-//                });
+            it('should trigger called with an error', function(done) {
+                create(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
+        });
+    });
 
-//                it('should not create the project remotely', function() {
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(cli.create.remote).not.toHaveBeenCalled();
-//                });
+    describe('failed to create local project', function() {
+        beforeEach(function() {
+            create.local.andCallFake(function(options, callback) {
+                callback(new Error('app path already exists'));
+            });
+        });
 
-//                it('should not create the project locally', function() {
-//                    cli.create.remote.andCallFake(function(options, callback) {
-//                        callback(null);
-//                    });
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(cli.create.local).not.toHaveBeenCalled();
-//                });
-//            });
-//        });
+        it('should not create remote project', function() {
+            create(options, function(e) {});
+            expect(create.remote).not.toHaveBeenCalled();
+        });
 
-//        describe('creating remote project', function() {
-//            beforeEach(function() {
-//                apiSpy = jasmine.createSpyObj('apiSpy', [ 'post' ]);
-//                spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                    callback(null, apiSpy);
-//                });
-//                cli.create.remote.andCallThrough();
-//                spyOn(prompt, 'get').andCallFake(function(obj, fn) {
-//                    fn(null, { name: 'My App' });
-//                });
-//            });
+        it('should trigger callback with an error', function(done) {
+            create(options, function(e) {
+                expect(e).toEqual(jasmine.any(Error));
+                done();
+            });
+        });
+    });
+});
 
-//            it('should prompt for "app name"', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(prompt.get.mostRecentCall.args[0].properties.name).toBeDefined();
-//            });
+/*
+ * Specification for local create.
+ */
 
-//            it('should require "app name"', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(prompt.get.mostRecentCall.args[0].properties.name.required).toBe(true);
-//            });
+describe('create.local(options, callback)', function() {
+    beforeEach(function() {
+        options = { path: '/some/path/to/my/app' };
+        spyOn(fs, 'exists');
+        spyOn(shell, 'cp');
+    });
 
-//            it('should request to create the project remotely', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(apiSpy.post).toHaveBeenCalled();
-//            });
+    it('should require options', function() {
+        expect(function() {
+            options = undefined;
+            create.local(options, function(e) {});
+        }).toThrow();
+    });
 
-//            describe('successful API response', function() {
-//                beforeEach(function() {
-//                    apiSpy.post.andCallFake(function(url, options, callback) {
-//                        callback(null, {});
-//                    });
-//                });
+    it('should require options.path', function() {
+        expect(function() {
+            options.path = undefined;
+            create.local(options, function(e) {});
+        }).toThrow();
+    });
 
-//                it('should output info on the created remote project', function() {
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(stdout).toHaveBeenCalled();
-//                });
+    it('should not require callback', function() {
+        expect(function() {
+            create.local(options);
+        }).not.toThrow();
+    });
 
-//                it('should add remote project id to .cordova/config.json', function() {
-//                    // @TODO
-//                });
-//            });
+    it('should check if path exists', function() {
+        create.local(options, function(e) {});
+        expect(fs.exists).toHaveBeenCalledWith(options.path, jasmine.any(Function));
+    });
 
-//            describe('unsuccessful API response', function() {
-//                beforeEach(function() {
-//                    apiSpy.post.andCallFake(function(url, options, callback) {
-//                        callback(new Error('Duplicate title'));
-//                    });
-//                });
+    describe('path is available', function() {
+        beforeEach(function() {
+            fs.exists.andCallFake(function(path, callback) {
+                callback(false);
+            });
+        });
 
-//                it('should output an error', function() {
-//                    cli.argv({ _: ['create', './my-app'] });
-//                    expect(stderr).toHaveBeenCalled();
-//                });
+        it('should use a valid project template path', function() {
+            console.log(create.local.templatePath);
+            expect(fs.existsSync(create.local.templatePath)).toBe(true);
+        });
 
-//                it('should not create the project locally', function() {
-//                    expect(cli.create.local).not.toHaveBeenCalled();
-//                });
+        it('should create project in path', function() {
+            create.local(options, function(e) {});
+            expect(shell.cp).toHaveBeenCalledWith(
+                '-R',
+                create.local.templatePath,
+                options.path
+            );
+        });
 
-//                it('should not create the project remotely', function() {
-//                    // @TODO
-//                });
-//            });
-//        });
+        it('should trigger callback without an error', function(done) {
+            create.local(options, function(e) {
+                expect(e).toBeNull();
+                done();
+            });
+        });
+    });
 
-//        describe('creating local project', function() {
-//            beforeEach(function() {
-//                spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                    callback(null, {});
-//                });
-//                cli.create.remote.andCallFake(function(options, callback) {
-//                    callback(null);
-//                });
-//                cli.create.local.andCallThrough();
-//                spyOn(fs, 'existsSync').andReturn(false);
-//            });
+    describe('path is not available', function() {
+        beforeEach(function() {
+            fs.exists.andCallFake(function(path, callback) {
+                callback(true);
+            });
+        });
 
-//            it('should create the project locally', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(cli.create.local).toHaveBeenCalled();
-//            });
-
-//            it('should output the created project path', function() {
-//                cli.argv({ _: ['create', './my-app'] });
-//                expect(stdout.mostRecentCall.args[0]).toMatch('/my-app');
-//            });
-
-//            describe('file structure', function() {
-//                it('should have .cordova/config.json', function() {
-//                    // @TODO
-//                    // { "phonegapbuild": { "id": 10 } }
-//                });
-
-//                it('should have www/config.xml', function() {
-//                    // @TODO
-//                });
-
-//                it('should have www/index.html', function() {
-//                    // @TODO
-//                });
-//            });
-//        });
-//    });
-
-//    describe('$ phonegap-build create ./my-app --name "My App"', function() {
-//        beforeEach(function() {
-//            apiSpy = jasmine.createSpyObj('apiSpy', ['post']);
-//            spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                callback(null, apiSpy);
-//            });
-//            cli.create.remote.andCallThrough();
-//        });
-
-//        describe('creating remote project', function() {
-//            it('should not prompt for app name', function() {
-//                cli.argv({ _: ['create', './my-app'], name: 'My Unique App' });
-//                expect(apiSpy.post).toHaveBeenCalled();
-//                expect(apiSpy.post.mostRecentCall.args[1].title).toEqual('My Unique App');
-//            });
-//        });
-//    });
-
-//    describe('$ phonegap-build create ./my-app -n "My App"', function() {
-//        beforeEach(function() {
-//            apiSpy = jasmine.createSpyObj('apiSpy', ['post']);
-//            spyOn(cli.phonegapbuild, 'login').andCallFake(function(callback) {
-//                callback(null, apiSpy);
-//            });
-//            cli.create.remote.andCallThrough();
-//        });
-
-//        describe('creating remote project', function() {
-//            it('should not prompt for app name', function() {
-//                cli.argv({ _: ['create', './my-app'], n: 'My Unique App' });
-//                expect(apiSpy.post).toHaveBeenCalled();
-//                expect(apiSpy.post.mostRecentCall.args[1].title).toEqual('My Unique App');
-//            });
-//        });
-//    });
-//});
+        it('should trigger callback with an error', function(done) {
+            create.local(options, function(e) {
+                expect(e).toEqual(jasmine.any(Error));
+                done();
+            });
+        });
+    });
+});
