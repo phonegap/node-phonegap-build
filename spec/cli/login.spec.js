@@ -7,7 +7,7 @@ var prompt = require('prompt'),
     cli;
 
 /*
- * Help command specification.
+ * Specification for login cli.
  */
 
 describe('$ phonegap-build login', function() {
