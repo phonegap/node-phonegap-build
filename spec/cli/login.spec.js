@@ -3,6 +3,7 @@
  */
 
 var prompt = require('prompt'),
+    config = require('../../lib/phonegap-build/config'),
     CLI = require('../../lib/cli'),
     cli;
 
@@ -14,6 +15,7 @@ describe('$ phonegap-build login', function() {
     beforeEach(function() {
         cli = new CLI();
         spyOn(process.stdout, 'write');
+        spyOn(config, 'load');
     });
 
     describe('$ phonegap-build help', function() {
@@ -29,6 +31,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should prompt for username', function() {
@@ -133,6 +138,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should not prompt for username', function() {
@@ -172,6 +180,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should not prompt for username', function() {
@@ -211,6 +222,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should prompt for username', function() {
@@ -250,6 +264,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should prompt for username', function() {
@@ -289,6 +306,9 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: undefined });
+                });
             });
 
             it('should not prompt for username', function() {
