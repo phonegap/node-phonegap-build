@@ -27,7 +27,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -134,7 +134,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --username zelda', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -176,7 +176,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login -u zelda', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -218,7 +218,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --password tr1force', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -260,7 +260,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login -p tr1force', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -302,7 +302,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --username zelda --password tr1force', function() {
-        describe('no saved credentials', function() {
+        describe('no saved account', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
