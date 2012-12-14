@@ -141,6 +141,7 @@ describe('create.local(options, callback)', function() {
         options = { path: '/some/path/to/my/app' };
         spyOn(fs, 'exists');
         spyOn(shell, 'cp');
+        spyOn(shell, 'mkdir');
     });
 
     it('should require options', function() {
@@ -176,15 +177,22 @@ describe('create.local(options, callback)', function() {
         });
 
         it('should use a valid project template path', function() {
-            console.log(create.local.templatePath);
             expect(fs.existsSync(create.local.templatePath)).toBe(true);
         });
 
-        it('should create project in path', function() {
+        it('should create project path', function() {
+            create.local(options, function(e) {});
+            expect(shell.mkdir).toHaveBeenCalledWith(
+                '-p',
+                options.path
+            );
+        });
+
+        it('should copy project template into path', function() {
             create.local(options, function(e) {});
             expect(shell.cp).toHaveBeenCalledWith(
                 '-R',
-                create.local.templatePath,
+                path.join(create.local.templatePath, '*'),
                 options.path
             );
         });
