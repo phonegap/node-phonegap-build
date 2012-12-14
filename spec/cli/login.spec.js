@@ -27,7 +27,73 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login', function() {
-        describe('no saved account', function() {
+        it('should try to lookup account', function() {
+            cli.argv({ _: ['login'] });
+            expect(config.load).toHaveBeenCalled();
+        });
+
+        describe('successful account lookup', function() {
+            beforeEach(function() {
+                spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: 'abc123' });
+                });
+            });
+
+            it('should try to login', function() {
+                cli.argv({ _: ['login'] });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    null,
+                    jasmine.any(Function)
+                );
+            });
+
+            describe('successful login', function() {
+                beforeEach(function() {
+                    cli.phonegapbuild.login.andCallFake(function(argv, callback) {
+                        callback(null, {});
+                    });
+                });
+
+                it('should trigger callback without an error', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(e).toBeNull();
+                        done();
+                    });
+                });
+
+                it('should trigger callback with API object', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(api).toBeDefined();
+                        done();
+                    });
+                });
+            });
+
+            describe('failed login', function() {
+                beforeEach(function() {
+                    cli.phonegapbuild.login.andCallFake(function(argv, callback) {
+                        callback(new Error('Invalid password'));
+                    });
+                });
+
+                it('should trigger callback with an error', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(e).toBeDefined();
+                        done();
+                    });
+                });
+
+                it('should trigger callback without an API object', function(done) {
+                    cli.argv({ _: ['login'] }, function(e, api) {
+                        expect(api).not.toBeDefined();
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -134,7 +200,24 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --username zelda', function() {
-        describe('no saved account', function() {
+        describe('successful account lookup', function() {
+            beforeEach(function() {
+                spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: 'abc123' });
+                });
+            });
+
+            it('should try to login', function() {
+                cli.argv({ _: ['login'], username: 'zelda' });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    null,
+                    jasmine.any(Function)
+                );
+            });
+        });
+
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -176,7 +259,24 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login -u zelda', function() {
-        describe('no saved account', function() {
+        describe('successful account lookup', function() {
+            beforeEach(function() {
+                spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: 'abc123' });
+                });
+            });
+
+            it('should try to login', function() {
+                cli.argv({ _: ['login'], u: 'zelda' });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    null,
+                    jasmine.any(Function)
+                );
+            });
+        });
+
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -218,7 +318,24 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --password tr1force', function() {
-        describe('no saved account', function() {
+        describe('successful account lookup', function() {
+            beforeEach(function() {
+                spyOn(cli.phonegapbuild, 'login');
+                config.load.andCallFake(function(callback) {
+                    callback(null, { token: 'abc123' });
+                });
+            });
+
+            it('should try to login', function() {
+                cli.argv({ _: ['login'], password: 'tr1force' });
+                expect(cli.phonegapbuild.login).toHaveBeenCalledWith(
+                    null,
+                    jasmine.any(Function)
+                );
+            });
+        });
+
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -260,7 +377,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login -p tr1force', function() {
-        describe('no saved account', function() {
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
@@ -302,7 +419,7 @@ describe('$ phonegap-build login', function() {
     });
 
     describe('$ phonegap-build login --username zelda --password tr1force', function() {
-        describe('no saved account', function() {
+        describe('failed account lookup', function() {
             beforeEach(function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
