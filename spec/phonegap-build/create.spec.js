@@ -8,7 +8,7 @@ var create = require('../../lib/phonegap-build/create'),
     options;
 
 /*
- * Specification for create.
+ * Create specification.
  */
 
 describe('create(options, callback)', function() {
@@ -132,7 +132,7 @@ describe('create(options, callback)', function() {
 });
 
 /*
- * Specification for local create.
+ * Local create specification.
  */
 
 describe('create.local(options, callback)', function() {
@@ -223,6 +223,90 @@ describe('create.local(options, callback)', function() {
 
         it('should trigger callback with an error', function(done) {
             create.local(options, function(e) {
+                expect(e).toEqual(jasmine.any(Error));
+                done();
+            });
+        });
+    });
+});
+
+/*
+ * Remote create specification.
+ */
+
+describe('create.remote(options, callback)', function() {
+    beforeEach(function() {
+        options = {
+            name: 'My App',
+            api: {
+                post: function() {
+                    // spy stub
+                }
+            }
+        };
+        spyOn(options.api, 'post');
+    });
+
+    it('should require parameter options', function() {
+        expect(function() {
+            options = undefined;
+            create.remote(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require parameter options.name', function() {
+        expect(function() {
+            options.name = undefined;
+            create.remote(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require parameter options.api', function() {
+        expect(function() {
+            options.api = undefined;
+            create.remote(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require parameter callback', function() {
+        expect(function() {
+            create.remote(options);
+        }).toThrow();
+    });
+
+    it('should try to make a post request', function() {
+        create.remote(options, function(e) {});
+        expect(options.api.post).toHaveBeenCalledWith(
+            '/apps',
+            { title: options.name, create_method: 'file' },
+            jasmine.any(Function)
+        );
+    });
+
+    describe('successful post request', function() {
+        beforeEach(function() {
+            options.api.post.andCallFake(function(path, headers, callback) {
+                callback(null);
+            });
+        });
+
+        it('should trigger callback without an error', function(done) {
+            create.remote(options, function(e) {
+                expect(e).toBeNull();
+                done();
+            });
+        });
+    });
+
+    describe('failed post request', function() {
+        beforeEach(function() {
+            options.api.post.andCallFake(function(path, headers, callback) {
+                callback(new Error('PhoneGap Build did not respond'));
+            });
+        });
+
+        it('should trigger callback with an error', function(done) {
+            create.remote(options, function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
