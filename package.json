@@ -27,9 +27,10 @@
         "node": ">=0.8.0"
     },
     "dependencies": {
+        "prompt": "0.2.x",
+        "cordova": "0.1.x",
         "optimist": "0.3.x",
-        "phonegap-build-rest": ">=0.2.x",
-        "prompt": "0.2.x"
+        "phonegap-build-rest": ">=0.2.x"
     },
     "devDependencies": {
         "jasmine-node": "1.x.x",

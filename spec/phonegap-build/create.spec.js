@@ -3,8 +3,7 @@
  */
 
 var create = require('../../lib/phonegap-build/create'),
-    shell = require('shelljs'),
-    path = require('path'),
+    cordova = require('cordova'),
     fs = require('fs'),
     options;
 
@@ -140,8 +139,7 @@ describe('create.local(options, callback)', function() {
     beforeEach(function() {
         options = { path: '/some/path/to/my/app' };
         spyOn(fs, 'exists');
-        spyOn(shell, 'cp');
-        spyOn(shell, 'mkdir');
+        spyOn(cordova, 'create');
     });
 
     it('should require options', function() {
@@ -176,31 +174,42 @@ describe('create.local(options, callback)', function() {
             });
         });
 
-        it('should use a valid project template path', function() {
-            expect(fs.existsSync(create.local.templatePath)).toBe(true);
-        });
-
-        it('should create project path', function() {
+        it('should have cordova create a project', function() {
             create.local(options, function(e) {});
-            expect(shell.mkdir).toHaveBeenCalledWith(
-                '-p',
-                options.path
-            );
+            expect(cordova.create).toHaveBeenCalledWith(options.path);
         });
 
-        it('should copy project template into path', function() {
-            create.local(options, function(e) {});
-            expect(shell.cp).toHaveBeenCalledWith(
-                '-R',
-                path.join(create.local.templatePath, '*'),
-                options.path
-            );
+        describe('successful create', function() {
+            beforeEach(function() {
+                cordova.create.andCallFake(function(path) {});
+            });
+
+            it('should trigger callback without an error', function(done) {
+                create.local(options, function(e) {
+                    expect(e).toBeNull();
+                    done();
+                });
+            });
         });
 
-        it('should trigger callback without an error', function(done) {
-            create.local(options, function(e) {
-                expect(e).toBeNull();
-                done();
+        describe('failed create', function() {
+            beforeEach(function() {
+                cordova.create.andCallFake(function(path) {
+                    throw new Error('cordova create is a sync call');
+                });
+            });
+
+            it('should not throw an error', function() {
+                expect(function() {
+                    create.local(options, function(e) {});
+                }).not.toThrow();
+            });
+
+            it('should trigger callback with an error', function(done) {
+                create.local(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
             });
         });
     });
