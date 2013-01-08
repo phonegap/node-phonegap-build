@@ -74,7 +74,7 @@ describe('create(options, callback)', function() {
         it('should try to create remote project', function() {
             create(options, function(e) {});
             expect(create.remote).toHaveBeenCalledWith(
-                { name: options.name, api: jasmine.any(Object) },
+                { name: options.name, path: options.path, api: jasmine.any(Object) },
                 jasmine.any(Function)
             );
         });
@@ -238,6 +238,7 @@ describe('create.remote(options, callback)', function() {
     beforeEach(function() {
         options = {
             name: 'My App',
+            path: 'path/to/app.zip',
             api: {
                 post: function() {
                     // spy stub
@@ -261,6 +262,13 @@ describe('create.remote(options, callback)', function() {
         }).toThrow();
     });
 
+    it('should require parameter options.path', function() {
+        expect(function() {
+            options.path = undefined;
+            create.remote(options, function(e) {});
+        }).toThrow();
+    });
+
     it('should require parameter options.api', function() {
         expect(function() {
             options.api = undefined;
@@ -277,8 +285,8 @@ describe('create.remote(options, callback)', function() {
     it('should try to make a post request', function() {
         create.remote(options, function(e) {});
         expect(options.api.post).toHaveBeenCalledWith(
-            '/apps',
-            { title: options.name, create_method: 'file' },
+            jasmine.any(String),
+            jasmine.any(Object),
             jasmine.any(Function)
         );
     });
