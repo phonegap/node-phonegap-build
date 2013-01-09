@@ -3,6 +3,7 @@
  */
 
 var create = require('../../lib/phonegap-build/create'),
+    zip = require('../../lib/phonegap-build/create/zip'),
     cordova = require('cordova'),
     fs = require('fs'),
     options;
@@ -15,7 +16,7 @@ describe('create(options, callback)', function() {
     beforeEach(function() {
         options = {
             api: {},
-            path: '/some/path/to/my/app',
+            path: '/some/path/to/app/www',
             name: 'My App'
         };
         spyOn(create, 'remote');
@@ -246,6 +247,8 @@ describe('create.remote(options, callback)', function() {
             }
         };
         spyOn(options.api, 'post');
+        spyOn(zip, 'compress');
+        spyOn(zip, 'cleanup');
     });
 
     it('should require parameter options', function() {
@@ -282,35 +285,81 @@ describe('create.remote(options, callback)', function() {
         }).toThrow();
     });
 
-    it('should try to make a post request', function() {
+    it('should try to zip application', function() {
         create.remote(options, function(e) {});
-        expect(options.api.post).toHaveBeenCalledWith(
-            jasmine.any(String),
-            jasmine.any(Object),
+        expect(zip.compress).toHaveBeenCalledWith(
+            options.path,
             jasmine.any(Function)
         );
     });
 
-    describe('successful post request', function() {
+    describe('successful zip', function() {
         beforeEach(function() {
-            options.api.post.andCallFake(function(path, headers, callback) {
-                callback(null);
+            zip.compress.andCallFake(function(path, callback) {
+                callback(null, '/path/to/build/www.zip');
             });
         });
 
-        it('should trigger callback without an error', function(done) {
-            create.remote(options, function(e) {
-                expect(e).toBeNull();
-                done();
+        it('should try to make a post request', function() {
+            create.remote(options, function(e) {});
+            expect(options.api.post).toHaveBeenCalledWith(
+                jasmine.any(String),
+                jasmine.any(Object),
+                jasmine.any(Function)
+            );
+        });
+
+        describe('successful post request', function() {
+            beforeEach(function() {
+                options.api.post.andCallFake(function(path, headers, callback) {
+                    callback(null);
+                });
+            });
+
+            it('should delete zip archive', function() {
+                create.remote(options, function(e) {});
+                expect(zip.cleanup).toHaveBeenCalled();
+            });
+
+            it('should trigger callback without an error', function(done) {
+                create.remote(options, function(e) {
+                    expect(e).toBeNull();
+                    done();
+                });
+            });
+        });
+
+        describe('failed post request', function() {
+            beforeEach(function() {
+                options.api.post.andCallFake(function(path, headers, callback) {
+                    callback(new Error('PhoneGap Build did not respond'));
+                });
+            });
+
+            it('should delete zip archive', function() {
+                create.remote(options, function(e) {});
+                expect(zip.cleanup).toHaveBeenCalled();
+            });
+
+            it('should trigger callback with an error', function(done) {
+                create.remote(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
             });
         });
     });
 
-    describe('failed post request', function() {
+    describe('failed zip', function() {
         beforeEach(function() {
-            options.api.post.andCallFake(function(path, headers, callback) {
-                callback(new Error('PhoneGap Build did not respond'));
+            zip.compress.andCallFake(function(path, callback) {
+                callback(new Error('Write access denied'));
             });
+        });
+
+        it('should not make a post request', function() {
+            create.remote(options, function(e) {});
+            expect(options.api.post).not.toHaveBeenCalled();
         });
 
         it('should trigger callback with an error', function(done) {
