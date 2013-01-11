@@ -5,6 +5,7 @@
 var create = require('../../lib/phonegap-build/create'),
     zip = require('../../lib/phonegap-build/create/zip'),
     cordova = require('cordova'),
+    path = require('path'),
     fs = require('fs'),
     options;
 
@@ -288,14 +289,15 @@ describe('create.remote(options, callback)', function() {
     it('should try to zip application', function() {
         create.remote(options, function(e) {});
         expect(zip.compress).toHaveBeenCalledWith(
-            options.path,
+            path.join(options.path, 'www'),
+            path.join(options.path, 'build'),
             jasmine.any(Function)
         );
     });
 
     describe('successful zip', function() {
         beforeEach(function() {
-            zip.compress.andCallFake(function(path, callback) {
+            zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
                 callback(null, '/path/to/build/www.zip');
             });
         });
@@ -352,7 +354,7 @@ describe('create.remote(options, callback)', function() {
 
     describe('failed zip', function() {
         beforeEach(function() {
-            zip.compress.andCallFake(function(path, callback) {
+            zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
                 callback(new Error('Write access denied'));
             });
         });
