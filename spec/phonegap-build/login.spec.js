@@ -4,7 +4,7 @@
 
 var login = require('../../lib/phonegap-build/login'),
     config = require('../../lib/phonegap-build/config'),
-    client = require('phonegap-build-rest'),
+    client = require('phonegap-build-api'),
     options,
     config;
 
