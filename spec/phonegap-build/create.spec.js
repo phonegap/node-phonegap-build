@@ -3,6 +3,7 @@
  */
 
 var create = require('../../lib/phonegap-build/create'),
+    config = require('../../lib/phonegap-build/common/config'),
     zip = require('../../lib/phonegap-build/create/zip'),
     cordova = require('cordova'),
     path = require('path'),
@@ -250,6 +251,8 @@ describe('create.remote(options, callback)', function() {
         spyOn(options.api, 'post');
         spyOn(zip, 'compress');
         spyOn(zip, 'cleanup');
+        spyOn(config.local, 'load');
+        spyOn(config.local, 'save');
     });
 
     it('should require parameter options', function() {
@@ -314,7 +317,7 @@ describe('create.remote(options, callback)', function() {
         describe('successful post request', function() {
             beforeEach(function() {
                 options.api.post.andCallFake(function(path, headers, callback) {
-                    callback(null);
+                    callback(null, { id: '10' });
                 });
             });
 
@@ -323,10 +326,70 @@ describe('create.remote(options, callback)', function() {
                 expect(zip.cleanup).toHaveBeenCalled();
             });
 
-            it('should trigger callback without an error', function(done) {
-                create.remote(options, function(e) {
-                    expect(e).toBeNull();
-                    done();
+            it('should try to load config.json', function() {
+                create.remote(options, function(e) {});
+                expect(config.local.load).toHaveBeenCalled();
+            });
+
+            describe('successful load config.json', function() {
+                beforeEach(function() {
+                    config.local.load.andCallFake(function(callback) {
+                        callback(null, {});
+                    });
+                });
+
+                it('should try to save config.json', function() {
+                    create.remote(options, function(e) {});
+                    expect(config.local.save).toHaveBeenCalled();
+                });
+
+                describe('successful save config.json', function() {
+                    beforeEach(function() {
+                        config.local.save.andCallFake(function(data, callback) {
+                            callback(null);
+                        });
+                    });
+                    it('should trigger callback without an error', function(done) {
+                        create.remote(options, function(e) {
+                            expect(e).toBeNull();
+                            done();
+                        });
+                    });
+                });
+
+                describe('failed save config.json', function() {
+                    beforeEach(function() {
+                        config.local.save.andCallFake(function(data, callback) {
+                            callback(new Error('could not write config.json'));
+                        });
+                    });
+
+                    it('should trigger callback with an error', function(done) {
+                        create.remote(options, function(e) {
+                            expect(e).toEqual(jasmine.any(Error));
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe('failed to load config.json', function() {
+                beforeEach(function() {
+                    config.local.load.andCallFake(function(callback) {
+                        callback(new Error('could not read config.json'));
+                    });
+                });
+
+                it('should not call config.save', function() {
+                    create.remote(options, function(e) {});
+                    expect(config.local.save).not.toHaveBeenCalled();
+                });
+
+                it('should trigger callback with an error', function(done) {
+                    create.remote(options, function(e) {
+                        expect(e).toEqual(jasmine.any(Error));
+                        done();
+                    });
                 });
             });
         });
