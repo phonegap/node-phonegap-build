@@ -3,7 +3,7 @@
  */
 
 var create = require('../../lib/phonegap-build/create'),
-    config = require('../../lib/phonegap-build/common/config'),
+    config = require('../../lib/common/config'),
     zip = require('../../lib/phonegap-build/create/zip'),
     cordova = require('cordova'),
     path = require('path'),
@@ -349,6 +349,7 @@ describe('create.remote(options, callback)', function() {
                             callback(null);
                         });
                     });
+
                     it('should trigger callback without an error', function(done) {
                         create.remote(options, function(e) {
                             expect(e).toBeNull();

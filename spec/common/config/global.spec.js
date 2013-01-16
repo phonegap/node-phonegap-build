@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-var config = require('../../lib/phonegap-build/config'),
+var config = require('../../../lib/common/config'),
     shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
@@ -12,25 +12,25 @@ var config = require('../../lib/phonegap-build/config'),
  * Specification for config.
  */
 
-describe('config', function() {
-    describe('config.path', function() {
+describe('config.global', function() {
+    describe('config.global.path', function() {
         it('should be a valid dirname', function() {
-            var dirname = path.dirname(config.path);
+            var dirname = path.dirname(config.global.path);
             expect(fs.existsSync(dirname)).toBe(true);
         });
     });
 
-    describe('config.load(callback)', function() {
+    describe('config.global.load(callback)', function() {
         it('should require the callback function', function() {
-            expect(function() { config.load(); }).toThrow();
+            expect(function() { config.global.load(); }).toThrow();
         });
 
         it('should try to find config file', function() {
             spyOn(fs, 'exists');
-            config.load(function(e, data) {});
+            config.global.load(function(e, data) {});
             expect(fs.exists).toHaveBeenCalled();
             expect(fs.exists.mostRecentCall.args[0]).toMatch(
-                path.join(config.path, 'config.json')
+                path.join(config.global.path, 'config.json')
             );
         });
 
@@ -43,10 +43,10 @@ describe('config', function() {
 
             it('should read config file', function() {
                 spyOn(fs, 'readFile');
-                config.load(function(e, data) {});
+                config.global.load(function(e, data) {});
                 expect(fs.readFile).toHaveBeenCalled();
                 expect(fs.readFile.mostRecentCall.args[0]).toMatch(
-                    path.join(config.path, 'config.json')
+                    path.join(config.global.path, 'config.json')
                 );
             });
 
@@ -58,14 +58,14 @@ describe('config', function() {
                 });
 
                 it('should trigger callback without an error', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(e).toBeNull();
                         done();
                     });
                 });
 
                 it('should trigger callback with config file object', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(data).toEqual({ token: 'abc123' });
                         done();
                     });
@@ -80,14 +80,14 @@ describe('config', function() {
                 });
 
                 it('should trigger callback with an error', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
                 });
 
                 it('should trigger callback without config file object', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(data).not.toBeDefined();
                         done();
                     });
@@ -103,32 +103,32 @@ describe('config', function() {
             });
 
             it('should try to save a config file', function() {
-                spyOn(config, 'save');
-                config.load(function(e, data) {});
-                expect(config.save).toHaveBeenCalled();
+                spyOn(config.global, 'save');
+                config.global.load(function(e, data) {});
+                expect(config.global.save).toHaveBeenCalled();
             });
 
             describe('successfully save config file', function() {
                 beforeEach(function() {
-                    spyOn(config, 'save').andCallFake(function(data, callback) {
+                    spyOn(config.global, 'save').andCallFake(function(data, callback) {
                         callback(null);
                     });
                 });
 
                 it('should save an empty object', function() {
-                    config.load(function(e, data) {});
-                    expect(config.save.mostRecentCall.args[0]).toEqual({});
+                    config.global.load(function(e, data) {});
+                    expect(config.global.save.mostRecentCall.args[0]).toEqual({});
                 });
 
                 it('should trigger callback without an error', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(e).toBeNull();
                         done();
                     });
                 });
 
                 it('should trigger callback with config file object', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(data).toEqual({});
                         done();
                     });
@@ -137,20 +137,20 @@ describe('config', function() {
 
             describe('failed to save config file', function() {
                 beforeEach(function() {
-                    spyOn(config, 'save').andCallFake(function(data, callback) {
+                    spyOn(config.global, 'save').andCallFake(function(data, callback) {
                         callback(new Error('no write access'));
                     });
                 });
 
                 it('should trigger callback with an error', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
                 });
 
                 it('should trigger callback without config file object', function(done) {
-                    config.load(function(e, data) {
+                    config.global.load(function(e, data) {
                         expect(data).not.toBeDefined();
                         done();
                     });
@@ -159,7 +159,7 @@ describe('config', function() {
         });
     });
 
-    describe('config.save(data, callback)', function() {
+    describe('config.global.save(data, callback)', function() {
         beforeEach(function() {
             data = { token: 'abc123' };
             spyOn(shell, 'mkdir');
@@ -167,24 +167,24 @@ describe('config', function() {
         });
 
         it('should require the data parameter', function() {
-            expect(function() { config.save(); }).toThrow();
+            expect(function() { config.global.save(); }).toThrow();
         });
 
         it('should require the callback parameter', function() {
-            expect(function() { config.save(data); }).toThrow();
+            expect(function() { config.global.save(data); }).toThrow();
         });
 
         it('should recursively create directories', function() {
-            config.save(data, function(e) {});
+            config.global.save(data, function(e) {});
             expect(shell.mkdir).toHaveBeenCalled();
             expect(shell.mkdir.mostRecentCall.args[0]).toEqual('-p');
         });
 
         it('should try to write', function() {
-            config.save(data, function(e) {});
+            config.global.save(data, function(e) {});
             expect(fs.writeFile).toHaveBeenCalled();
             expect(fs.writeFile.mostRecentCall.args[0]).toEqual(
-                path.join(config.path, 'config.json')
+                path.join(config.global.path, 'config.json')
             );
         });
 
@@ -196,14 +196,14 @@ describe('config', function() {
             });
 
             it('should write to the config file', function() {
-                config.save(data, function(e) {});
+                config.global.save(data, function(e) {});
                 expect(fs.writeFile.mostRecentCall.args[0]).toEqual(
-                    path.join(config.path, 'config.json')
+                    path.join(config.global.path, 'config.json')
                 );
             });
 
             it('should write the json data', function(done) {
-                config.save({ token: 'def456', username: 'link' }, function(e) {
+                config.global.save({ token: 'def456', username: 'link' }, function(e) {
                     var data = JSON.parse(fs.writeFile.mostRecentCall.args[1]);
                     expect(data).toEqual({ token: 'def456', username: 'link' });
                     done();
@@ -211,7 +211,7 @@ describe('config', function() {
             });
 
             it('should trigger callback without an error', function(done) {
-                config.save({ token: 'def456' }, function(e) {
+                config.global.save({ token: 'def456' }, function(e) {
                     expect(e).toBeNull();
                     done();
                 });
@@ -226,7 +226,7 @@ describe('config', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                config.save({ token: 'def456' }, function(e) {
+                config.global.save({ token: 'def456' }, function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });

@@ -3,7 +3,7 @@
  */
 
 var logout = require('../../lib/phonegap-build/logout'),
-    config = require('../../lib/phonegap-build/config');
+    config = require('../../lib/common/config');
 
 /*
  * Specification for logout.
@@ -11,8 +11,8 @@ var logout = require('../../lib/phonegap-build/logout'),
 
 describe('logout(options, callback)', function() {
     beforeEach(function() {
-        spyOn(config, 'load');
-        spyOn(config, 'save');
+        spyOn(config.global, 'load');
+        spyOn(config.global, 'save');
     });
 
     it('should require options parameter', function() {
@@ -25,12 +25,12 @@ describe('logout(options, callback)', function() {
 
     it('should try to load the config', function() {
         logout({}, function(e) {});
-        expect(config.load).toHaveBeenCalled();
+        expect(config.global.load).toHaveBeenCalled();
     });
 
     describe('successfully load config', function() {
         beforeEach(function() {
-            config.load.andCallFake(function(callback) {
+            config.global.load.andCallFake(function(callback) {
                 callback(null, {
                     email: 'zelda@nintendo.com',
                     token: 'abc123'
@@ -40,24 +40,24 @@ describe('logout(options, callback)', function() {
 
         it('should try to save the config', function() {
             logout({}, function(e) {});
-            expect(config.save).toHaveBeenCalled();
+            expect(config.global.save).toHaveBeenCalled();
         });
 
         describe('successfully saved config', function() {
             beforeEach(function() {
-                config.save.andCallFake(function(data, callback) {
+                config.global.save.andCallFake(function(data, callback) {
                     callback(null);
                 });
             });
 
             it('should delete the token key', function() {
                 logout({}, function(e) {});
-                expect(config.save.mostRecentCall.args[0].token).not.toBeDefined();
+                expect(config.global.save.mostRecentCall.args[0].token).not.toBeDefined();
             });
 
             it('should preserve the remaining keys', function() {
                 logout({}, function(e) {});
-                expect(config.save.mostRecentCall.args[0]).toEqual(
+                expect(config.global.save.mostRecentCall.args[0]).toEqual(
                     { email: 'zelda@nintendo.com' }
                 );
             });
@@ -72,7 +72,7 @@ describe('logout(options, callback)', function() {
 
         describe('failed to save config', function() {
             beforeEach(function() {
-                config.save.andCallFake(function(data, callback) {
+                config.global.save.andCallFake(function(data, callback) {
                     callback(new Error('no write access'));
                 });
             });
@@ -88,7 +88,7 @@ describe('logout(options, callback)', function() {
 
     describe('failed to load config', function() {
         beforeEach(function() {
-            config.load.andCallFake(function(callback) {
+            config.global.load.andCallFake(function(callback) {
                 callback(new Error('no read access'));
             });
         });

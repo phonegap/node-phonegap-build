@@ -3,10 +3,9 @@
  */
 
 var login = require('../../lib/phonegap-build/login'),
-    config = require('../../lib/phonegap-build/config'),
+    config = require('../../lib/common/config'),
     client = require('phonegap-build-api'),
-    options,
-    config;
+    options;
 
 /*
  * Specification for login.
@@ -16,8 +15,8 @@ describe('login(options, callback)', function() {
     beforeEach(function() {
         options = { username: 'zelda', password: 'tr1force' };
         spyOn(client, 'auth');
-        spyOn(config, 'load');
-        spyOn(config, 'save');
+        spyOn(config.global, 'load');
+        spyOn(config.global, 'save');
     });
 
     it('should not require callback', function() {
@@ -28,12 +27,12 @@ describe('login(options, callback)', function() {
 
     it('should try to lookup token', function() {
         login(options, function(e, api) {});
-        expect(config.load).toHaveBeenCalled();
+        expect(config.global.load).toHaveBeenCalled();
     });
 
     describe('successful token lookup', function() {
         beforeEach(function() {
-            config.load.andCallFake(function(callback) {
+            config.global.load.andCallFake(function(callback) {
                 callback(null, { 'email': 'zelda@hyrule.org', 'token': 'abc123' });
             });
         });
@@ -55,7 +54,7 @@ describe('login(options, callback)', function() {
 
     describe('failed token lookup', function() {
         beforeEach(function() {
-            config.load.andCallFake(function(callback) {
+            config.global.load.andCallFake(function(callback) {
                 callback(new Error('config not found at ~/.phonegap-build'));
             });
         });
@@ -95,12 +94,12 @@ describe('login(options, callback)', function() {
 
             it('should try to save token', function() {
                 login(options, function(e, api) {});
-                expect(config.save).toHaveBeenCalled();
+                expect(config.global.save).toHaveBeenCalled();
             });
 
             describe('successfully saved token', function() {
                 beforeEach(function() {
-                    config.save.andCallFake(function(data, callback) {
+                    config.global.save.andCallFake(function(data, callback) {
                         callback(null);
                     });
                 });
@@ -122,7 +121,7 @@ describe('login(options, callback)', function() {
 
             describe('failed to save token', function() {
                 beforeEach(function() {
-                    config.save.andCallFake(function(data, callback) {
+                    config.global.save.andCallFake(function(data, callback) {
                         callback(new Error('No write permission'));
                     });
                 });
