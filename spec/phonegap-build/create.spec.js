@@ -253,6 +253,7 @@ describe('create.remote(options, callback)', function() {
         spyOn(zip, 'cleanup');
         spyOn(config.local, 'load');
         spyOn(config.local, 'save');
+        spyOn(process, 'chdir');
     });
 
     it('should require parameter options', function() {
