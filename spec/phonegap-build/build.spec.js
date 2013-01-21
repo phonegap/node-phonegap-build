@@ -26,6 +26,7 @@ describe('build(options, callback)', function() {
         spyOn(zip, 'cleanup');
         spyOn(options.api, 'put');
         spyOn(config.local, 'load');
+        spyOn(build, 'waitForComplete');
     });
 
     it('should require options', function() {
@@ -100,10 +101,38 @@ describe('build(options, callback)', function() {
                 expect(zip.cleanup).toHaveBeenCalled();
             });
 
-            it('should trigger callback without an error', function(done) {
-                build(options, function(e) {
-                    expect(e).toBeNull();
-                    done();
+            it('should wait for the platform build to complete', function() {
+                build(options, function(e) {});
+                expect(build.waitForComplete).toHaveBeenCalled();
+            });
+
+            describe('on build complete', function() {
+                beforeEach(function() {
+                    build.waitForComplete.andCallFake(function(options, callback) {
+                        callback(null);
+                    });
+                });
+
+                it('should trigger callback without an error', function(done) {
+                    build(options, function(e) {
+                        expect(e).toBeNull();
+                        done();
+                    });
+                });
+            });
+
+            describe('on build error', function() {
+                beforeEach(function() {
+                    build.waitForComplete.andCallFake(function(options, callback) {
+                        callback(new Error('some message'));
+                    });
+                });
+
+                it('should trigger callback without an error', function(done) {
+                    build(options, function(e) {
+                        expect(e).toEqual(jasmine.any(Error));
+                        done();
+                    });
                 });
             });
         });
@@ -127,5 +156,63 @@ describe('build(options, callback)', function() {
                 });
             });
         });
+    });
+});
+
+/*
+ * Specification for build.waitForComplete(options, callback);
+ */
+
+describe('build.waitForComplete', function() {
+    beforeEach(function() {
+        options = {
+            api: {
+                get: function() {
+                    // spy stub
+                }
+            },
+            id: 12345,
+            platforms: ['android']
+        };
+        spyOn(options.api, 'get');
+    });
+
+    it('should require options parameter', function() {
+        expect(function() {
+            options = undefined;
+            build.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.api parameter', function() {
+        expect(function() {
+            options.api = undefined;
+            build.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.id parameter', function() {
+        expect(function() {
+            options.id = undefined;
+            build.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.platforms parameter', function() {
+        expect(function() {
+            options.platforms = undefined;
+            build.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.platforms parameter', function() {
+        expect(function() {
+            build.waitForComplete(options);
+        }).toThrow();
+    });
+
+    it('should try to get application status', function() {
+        build.waitForComplete(options, function(e) {});
+        expect(options.api.get).toHaveBeenCalled();
     });
 });
