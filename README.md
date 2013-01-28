@@ -2,31 +2,36 @@
 
 > PhoneGap Build command-line interface and node.js library.
 
-## Getting Started on the Command-line
+## Getting Started on the Command-line (CLI)
 
-### Install
+### CLI: Install
 
     $ sudo npm install -g phonegap-build-cli
 
-### Usage
+### CLI: Usage
 
-    $ phonegap-build help
+    Usage: phonegap-build [options] [commands]
 
-    Usage: phonegap-build [options] [command]
+    Synopsis:
+
+      PhoneGap Build command-line environment.
 
     Commands:
 
-        help
-        display help
+      login                login to phonegap build
+      logout               logout of phonegap build
+      create <path>        create a phonegap project
+      build <platform>     build a specific platform
+      help [commands]      output usage information
 
     Options:
 
-        -h, --help     output usage information
-        -V, --version  output the version number
+      -v, --version        output version number
+      -h, --help           output usage information
 
 ## Getting Started with Node.js
 
-### Install
+### Node.js: Install
 
 `package.json`:
 
@@ -36,9 +41,87 @@
         }
     }
 
-### Usage
+### Require
 
     var build = require('phonegap-build-cli');
+
+### Login
+
+Authenticates with PhoneGap Build, saves the token, and return an API object.
+When the save token exists, the authentication step is skipped.
+
+#### Options:
+
+  - `options` {Object} contains the login credentials.
+  - `options.username` {String} is the username.
+  - `options.password` {String} is the password.
+  - `callback(e)` {Function} is called after the login.
+    - `e` {Error} is null on a successful login attempt.
+    - `api` {Object} the API object defined by phonegap-build-rest
+
+#### Example:
+
+    build.login({ username: 'zelda', password: 'tr1force' }, function(e, api) {
+        // pass `api` to other phonegap build commands
+    });
+
+### Logout
+
+Logout the user by deleting the token key from the config file.
+
+#### Options:
+
+  - `args` {Object} is unused and should be `{}`.
+  - `callback` {Function} is a callback function.
+    - `e` {Error} is null unless there is an error.
+
+#### Example:
+
+    build.logout({}, function(e) {
+        console.log('now logged out.');
+    });
+
+
+### Create a New App
+
+Creates an application on the local filesystem and also remotely on
+PhoneGap Build. The remote application is linked by storing the app ID
+inside the application's config file.
+
+#### Options:
+
+  - `options` {Object} is data required to create an app
+    - `api` {Object} is a phonegap-build-rest API object.
+    - `path` {String} is a directory path for the app.
+    - `name` {String} is the app name give to PhoneGap Build.
+  - `callback` {Function} is triggered after creating the app.
+    - `e` {Error} is null unless there is an error.
+
+#### Example:
+
+    build.create({ api: api, path: 'path/to/new/app', name: 'My App' }, function(e) {
+    });
+
+
+### Build an App
+
+The build task will compress the application, upload it to PhoneGap Build,
+and poll until the platform's build status is complete or an error is
+encountered.
+
+#### Options:
+
+  - `options` {Object} is data required for building a platform.
+  - `options.api` {Object} is the phonegap-build-api API object.
+  - `options.platforms` {Array} is a collection of platform names {String} that
+                        specify the platforms to build.
+  - `callback` {Function} is triggered after the build is complete.
+    - `e` {Error} is null unless there is an error.
+
+#### Example:
+
+    build.build({ api: api, platforms: ['android'] }, function(e) {
+    });
 
 [travis-ci-img]: https://secure.travis-ci.org/mwbrooks/phonegap-build-cli.png
 [travis-ci-url]: http://travis-ci.org/mwbrooks/phonegap-build-cli
