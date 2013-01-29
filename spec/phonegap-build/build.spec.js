@@ -56,13 +56,16 @@ describe('build(options, callback)', function() {
         }).not.toThrow();
     });
 
-    it('should try to zip application', function() {
+    it('should try to zip application', function(done) {
         build(options, function(e) {});
-        expect(zip.compress).toHaveBeenCalledWith(
-            path.join(process.cwd(), 'www'),   // path to zip
-            path.join(process.cwd(), 'build'), // path to write zip file
-            jasmine.any(Function)
-        );
+        process.nextTick(function() {
+            expect(zip.compress).toHaveBeenCalledWith(
+                path.join(process.cwd(), 'www'),   // path to zip
+                path.join(process.cwd(), 'build'), // path to write zip file
+                jasmine.any(Function)
+            );
+            done();
+        });
     });
 
     describe('successful zip', function() {
@@ -80,13 +83,16 @@ describe('build(options, callback)', function() {
             });
         });
 
-        it('should try to upload app to phonegap build', function() {
+        it('should try to upload app to phonegap build', function(done) {
             build(options, function(e) {});
-            expect(options.api.put).toHaveBeenCalledWith(
-                '/apps/12345',
-                { form: { file: '/path/to/build/www.zip' } },
-                jasmine.any(Function)
-            );
+            process.nextTick(function() {
+                expect(options.api.put).toHaveBeenCalledWith(
+                    '/apps/12345',
+                    { form: { file: '/path/to/build/www.zip' } },
+                    jasmine.any(Function)
+                );
+                done();
+            });
         });
 
         describe('successful upload', function() {
@@ -96,14 +102,20 @@ describe('build(options, callback)', function() {
                 });
             });
 
-            it('should delete zip archive', function() {
+            it('should delete zip archive', function(done) {
                 build(options, function(e) {});
-                expect(zip.cleanup).toHaveBeenCalled();
+                process.nextTick(function() {
+                    expect(zip.cleanup).toHaveBeenCalled();
+                    done();
+                });
             });
 
-            it('should wait for the platform build to complete', function() {
+            it('should wait for the platform build to complete', function(done) {
                 build(options, function(e) {});
-                expect(build.waitForComplete).toHaveBeenCalled();
+                process.nextTick(function() {
+                    expect(build.waitForComplete).toHaveBeenCalled();
+                    done();
+                });
             });
 
             describe('on build complete', function() {
@@ -116,6 +128,13 @@ describe('build(options, callback)', function() {
                 it('should trigger callback without an error', function(done) {
                     build(options, function(e) {
                         expect(e).toBeNull();
+                        done();
+                    });
+                });
+
+                it('should trigger "complete" event', function(done) {
+                    var emitter = build(options);
+                    emitter.on('complete', function(e) {
                         done();
                     });
                 });
@@ -134,6 +153,14 @@ describe('build(options, callback)', function() {
                         done();
                     });
                 });
+
+                it('should trigger "error" event', function(done) {
+                    var emitter = build(options);
+                    emitter.on('error', function(e) {
+                        expect(e).toEqual(jasmine.any(Error));
+                        done();
+                    });
+                });
             });
         });
 
@@ -144,13 +171,24 @@ describe('build(options, callback)', function() {
                 });
             });
 
-            it('should delete zip archive', function() {
+            it('should delete zip archive', function(done) {
                 build(options, function(e) {});
-                expect(zip.cleanup).toHaveBeenCalled();
+                process.nextTick(function() {
+                    expect(zip.cleanup).toHaveBeenCalled();
+                    done();
+                });
             });
 
             it('should trigger callback with an error', function(done) {
                 build(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
+
+            it('should trigger "error" event', function(done) {
+                var emitter = build(options);
+                emitter.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });

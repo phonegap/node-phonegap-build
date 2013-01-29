@@ -27,7 +27,9 @@ describe('login(options, callback)', function() {
 
     it('should try to lookup token', function() {
         login(options, function(e, api) {});
-        expect(config.global.load).toHaveBeenCalled();
+        process.nextTick(function() {
+            expect(config.global.load).toHaveBeenCalled();
+        });
     });
 
     describe('successful token lookup', function() {
@@ -46,6 +48,14 @@ describe('login(options, callback)', function() {
 
         it('should trigger callback with an api object', function(done) {
             login(options, function(e, api) {
+                expect(api).toBeDefined();
+                done();
+            });
+        });
+
+        it('should trigger "complete" event', function(done) {
+            var emitter = login(options);
+            emitter.on('complete', function(api) {
                 expect(api).toBeDefined();
                 done();
             });
@@ -79,10 +89,12 @@ describe('login(options, callback)', function() {
 
         it('should try to authenticate', function() {
             login(options, function() {});
-            expect(client.auth).toHaveBeenCalledWith(
-                options,
-                jasmine.any(Function)
-            );
+            process.nextTick(function() {
+                expect(client.auth).toHaveBeenCalledWith(
+                    options,
+                    jasmine.any(Function)
+                );
+            });
         });
 
         describe('successful authentication', function() {
@@ -94,7 +106,9 @@ describe('login(options, callback)', function() {
 
             it('should try to save token', function() {
                 login(options, function(e, api) {});
-                expect(config.global.save).toHaveBeenCalled();
+                process.nextTick(function() {
+                    expect(config.global.save).toHaveBeenCalled();
+                });
             });
 
             describe('successfully saved token', function() {
@@ -117,6 +131,14 @@ describe('login(options, callback)', function() {
                         done();
                     });
                 });
+
+                it('should trigger "complete" event', function(done) {
+                    var emitter = login(options);
+                    emitter.on('complete', function(api) {
+                        expect(api).toBeDefined();
+                        done();
+                    });
+                });
             });
 
             describe('failed to save token', function() {
@@ -128,7 +150,7 @@ describe('login(options, callback)', function() {
 
                 it('should trigger callback with an error', function(done) {
                     login(options, function(e, api) {
-                        expect(e).toBeDefined();
+                        expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
                 });
@@ -136,6 +158,14 @@ describe('login(options, callback)', function() {
                 it('should trigger callback without an api object', function(done) {
                     login(options, function(e, api) {
                         expect(api).not.toBeDefined();
+                        done();
+                    });
+                });
+
+                it('should trigger "error" event', function(done) {
+                    var emitter = login(options);
+                    emitter.on('error', function(e) {
+                        expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
                 });
@@ -151,7 +181,7 @@ describe('login(options, callback)', function() {
 
             it('should trigger callback an error', function(done) {
                 login(options, function(e, api) {
-                    expect(e).toBeDefined();
+                    expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
             });
@@ -159,6 +189,14 @@ describe('login(options, callback)', function() {
             it('should trigger callback without an api object', function(done) {
                 login(options, function(e, api) {
                     expect(api).not.toBeDefined();
+                    done();
+                });
+            });
+
+            it('should trigger "error" event', function(done) {
+                var emitter = login(options);
+                emitter.on('error', function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
             });

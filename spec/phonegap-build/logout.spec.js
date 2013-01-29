@@ -19,13 +19,16 @@ describe('logout(options, callback)', function() {
         expect(function() { logout(undefined, function(e) {}); }).toThrow();
     });
 
-    it('should require callback parameter', function() {
-        expect(function() { logout({}, undefined); }).toThrow();
+    it('should not require callback parameter', function() {
+        expect(function() { logout({}, undefined); }).not.toThrow();
     });
 
-    it('should try to load the config', function() {
+    it('should try to load the config', function(done) {
         logout({}, function(e) {});
-        expect(config.global.load).toHaveBeenCalled();
+        process.nextTick(function() {
+            expect(config.global.load).toHaveBeenCalled();
+            done();
+        });
     });
 
     describe('successfully load config', function() {
@@ -38,9 +41,12 @@ describe('logout(options, callback)', function() {
             });
         });
 
-        it('should try to save the config', function() {
+        it('should try to save the config', function(done) {
             logout({}, function(e) {});
-            expect(config.global.save).toHaveBeenCalled();
+            process.nextTick(function() {
+                expect(config.global.save).toHaveBeenCalled();
+                done();
+            });
         });
 
         describe('successfully saved config', function() {
@@ -50,21 +56,34 @@ describe('logout(options, callback)', function() {
                 });
             });
 
-            it('should delete the token key', function() {
+            it('should delete the token key', function(done) {
                 logout({}, function(e) {});
-                expect(config.global.save.mostRecentCall.args[0].token).not.toBeDefined();
+                process.nextTick(function() {
+                    expect(config.global.save.mostRecentCall.args[0].token).not.toBeDefined();
+                    done();
+                });
             });
 
-            it('should preserve the remaining keys', function() {
+            it('should preserve the remaining keys', function(done) {
                 logout({}, function(e) {});
-                expect(config.global.save.mostRecentCall.args[0]).toEqual(
-                    { email: 'zelda@nintendo.com' }
-                );
+                process.nextTick(function() {
+                    expect(config.global.save.mostRecentCall.args[0]).toEqual(
+                        { email: 'zelda@nintendo.com' }
+                    );
+                    done();
+                });
             });
 
             it('should trigger callback without an error', function(done) {
                 logout({}, function(e) {
                     expect(e).toBeNull();
+                    done();
+                });
+            });
+
+            it('should trigger "complete" event', function(done) {
+                var emitter = logout({});
+                emitter.on('complete', function() {
                     done();
                 });
             });
@@ -83,6 +102,14 @@ describe('logout(options, callback)', function() {
                     done();
                 });
             });
+
+            it('should trigger "error" event', function(done) {
+                var emitter = logout({});
+                emitter.on('error', function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
         });
     });
 
@@ -93,8 +120,16 @@ describe('logout(options, callback)', function() {
             });
         });
 
-        it('should trigger callback without an error', function(done) {
+        it('should trigger callback with an error', function(done) {
             logout({}, function(e) {
+                expect(e).toEqual(jasmine.any(Error));
+                done();
+            });
+        });
+
+        it('should trigger "error" event', function(done) {
+            var emitter = logout({});
+            emitter.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });

@@ -59,12 +59,15 @@ describe('create(options, callback)', function() {
         }).not.toThrow();
     });
 
-    it('should try to create local project', function() {
+    it('should try to create local project', function(done) {
         create(options, function(e) {});
-        expect(create.local).toHaveBeenCalledWith(
-            { path: options.path },
-            jasmine.any(Function)
-        );
+        process.nextTick(function() {
+            expect(create.local).toHaveBeenCalledWith(
+                { path: options.path },
+                jasmine.any(Function)
+            );
+            done();
+        });
     });
 
     describe('successfully created local project', function() {
@@ -74,12 +77,15 @@ describe('create(options, callback)', function() {
             });
         });
 
-        it('should try to create remote project', function() {
+        it('should try to create remote project', function(done) {
             create(options, function(e) {});
-            expect(create.remote).toHaveBeenCalledWith(
-                { name: options.name, path: options.path, api: jasmine.any(Object) },
-                jasmine.any(Function)
-            );
+            process.nextTick(function() {
+                expect(create.remote).toHaveBeenCalledWith(
+                    { name: options.name, path: options.path, api: jasmine.any(Object) },
+                    jasmine.any(Function)
+                );
+                done();
+            });
         });
 
         describe('successfully created remote project', function() {
@@ -95,6 +101,13 @@ describe('create(options, callback)', function() {
                     done();
                 });
             });
+
+            it('should trigger "complete" event', function(done) {
+                var emitter = create(options);
+                emitter.on('complete', function() {
+                    done();
+                });
+            });
         });
 
         describe('failed to create remote project', function() {
@@ -106,6 +119,14 @@ describe('create(options, callback)', function() {
 
             it('should trigger called with an error', function(done) {
                 create(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
+
+            it('should trigger "error" event', function(done) {
+                var emitter = create(options);
+                emitter.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -127,6 +148,14 @@ describe('create(options, callback)', function() {
 
         it('should trigger callback with an error', function(done) {
             create(options, function(e) {
+                expect(e).toEqual(jasmine.any(Error));
+                done();
+            });
+        });
+
+        it('should trigger "error" event', function(done) {
+            var emitter = create(options);
+            emitter.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
