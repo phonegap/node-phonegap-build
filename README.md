@@ -6,7 +6,7 @@
 
 ### CLI: Install
 
-    $ sudo npm install -g phonegap-build-cli
+    $ sudo npm install -g phonegap-build
 
 ### CLI: Usage
 
