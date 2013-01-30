@@ -5,7 +5,7 @@
 var create = require('../../lib/phonegap-build/create'),
     config = require('../../lib/common/config'),
     zip = require('../../lib/phonegap-build/create/zip'),
-    cordova = require('cordova'),
+    shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
     options;
@@ -171,7 +171,9 @@ describe('create.local(options, callback)', function() {
     beforeEach(function() {
         options = { path: '/some/path/to/my/app' };
         spyOn(fs, 'exists');
-        spyOn(cordova, 'create');
+        spyOn(shell, 'cp');
+        spyOn(shell, 'mkdir');
+        spyOn(shell, 'mv');
     });
 
     it('should require options', function() {
@@ -206,14 +208,15 @@ describe('create.local(options, callback)', function() {
             });
         });
 
-        it('should have cordova create a project', function() {
+        it('should create project from path', function() {
             create.local(options, function(e) {});
-            expect(cordova.create).toHaveBeenCalledWith(options.path);
+            expect(shell.cp).toHaveBeenCalled();
+            expect(shell.cp.mostRecentCall.args[0]).toEqual('-R');
         });
 
         describe('successful create', function() {
             beforeEach(function() {
-                cordova.create.andCallFake(function(path) {});
+                spyOn(shell, 'error').andReturn(null);
             });
 
             it('should trigger callback without an error', function(done) {
@@ -226,9 +229,7 @@ describe('create.local(options, callback)', function() {
 
         describe('failed create', function() {
             beforeEach(function() {
-                cordova.create.andCallFake(function(path) {
-                    throw new Error('cordova create is a sync call');
-                });
+                spyOn(shell, 'error').andReturn('no write access to path');
             });
 
             it('should not throw an error', function() {

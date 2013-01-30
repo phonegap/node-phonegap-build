@@ -29,7 +29,6 @@
     "dependencies": {
         "prompt": "0.2.x",
         "shelljs": "0.0.x",
-        "cordova": "0.1.x",
         "optimist": "0.3.x",
         "phonegap-build-api": ">=0.3.x"
     },
