@@ -4,7 +4,8 @@
 
 var zip = require('../../lib/phonegap-build/create/zip'),
     shell = require('shelljs'),
-    fs = require('fs');
+    fs = require('fs'),
+    p = require('path');
 
 /*
  * Zip specification.
@@ -78,7 +79,7 @@ describe('zip', function() {
 
                 it('should trigger callback with a zip path', function(done) {
                     zip.compress('./www', './build', function(e, path) {
-                        expect(path).toEqual('build/www.zip');
+                        expect(path).toEqual(p.join('build', 'www.zip'));
                         done();
                     });
                 });

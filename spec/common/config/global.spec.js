@@ -29,7 +29,7 @@ describe('config.global', function() {
             spyOn(fs, 'exists');
             config.global.load(function(e, data) {});
             expect(fs.exists).toHaveBeenCalled();
-            expect(fs.exists.mostRecentCall.args[0]).toMatch(
+            expect(fs.exists.mostRecentCall.args[0]).toEqual(
                 path.join(config.global.path, 'config.json')
             );
         });
@@ -45,7 +45,7 @@ describe('config.global', function() {
                 spyOn(fs, 'readFile');
                 config.global.load(function(e, data) {});
                 expect(fs.readFile).toHaveBeenCalled();
-                expect(fs.readFile.mostRecentCall.args[0]).toMatch(
+                expect(fs.readFile.mostRecentCall.args[0]).toEqual(
                     path.join(config.global.path, 'config.json')
                 );
             });
