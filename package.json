@@ -33,7 +33,7 @@
         "phonegap-build-api": ">=0.3.x"
     },
     "devDependencies": {
-        "jasmine-node": "1.x.x"
+        "jasmine-node": "1.1.x"
     },
     "optionalDependencies": {
     },
