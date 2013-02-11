@@ -18,10 +18,8 @@ describe('create(options, callback)', function() {
     beforeEach(function() {
         options = {
             api: {},
-            path: '/some/path/to/app/www',
-            name: 'My App'
+            path: '/some/path/to/app/www'
         };
-        spyOn(create, 'remote');
         spyOn(create, 'local');
     });
 
@@ -42,13 +40,6 @@ describe('create(options, callback)', function() {
     it('should require options.path', function() {
         expect(function() {
             options.path = undefined;
-            create(options, function(e) {});
-        }).toThrow();
-    });
-
-    it('should require options.name', function() {
-        expect(function() {
-            options.name = undefined;
             create(options, function(e) {});
         }).toThrow();
     });
@@ -77,59 +68,17 @@ describe('create(options, callback)', function() {
             });
         });
 
-        it('should try to create remote project', function(done) {
-            create(options, function(e) {});
-            process.nextTick(function() {
-                expect(create.remote).toHaveBeenCalledWith(
-                    { name: options.name, path: options.path, api: jasmine.any(Object) },
-                    jasmine.any(Function)
-                );
+        it('should trigger called without an error', function(done) {
+            create(options, function(e) {
+                expect(e).toBeNull();
                 done();
             });
         });
 
-        describe('successfully created remote project', function() {
-            beforeEach(function() {
-                create.remote.andCallFake(function(options, callback) {
-                    callback(null);
-                });
-            });
-
-            it('should trigger called without an error', function(done) {
-                create(options, function(e) {
-                    expect(e).toBeNull();
-                    done();
-                });
-            });
-
-            it('should trigger "complete" event', function(done) {
-                var emitter = create(options);
-                emitter.on('complete', function() {
-                    done();
-                });
-            });
-        });
-
-        describe('failed to create remote project', function() {
-            beforeEach(function() {
-                create.remote.andCallFake(function(options, callback) {
-                    callback(new Error('server did not respond'));
-                });
-            });
-
-            it('should trigger called with an error', function(done) {
-                create(options, function(e) {
-                    expect(e).toEqual(jasmine.any(Error));
-                    done();
-                });
-            });
-
-            it('should trigger "error" event', function(done) {
-                var emitter = create(options);
-                emitter.on('error', function(e) {
-                    expect(e).toEqual(jasmine.any(Error));
-                    done();
-                });
+        it('should trigger "complete" event', function(done) {
+            var emitter = create(options);
+            emitter.on('complete', function() {
+                done();
             });
         });
     });
@@ -139,11 +88,6 @@ describe('create(options, callback)', function() {
             create.local.andCallFake(function(options, callback) {
                 callback(new Error('app path already exists'));
             });
-        });
-
-        it('should not create remote project', function() {
-            create(options, function(e) {});
-            expect(create.remote).not.toHaveBeenCalled();
         });
 
         it('should trigger callback with an error', function(done) {
@@ -267,6 +211,7 @@ describe('create.local(options, callback)', function() {
  * Remote create specification.
  */
 
+/*
 describe('create.remote(options, callback)', function() {
     beforeEach(function() {
         options = {
@@ -467,3 +412,4 @@ describe('create.remote(options, callback)', function() {
         });
     });
 });
+*/
