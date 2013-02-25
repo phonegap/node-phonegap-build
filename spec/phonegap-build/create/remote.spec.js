@@ -14,7 +14,7 @@ var create = require('../../../lib/phonegap-build/create/remote'),
  * Remote create specification.
  */
 
-describe('create(options, callback)', function() {
+describe('create.remote(options, callback)', function() {
     beforeEach(function() {
         options = {
             name: 'My App',
@@ -31,6 +31,7 @@ describe('create(options, callback)', function() {
         spyOn(config.local, 'load');
         spyOn(config.local, 'save');
         spyOn(process, 'chdir');
+        spyOn(fs, 'readFile');
     });
 
     it('should require parameter options', function() {
@@ -53,80 +54,114 @@ describe('create(options, callback)', function() {
         }).toThrow();
     });
 
-    it('should try to zip application', function() {
+    it('should try to read app name', function() {
         create(options, function(e) {});
-        expect(zip.compress).toHaveBeenCalledWith(
-            path.join(process.cwd(), 'www'),
-            path.join(process.cwd(), 'build'),
-            jasmine.any(Function)
-        );
+        expect(fs.readFile).toHaveBeenCalled();
+        expect(fs.readFile.mostRecentCall.args[0]).toMatch(/config\.xml$/);
     });
 
-    describe('successful zip', function() {
+    describe('successfully read app name', function() {
         beforeEach(function() {
-            zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
-                callback(null, '/path/to/build/www.zip');
+            fs.readFile.andCallFake(function(path, encoding, callback) {
+                callback(null, '<widget><name>My App</name></widget>');
             });
         });
 
-        it('should try to make a post request', function() {
+        it('should try to zip application', function() {
             create(options, function(e) {});
-            expect(options.api.post).toHaveBeenCalledWith(
-                jasmine.any(String),
-                jasmine.any(Object),
+            expect(zip.compress).toHaveBeenCalledWith(
+                path.join(process.cwd(), 'www'),
+                path.join(process.cwd(), 'build'),
                 jasmine.any(Function)
             );
         });
 
-        describe('successful post request', function() {
+        describe('successful zip', function() {
             beforeEach(function() {
-                options.api.post.andCallFake(function(path, headers, callback) {
-                    callback(null, { id: '10' });
+                zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
+                    callback(null, '/path/to/build/www.zip');
                 });
             });
 
-            it('should delete zip archive', function() {
+            it('should try to make a post request', function() {
                 create(options, function(e) {});
-                expect(zip.cleanup).toHaveBeenCalled();
+                expect(options.api.post).toHaveBeenCalledWith(
+                    jasmine.any(String),
+                    jasmine.any(Object),
+                    jasmine.any(Function)
+                );
             });
 
-            it('should try to load config.json', function() {
-                create(options, function(e) {});
-                expect(config.local.load).toHaveBeenCalled();
-            });
-
-            describe('successful load config.json', function() {
+            describe('successful post request', function() {
                 beforeEach(function() {
-                    config.local.load.andCallFake(function(callback) {
-                        callback(null, {});
+                    options.api.post.andCallFake(function(path, headers, callback) {
+                        callback(null, { id: '10' });
                     });
                 });
 
-                it('should try to save config.json', function() {
+                it('should delete zip archive', function() {
                     create(options, function(e) {});
-                    expect(config.local.save).toHaveBeenCalled();
+                    expect(zip.cleanup).toHaveBeenCalled();
                 });
 
-                describe('successful save config.json', function() {
+                it('should try to load config.json', function() {
+                    create(options, function(e) {});
+                    expect(config.local.load).toHaveBeenCalled();
+                });
+
+                describe('successful load config.json', function() {
                     beforeEach(function() {
-                        config.local.save.andCallFake(function(data, callback) {
-                            callback(null);
+                        config.local.load.andCallFake(function(callback) {
+                            callback(null, {});
                         });
                     });
 
-                    it('should trigger callback without an error', function(done) {
-                        create(options, function(e) {
-                            expect(e).toBeNull();
-                            done();
+                    it('should try to save config.json', function() {
+                        create(options, function(e) {});
+                        expect(config.local.save).toHaveBeenCalled();
+                    });
+
+                    describe('successful save config.json', function() {
+                        beforeEach(function() {
+                            config.local.save.andCallFake(function(data, callback) {
+                                callback(null);
+                            });
+                        });
+
+                        it('should trigger callback without an error', function(done) {
+                            create(options, function(e) {
+                                expect(e).toBeNull();
+                                done();
+                            });
+                        });
+                    });
+
+                    describe('failed save config.json', function() {
+                        beforeEach(function() {
+                            config.local.save.andCallFake(function(data, callback) {
+                                callback(new Error('could not write config.json'));
+                            });
+                        });
+
+                        it('should trigger callback with an error', function(done) {
+                            create(options, function(e) {
+                                expect(e).toEqual(jasmine.any(Error));
+                                done();
+                            });
                         });
                     });
                 });
 
-                describe('failed save config.json', function() {
+                describe('failed to load config.json', function() {
                     beforeEach(function() {
-                        config.local.save.andCallFake(function(data, callback) {
-                            callback(new Error('could not write config.json'));
+                        config.local.load.andCallFake(function(callback) {
+                            callback(new Error('could not read config.json'));
                         });
+                    });
+
+                    it('should not call config.save', function() {
+                        create(options, function(e) {});
+                        expect(config.local.save).not.toHaveBeenCalled();
                     });
 
                     it('should trigger callback with an error', function(done) {
@@ -138,16 +173,16 @@ describe('create(options, callback)', function() {
                 });
             });
 
-            describe('failed to load config.json', function() {
+            describe('failed post request', function() {
                 beforeEach(function() {
-                    config.local.load.andCallFake(function(callback) {
-                        callback(new Error('could not read config.json'));
+                    options.api.post.andCallFake(function(path, headers, callback) {
+                        callback(new Error('PhoneGap Build did not respond'));
                     });
                 });
 
-                it('should not call config.save', function() {
+                it('should delete zip archive', function() {
                     create(options, function(e) {});
-                    expect(config.local.save).not.toHaveBeenCalled();
+                    expect(zip.cleanup).toHaveBeenCalled();
                 });
 
                 it('should trigger callback with an error', function(done) {
@@ -159,16 +194,16 @@ describe('create(options, callback)', function() {
             });
         });
 
-        describe('failed post request', function() {
+        describe('failed zip', function() {
             beforeEach(function() {
-                options.api.post.andCallFake(function(path, headers, callback) {
-                    callback(new Error('PhoneGap Build did not respond'));
+                zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
+                    callback(new Error('Write access denied'));
                 });
             });
 
-            it('should delete zip archive', function() {
+            it('should not make a post request', function() {
                 create(options, function(e) {});
-                expect(zip.cleanup).toHaveBeenCalled();
+                expect(options.api.post).not.toHaveBeenCalled();
             });
 
             it('should trigger callback with an error', function(done) {
@@ -180,22 +215,34 @@ describe('create(options, callback)', function() {
         });
     });
 
-    describe('failed zip', function() {
-        beforeEach(function() {
-            zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
-                callback(new Error('Write access denied'));
+    describe('failure reading app name', function() {
+        describe('missing config.xml', function() {
+            beforeEach(function() {
+                fs.readFile.andCallFake(function(path, encoding, callback) {
+                    callback(new Error('could not open file'));
+                });
+            });
+
+            it('should trigger callback with an error', function(done) {
+                create(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
             });
         });
 
-        it('should not make a post request', function() {
-            create(options, function(e) {});
-            expect(options.api.post).not.toHaveBeenCalled();
-        });
+        describe('missing <name> element', function() {
+            beforeEach(function() {
+                fs.readFile.andCallFake(function(path, encoding, callback) {
+                    callback(null, '<widget></widget>');
+                });
+            });
 
-        it('should trigger callback with an error', function(done) {
-            create(options, function(e) {
-                expect(e).toEqual(jasmine.any(Error));
-                done();
+            it('should trigger callback with an error', function(done) {
+                create(options, function(e) {
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
             });
         });
     });
