@@ -52,7 +52,7 @@ describe('build(options, callback)', function() {
     describe('when app exists', function() {
         beforeEach(function() {
             config.local.load.andCallFake(function(callback) {
-                callback(null, { 'phonegap-build': { 'id': 12345 } });
+                callback(null, { 'phonegap': { 'id': 12345 } });
             });
         });
 

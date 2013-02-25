@@ -73,7 +73,7 @@ describe('build(options, callback)', function() {
 
             config.local.load.andCallFake(function(callback) {
                 callback(null, {
-                    'phonegap-build': {
+                    'phonegap': {
                         'id': 12345
                     }
                 });
