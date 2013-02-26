@@ -124,7 +124,7 @@ describe('build(options, callback)', function() {
             describe('on build error', function() {
                 beforeEach(function() {
                     build.waitForComplete.andCallFake(function(options, callback) {
-                        callback(new Error('some message'));
+                        callback(new Error('server did not respond'));
                     });
                 });
 

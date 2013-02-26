@@ -30,6 +30,7 @@ describe('create.remote(options, callback)', function() {
         spyOn(zip, 'cleanup');
         spyOn(config.local, 'load');
         spyOn(config.local, 'save');
+        spyOn(create, 'waitForComplete');
         spyOn(process, 'chdir');
         spyOn(fs, 'readFile');
     });
@@ -128,10 +129,38 @@ describe('create.remote(options, callback)', function() {
                             });
                         });
 
-                        it('should trigger callback without an error', function(done) {
-                            create(options, function(e) {
-                                expect(e).toBeNull();
-                                done();
+                        it('should wait for the platform build to complete', function() {
+                            create(options, function(e) {});
+                            expect(create.waitForComplete).toHaveBeenCalled();
+                        });
+
+                        describe('on build complete', function() {
+                            beforeEach(function() {
+                                create.waitForComplete.andCallFake(function(options, callback) {
+                                    callback(null);
+                                });
+                            });
+
+                            it('should trigger callback without an error', function(done) {
+                                create(options, function(e) {
+                                    expect(e).toBeNull();
+                                    done();
+                                });
+                            });
+                        });
+
+                        describe('on build error', function() {
+                            beforeEach(function() {
+                                create.waitForComplete.andCallFake(function(options, callback) {
+                                    callback(new Error('server did not respond'));
+                                });
+                            });
+
+                            it('should trigger callback without an error', function(done) {
+                                create(options, function(e) {
+                                    expect(e).toEqual(jasmine.any(Error));
+                                    done();
+                                });
                             });
                         });
                     });
@@ -245,5 +274,63 @@ describe('create.remote(options, callback)', function() {
                 });
             });
         });
+    });
+});
+
+/*
+ * Specification for create.waitForComplete(options, callback);
+ */
+
+describe('create.waitForComplete', function() {
+    beforeEach(function() {
+        options = {
+            api: {
+                get: function() {
+                    // spy stub
+                }
+            },
+            id: 12345,
+            platforms: ['android']
+        };
+        spyOn(options.api, 'get');
+    });
+
+    it('should require options parameter', function() {
+        expect(function() {
+            options = undefined;
+            create.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.api parameter', function() {
+        expect(function() {
+            options.api = undefined;
+            create.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.id parameter', function() {
+        expect(function() {
+            options.id = undefined;
+            create.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.platforms parameter', function() {
+        expect(function() {
+            options.platforms = undefined;
+            create.waitForComplete(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require options.platforms parameter', function() {
+        expect(function() {
+            create.waitForComplete(options);
+        }).toThrow();
+    });
+
+    it('should try to get application status', function() {
+        create.waitForComplete(options, function(e) {});
+        expect(options.api.get).toHaveBeenCalled();
     });
 });
