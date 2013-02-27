@@ -3,7 +3,8 @@
  */
 
 var CLI = require('../../lib/cli'),
-    cli;
+    cli,
+    emitterSpy;
 
 /*
  * Command specification for build.
@@ -12,8 +13,13 @@ var CLI = require('../../lib/cli'),
 describe('$ phonegap-build build <platform>', function() {
     beforeEach(function() {
         cli = new CLI();
+        emitterSpy = {
+            on: function() {
+                // spy stub
+            }
+        };
         spyOn(process.stdout, 'write');
-        spyOn(cli.phonegapbuild, 'build');
+        spyOn(cli.phonegapbuild, 'build').andReturn(emitterSpy);
     });
 
     describe('$ phonegap-build help', function() {
@@ -61,6 +67,7 @@ describe('$ phonegap-build build <platform>', function() {
                 beforeEach(function() {
                     cli.phonegapbuild.build.andCallFake(function(opts, callback) {
                         callback(null);
+                        return emitterSpy;
                     });
                 });
 
@@ -76,6 +83,7 @@ describe('$ phonegap-build build <platform>', function() {
                 beforeEach(function() {
                     cli.phonegapbuild.build.andCallFake(function(opts, callback) {
                         callback(new Error('Could not connect to PhoneGap Build.'));
+                        return emitterSpy;
                     });
                 });
 

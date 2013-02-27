@@ -20,6 +20,11 @@ describe('build(options, callback)', function() {
                     // spy stub
                 }
             },
+            emitter: {
+                emit: function() {
+                    // spy stub
+                }
+            },
             platforms: ['android']
         };
         spyOn(zip, 'compress');
@@ -40,6 +45,13 @@ describe('build(options, callback)', function() {
         expect(function() {
             options.api = undefined;
             build(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require parameter options.emitter', function() {
+        expect(function() {
+            options.emitter = undefined;
+            create(options, function(e) {});
         }).toThrow();
     });
 

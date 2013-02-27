@@ -19,6 +19,11 @@ describe('create.remote(options, callback)', function() {
         options = {
             name: 'My App',
             path: 'path/to/app.zip',
+            emitter: {
+                emit: function() {
+                    // spy stub
+                }
+            },
             api: {
                 post: function() {
                     // spy stub
@@ -45,6 +50,13 @@ describe('create.remote(options, callback)', function() {
     it('should require parameter options.api', function() {
         expect(function() {
             options.api = undefined;
+            create(options, function(e) {});
+        }).toThrow();
+    });
+
+    it('should require parameter options.emitter', function() {
+        expect(function() {
+            options.emitter = undefined;
             create(options, function(e) {});
         }).toThrow();
     });
