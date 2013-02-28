@@ -8,6 +8,7 @@ var create = require('../../../lib/phonegap-build/create/remote'),
     shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
+    appData,
     options;
 
 /*
@@ -30,6 +31,13 @@ describe('create.remote(options, callback)', function() {
                 }
             }
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
         spyOn(options.api, 'post');
         spyOn(zip, 'compress');
         spyOn(zip, 'cleanup');
@@ -43,21 +51,21 @@ describe('create.remote(options, callback)', function() {
     it('should require parameter options', function() {
         expect(function() {
             options = undefined;
-            create(options, function(e) {});
+            create(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require parameter options.api', function() {
         expect(function() {
             options.api = undefined;
-            create(options, function(e) {});
+            create(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require parameter options.emitter', function() {
         expect(function() {
             options.emitter = undefined;
-            create(options, function(e) {});
+            create(options, function(e, data) {});
         }).toThrow();
     });
 
@@ -68,7 +76,7 @@ describe('create.remote(options, callback)', function() {
     });
 
     it('should try to read app name', function() {
-        create(options, function(e) {});
+        create(options, function(e, data) {});
         expect(fs.readFile).toHaveBeenCalled();
         expect(fs.readFile.mostRecentCall.args[0]).toMatch(/config\.xml$/);
     });
@@ -81,7 +89,7 @@ describe('create.remote(options, callback)', function() {
         });
 
         it('should try to zip application', function() {
-            create(options, function(e) {});
+            create(options, function(e, data) {});
             expect(zip.compress).toHaveBeenCalledWith(
                 path.join(process.cwd(), 'www'),
                 path.join(process.cwd(), 'build'),
@@ -97,7 +105,7 @@ describe('create.remote(options, callback)', function() {
             });
 
             it('should try to make a post request', function() {
-                create(options, function(e) {});
+                create(options, function(e, data) {});
                 expect(options.api.post).toHaveBeenCalledWith(
                     jasmine.any(String),
                     jasmine.any(Object),
@@ -113,12 +121,12 @@ describe('create.remote(options, callback)', function() {
                 });
 
                 it('should delete zip archive', function() {
-                    create(options, function(e) {});
+                    create(options, function(e, data) {});
                     expect(zip.cleanup).toHaveBeenCalled();
                 });
 
                 it('should try to load config.json', function() {
-                    create(options, function(e) {});
+                    create(options, function(e, data) {});
                     expect(config.local.load).toHaveBeenCalled();
                 });
 
@@ -130,7 +138,7 @@ describe('create.remote(options, callback)', function() {
                     });
 
                     it('should try to save config.json', function() {
-                        create(options, function(e) {});
+                        create(options, function(e, data) {});
                         expect(config.local.save).toHaveBeenCalled();
                     });
 
@@ -142,21 +150,27 @@ describe('create.remote(options, callback)', function() {
                         });
 
                         it('should wait for the platform build to complete', function() {
-                            create(options, function(e) {});
+                            create(options, function(e, data) {});
                             expect(create.waitForComplete).toHaveBeenCalled();
                         });
 
                         describe('on build complete', function() {
                             beforeEach(function() {
                                 create.waitForComplete.andCallFake(function(options, callback) {
-                                    callback(null);
+                                    callback(null, appData);
                                 });
                             });
 
                             it('should trigger callback without an error', function(done) {
-                                create(options, function(e) {
+                                create(options, function(e, data) {
                                     expect(e).toBeNull();
                                     done();
+                                });
+                            });
+
+                            it('should trigger callback with app data', function() {
+                                create(options, function(e, data) {
+                                    expect(data).toEqual(appData);
                                 });
                             });
                         });
@@ -169,7 +183,7 @@ describe('create.remote(options, callback)', function() {
                             });
 
                             it('should trigger callback without an error', function(done) {
-                                create(options, function(e) {
+                                create(options, function(e, data) {
                                     expect(e).toEqual(jasmine.any(Error));
                                     done();
                                 });
@@ -185,7 +199,7 @@ describe('create.remote(options, callback)', function() {
                         });
 
                         it('should trigger callback with an error', function(done) {
-                            create(options, function(e) {
+                            create(options, function(e, data) {
                                 expect(e).toEqual(jasmine.any(Error));
                                 done();
                             });
@@ -201,12 +215,12 @@ describe('create.remote(options, callback)', function() {
                     });
 
                     it('should not call config.save', function() {
-                        create(options, function(e) {});
+                        create(options, function(e, data) {});
                         expect(config.local.save).not.toHaveBeenCalled();
                     });
 
                     it('should trigger callback with an error', function(done) {
-                        create(options, function(e) {
+                        create(options, function(e, data) {
                             expect(e).toEqual(jasmine.any(Error));
                             done();
                         });
@@ -222,12 +236,12 @@ describe('create.remote(options, callback)', function() {
                 });
 
                 it('should delete zip archive', function() {
-                    create(options, function(e) {});
+                    create(options, function(e, data) {});
                     expect(zip.cleanup).toHaveBeenCalled();
                 });
 
                 it('should trigger callback with an error', function(done) {
-                    create(options, function(e) {
+                    create(options, function(e, data) {
                         expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
@@ -243,12 +257,12 @@ describe('create.remote(options, callback)', function() {
             });
 
             it('should not make a post request', function() {
-                create(options, function(e) {});
+                create(options, function(e, data) {});
                 expect(options.api.post).not.toHaveBeenCalled();
             });
 
             it('should trigger callback with an error', function(done) {
-                create(options, function(e) {
+                create(options, function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -265,7 +279,7 @@ describe('create.remote(options, callback)', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                create(options, function(e) {
+                create(options, function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -280,7 +294,7 @@ describe('create.remote(options, callback)', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                create(options, function(e) {
+                create(options, function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -304,34 +318,41 @@ describe('create.waitForComplete', function() {
             id: 12345,
             platforms: ['android']
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
         spyOn(options.api, 'get');
     });
 
     it('should require options parameter', function() {
         expect(function() {
             options = undefined;
-            create.waitForComplete(options, function(e) {});
+            create.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.api parameter', function() {
         expect(function() {
             options.api = undefined;
-            create.waitForComplete(options, function(e) {});
+            create.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.id parameter', function() {
         expect(function() {
             options.id = undefined;
-            create.waitForComplete(options, function(e) {});
+            create.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.platforms parameter', function() {
         expect(function() {
             options.platforms = undefined;
-            create.waitForComplete(options, function(e) {});
+            create.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
@@ -342,7 +363,7 @@ describe('create.waitForComplete', function() {
     });
 
     it('should try to get application status', function() {
-        create.waitForComplete(options, function(e) {});
+        create.waitForComplete(options, function(e, data) {});
         expect(options.api.get).toHaveBeenCalled();
     });
 });

@@ -4,6 +4,7 @@
 
 var build = require('../../lib/phonegap-build/build'),
     config = require('../../lib/common/config'),
+    appData,
     options;
 
 /*
@@ -17,6 +18,13 @@ describe('build(options, callback)', function() {
             },
             platforms: ['android']
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
         spyOn(build, 'create');
         spyOn(build, 'build');
         spyOn(config.local, 'load');
@@ -25,21 +33,21 @@ describe('build(options, callback)', function() {
     it('should require options', function() {
         expect(function() {
             options = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.api', function() {
         expect(function() {
             options.api = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.platforms', function() {
         expect(function() {
             options.platforms = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
@@ -57,7 +65,7 @@ describe('build(options, callback)', function() {
         });
 
         it('should try to build the app', function(done) {
-            build(options, function(e) {});
+            build(options, function(e, data) {});
             process.nextTick(function() {
                 expect(build.build).toHaveBeenCalled();
                 done();
@@ -67,20 +75,30 @@ describe('build(options, callback)', function() {
         describe('successfully built app', function() {
             beforeEach(function() {
                 build.build.andCallFake(function(options, callback) {
-                    callback(null);
+                    callback(null, appData);
                 });
             });
 
             it('should trigger callback without an error', function(done) {
-                build(options, function(e) {
+                build(options, function(e, data) {
                     expect(e).toBeNull();
+                    done();
+                });
+            });
+
+            it('should trigger callback with data', function(done) {
+                build(options, function(e, data) {
+                    expect(data).toEqual(appData);
                     done();
                 });
             });
 
             it('should trigger "complete" event', function(done) {
                 var b = build(options);
-                b.on('complete', done);
+                b.on('complete', function(data) {
+                    expect(data).toEqual(jasmine.any(Object));
+                    done();
+                });
             });
         });
 
@@ -92,7 +110,7 @@ describe('build(options, callback)', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                build(options, function(e) {
+                build(options, function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -100,7 +118,7 @@ describe('build(options, callback)', function() {
 
             it('should trigger "error" event', function(done) {
                 var b = build(options);
-                b.on('error', function(e) {
+                b.on('error', function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -116,7 +134,7 @@ describe('build(options, callback)', function() {
         });
 
         it('should try to create the app', function(done) {
-            build(options, function(e) {});
+            build(options, function(e, data) {});
             process.nextTick(function() {
                 expect(build.create).toHaveBeenCalled();
                 done();
@@ -126,20 +144,30 @@ describe('build(options, callback)', function() {
         describe('successfully created app', function() {
             beforeEach(function() {
                 build.create.andCallFake(function(options, callback) {
-                    callback(null);
+                    callback(null, appData);
                 });
             });
 
             it('should trigger callback without an error', function(done) {
-                build(options, function(e) {
+                build(options, function(e, data) {
                     expect(e).toBeNull();
+                    done();
+                });
+            });
+
+            it('should trigger callback with data', function(done) {
+                build(options, function(e, data) {
+                    expect(data).toEqual(appData);
                     done();
                 });
             });
 
             it('should trigger "complete" event', function(done) {
                 var b = build(options);
-                b.on('complete', done);
+                b.on('complete', function(data) {
+                    expect(data).toEqual(jasmine.any(Object));
+                    done();
+                });
             });
         });
 
@@ -151,7 +179,7 @@ describe('build(options, callback)', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                build(options, function(e) {
+                build(options, function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });

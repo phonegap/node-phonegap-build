@@ -2,8 +2,10 @@
  * Module dependencies.
  */
 
-var CLI = require('../../lib/cli'),
+var qrcode = require('qrcode-terminal'),
+    CLI = require('../../lib/cli'),
     cli,
+    appData,
     emitterSpy;
 
 /*
@@ -18,6 +20,14 @@ describe('$ phonegap-build build <platform>', function() {
                 // spy stub
             }
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
+        spyOn(qrcode, 'render');
         spyOn(process.stdout, 'write');
         spyOn(cli.phonegapbuild, 'build').andReturn(emitterSpy);
     });
@@ -66,14 +76,31 @@ describe('$ phonegap-build build <platform>', function() {
             describe('successful project build', function() {
                 beforeEach(function() {
                     cli.phonegapbuild.build.andCallFake(function(opts, callback) {
-                        callback(null);
+                        callback(null, appData);
                         return emitterSpy;
                     });
                 });
 
                 it('should call callback without an error', function(done) {
-                    cli.argv({ _: ['build', 'android'] }, function(e) {
+                    cli.argv({ _: ['build', 'android'] }, function(e, data) {
                         expect(e).toBeNull();
+                        done();
+                    });
+                });
+
+                it('should call callback with a data object', function(done) {
+                    cli.argv({ _: ['build', 'android'] }, function(e, data) {
+                        expect(data).toEqual(appData);
+                        done();
+                    });
+                });
+
+                it('should render the QRCode', function(done) {
+                    cli.argv({ _: ['build', 'android'] }, function(e, data) {
+                        expect(qrcode.render).toHaveBeenCalled();
+                        expect(qrcode.render.mostRecentCall.args[0]).toMatch(
+                            'https://build.phonegap.com' + data.download.android
+                        );
                         done();
                     });
                 });

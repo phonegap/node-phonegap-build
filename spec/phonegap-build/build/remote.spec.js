@@ -6,6 +6,7 @@ var build = require('../../../lib/phonegap-build/build/remote'),
     config = require('../../../lib/common/config'),
     zip = require('../../../lib/phonegap-build/create/zip'),
     path = require('path'),
+    appData,
     options;
 
 /*
@@ -27,6 +28,13 @@ describe('build(options, callback)', function() {
             },
             platforms: ['android']
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
         spyOn(zip, 'compress');
         spyOn(zip, 'cleanup');
         spyOn(options.api, 'put');
@@ -37,28 +45,28 @@ describe('build(options, callback)', function() {
     it('should require options', function() {
         expect(function() {
             options = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.api', function() {
         expect(function() {
             options.api = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require parameter options.emitter', function() {
         expect(function() {
             options.emitter = undefined;
-            create(options, function(e) {});
+            create(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.platforms', function() {
         expect(function() {
             options.platforms = undefined;
-            build(options, function(e) {});
+            build(options, function(e, data) {});
         }).toThrow();
     });
 
@@ -69,7 +77,7 @@ describe('build(options, callback)', function() {
     });
 
     it('should try to zip application', function() {
-        build(options, function(e) {});
+        build(options, function(e, data) {});
         expect(zip.compress).toHaveBeenCalledWith(
             path.join(process.cwd(), 'www'),   // path to zip
             path.join(process.cwd(), 'build'), // path to write zip file
@@ -93,7 +101,7 @@ describe('build(options, callback)', function() {
         });
 
         it('should try to upload app to phonegap build', function() {
-            build(options, function(e) {});
+            build(options, function(e, data) {});
             expect(options.api.put).toHaveBeenCalledWith(
                 '/apps/12345',
                 { form: { file: '/path/to/build/www.zip' } },
@@ -109,25 +117,32 @@ describe('build(options, callback)', function() {
             });
 
             it('should delete zip archive', function() {
-                build(options, function(e) {});
+                build(options, function(e, data) {});
                 expect(zip.cleanup).toHaveBeenCalled();
             });
 
             it('should wait for the platform build to complete', function() {
-                build(options, function(e) {});
+                build(options, function(e, data) {});
                 expect(build.waitForComplete).toHaveBeenCalled();
             });
 
             describe('on build complete', function() {
                 beforeEach(function() {
                     build.waitForComplete.andCallFake(function(options, callback) {
-                        callback(null);
+                        callback(null, appData);
                     });
                 });
 
                 it('should trigger callback without an error', function(done) {
-                    build(options, function(e) {
+                    build(options, function(e, data) {
                         expect(e).toBeNull();
+                        done();
+                    });
+                });
+
+                it('should trigger callback with app data', function(done) {
+                    build(options, function(e, data) {
+                        expect(data).toEqual(appData);
                         done();
                     });
                 });
@@ -186,34 +201,41 @@ describe('build.waitForComplete', function() {
             id: 12345,
             platforms: ['android']
         };
+        appData = {
+            id: '1234',
+            title: 'My App',
+            download: {
+                android: '/api/v1/apps/322388/android'
+            }
+        };
         spyOn(options.api, 'get');
     });
 
     it('should require options parameter', function() {
         expect(function() {
             options = undefined;
-            build.waitForComplete(options, function(e) {});
+            build.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.api parameter', function() {
         expect(function() {
             options.api = undefined;
-            build.waitForComplete(options, function(e) {});
+            build.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.id parameter', function() {
         expect(function() {
             options.id = undefined;
-            build.waitForComplete(options, function(e) {});
+            build.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
     it('should require options.platforms parameter', function() {
         expect(function() {
             options.platforms = undefined;
-            build.waitForComplete(options, function(e) {});
+            build.waitForComplete(options, function(e, data) {});
         }).toThrow();
     });
 
@@ -224,7 +246,7 @@ describe('build.waitForComplete', function() {
     });
 
     it('should try to get application status', function() {
-        build.waitForComplete(options, function(e) {});
+        build.waitForComplete(options, function(e, data) {});
         expect(options.api.get).toHaveBeenCalled();
     });
 });
