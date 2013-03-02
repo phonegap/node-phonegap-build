@@ -27,7 +27,7 @@ describe('$ phonegap-build build <platform>', function() {
                 android: '/api/v1/apps/322388/android'
             }
         };
-        spyOn(qrcode, 'render');
+        spyOn(qrcode, 'generate');
         spyOn(process.stdout, 'write');
         spyOn(cli.phonegapbuild, 'build').andReturn(emitterSpy);
     });
@@ -95,10 +95,10 @@ describe('$ phonegap-build build <platform>', function() {
                     });
                 });
 
-                it('should render the QRCode', function(done) {
+                it('should generate the QRCode', function(done) {
                     cli.argv({ _: ['build', 'android'] }, function(e, data) {
-                        expect(qrcode.render).toHaveBeenCalled();
-                        expect(qrcode.render.mostRecentCall.args[0]).toMatch(
+                        expect(qrcode.generate).toHaveBeenCalled();
+                        expect(qrcode.generate.mostRecentCall.args[0]).toMatch(
                             'https://build.phonegap.com' + data.download.android
                         );
                         done();
