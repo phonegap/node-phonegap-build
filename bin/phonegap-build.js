@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-var argv = require('optimist').argv;
-var CLI = require('../lib/cli');
+var CLI = require('../lib/cli'),
+    argv = require('optimist').argv;
 
 /*!
  * Run the command-line client.
