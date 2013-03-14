@@ -144,6 +144,12 @@ __Example:__
     build.build({ api: api, platforms: ['android'] }, function(e) {
     });
 
+## Related Projects
+
+- [phonegap-app-site](https://github.com/nitobi/phonegap-app-site)
+- [phonegap-app](https://github.com/mwbrooks/phonegap-app)
+- [phonegap-cli](https://github.com/mwbrooks/phonegap-cli)
+
 [travis-ci-img]: https://secure.travis-ci.org/mwbrooks/phonegap-build-cli.png
 [travis-ci-url]: http://travis-ci.org/mwbrooks/phonegap-build-cli
 
