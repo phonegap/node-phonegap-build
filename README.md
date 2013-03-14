@@ -103,9 +103,7 @@ inside the application's config file.
 __Options:__
 
   - `options` {Object} is data required to create an app
-    - `api` {Object} is a phonegap-build-rest API object.
     - `path` {String} is a directory path for the app.
-    - `name` {String} is the app name give to PhoneGap Build.
   - [`callback`] {Function} is triggered after creating the app.
     - `e` {Error} is null unless there is an error.
 
@@ -117,7 +115,7 @@ __Events:__
 
 __Example:__
 
-    build.create({ api: api, path: 'path/to/new/app', name: 'My App' }, function(e) {
+    build.create({ path: 'path/to/new/app' }, function(e) {
     });
 
 ### Build an App
