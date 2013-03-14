@@ -27,84 +27,55 @@ describe('$ phonegap-build create <path>', function() {
     });
 
     describe('$ phonegap-build create ./my-app', function() {
-        it('should try to login', function() {
-            spyOn(cli, 'login');
+        it('should try to create the project', function() {
             cli.argv({ _: ['create', './my-app'] });
-            expect(cli.login).toHaveBeenCalled();
+            expect(cli.phonegapbuild.create).toHaveBeenCalledWith(
+                {
+                    path: jasmine.any(String)
+                },
+                jasmine.any(Function)
+            );
         });
 
-        describe('successful login', function() {
+        describe('successful project creation', function() {
             beforeEach(function() {
-                spyOn(cli, 'login').andCallFake(function(argv, callback) {
-                    callback(null, {});
+                cli.phonegapbuild.create.andCallFake(function(opts, callback) {
+                    callback(null);
                 });
             });
 
-            it('should try to create the project', function() {
-                cli.argv({ _: ['create', './my-app'] });
-                expect(cli.phonegapbuild.create).toHaveBeenCalledWith(
-                    {
-                        api: jasmine.any(Object),
-                        path: jasmine.any(String)
-                    },
-                    jasmine.any(Function)
-                );
-            });
-
-            describe('successful project creation', function() {
-                beforeEach(function() {
-                    cli.phonegapbuild.create.andCallFake(function(opts, callback) {
-                        callback(null);
-                    });
-                });
-
-                it('should call callback without an error', function(done) {
-                    cli.argv({ _: ['create', './my-app'] }, function(e) {
-                        expect(e).toBeNull();
-                        done();
-                    });
-                });
-
-                it('should output a message about the created project', function() {
-                    // @TODO
+            it('should call callback without an error', function(done) {
+                cli.argv({ _: ['create', './my-app'] }, function(e) {
+                    expect(e).toBeNull();
+                    done();
                 });
             });
 
-            describe('failed project creation', function() {
-                beforeEach(function() {
-                    cli.phonegapbuild.create.andCallFake(function(opts, callback) {
-                        callback(new Error('Directory already exists'));
-                    });
-                });
-
-                it('should call callback with an error', function(done) {
-                    cli.argv({ _: ['create', './my-app'] }, function(e) {
-                        expect(e).toEqual(jasmine.any(Error));
-                        done();
-                    });
-                });
-
-                it('should output a message about the uncreated project', function() {
-                    // @TODO
+            it('should output a success message', function(done) {
+                cli.argv({ _: ['create', './my-app'] }, function(e) {
+                    expect(process.stdout.write).toHaveBeenCalled();
+                    done();
                 });
             });
         });
 
-        describe('failed login', function() {
+        describe('failed project creation', function() {
             beforeEach(function() {
-                spyOn(cli, 'login').andCallFake(function(argv, callback) {
-                    callback(new Error('Invalid account'));
+                cli.phonegapbuild.create.andCallFake(function(opts, callback) {
+                    callback(new Error('Directory already exists'));
                 });
-            });
-
-            it('should not create the project', function() {
-                cli.argv({ _: ['create', './my-app'] });
-                expect(cli.phonegapbuild.create).not.toHaveBeenCalled();
             });
 
             it('should call callback with an error', function(done) {
                 cli.argv({ _: ['create', './my-app'] }, function(e) {
-                    expect(e).not.toBeNull();
+                    expect(e).toEqual(jasmine.any(Error));
+                    done();
+                });
+            });
+
+            it('should output a message about the uncreated project', function(done) {
+                cli.argv({ _: ['create', './my-app'] }, function(e) {
+                    expect(process.stdout.write).toHaveBeenCalled();
                     done();
                 });
             });

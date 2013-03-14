@@ -30,13 +30,6 @@ describe('create(options, callback)', function() {
         }).toThrow();
     });
 
-    it('should require options.api', function() {
-        expect(function() {
-            options.api = undefined;
-            create(options, function(e) {});
-        }).toThrow();
-    });
-
     it('should require options.path', function() {
         expect(function() {
             options.path = undefined;
