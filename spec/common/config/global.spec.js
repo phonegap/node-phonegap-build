@@ -53,7 +53,7 @@ describe('config.global', function() {
             describe('successfully read config file', function() {
                 beforeEach(function() {
                     spyOn(fs, 'readFile').andCallFake(function(filepath, callback) {
-                        callback(null, '{ "token": "abc123" }');
+                        callback(null, '{ "phonegap" : { "token": "abc123" } }');
                     });
                 });
 
@@ -66,7 +66,7 @@ describe('config.global', function() {
 
                 it('should trigger callback with config file object', function(done) {
                     config.global.load(function(e, data) {
-                        expect(data).toEqual({ token: 'abc123' });
+                        expect(data).toEqual({ phonegap: { token: 'abc123' } });
                         done();
                     });
                 });
@@ -117,7 +117,7 @@ describe('config.global', function() {
 
                 it('should save an empty object', function() {
                     config.global.load(function(e, data) {});
-                    expect(config.global.save.mostRecentCall.args[0]).toEqual({});
+                    expect(config.global.save.mostRecentCall.args[0]).toEqual({ phonegap: {} });
                 });
 
                 it('should trigger callback without an error', function(done) {
@@ -129,7 +129,7 @@ describe('config.global', function() {
 
                 it('should trigger callback with config file object', function(done) {
                     config.global.load(function(e, data) {
-                        expect(data).toEqual({});
+                        expect(data).toEqual({ phonegap: {} });
                         done();
                     });
                 });
@@ -161,7 +161,7 @@ describe('config.global', function() {
 
     describe('config.global.save(data, callback)', function() {
         beforeEach(function() {
-            data = { token: 'abc123' };
+            data = { phonegap: { token: 'abc123' } };
             spyOn(shell, 'mkdir');
             spyOn(fs, 'writeFile');
         });
@@ -203,15 +203,15 @@ describe('config.global', function() {
             });
 
             it('should write the json data', function(done) {
-                config.global.save({ token: 'def456', username: 'link' }, function(e) {
+                config.global.save({ phonegap: { token: 'def456', username: 'link' } }, function(e) {
                     var data = JSON.parse(fs.writeFile.mostRecentCall.args[1]);
-                    expect(data).toEqual({ token: 'def456', username: 'link' });
+                    expect(data).toEqual({ phonegap: { token: 'def456', username: 'link' } });
                     done();
                 });
             });
 
             it('should trigger callback without an error', function(done) {
-                config.global.save({ token: 'def456' }, function(e) {
+                config.global.save({ phonegap: { token: 'def456' } }, function(e) {
                     expect(e).toBeNull();
                     done();
                 });
@@ -226,7 +226,7 @@ describe('config.global', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                config.global.save({ token: 'def456' }, function(e) {
+                config.global.save({ phonegap: { token: 'def456' } }, function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });

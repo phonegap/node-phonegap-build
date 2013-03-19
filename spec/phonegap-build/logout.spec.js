@@ -35,8 +35,10 @@ describe('logout(options, callback)', function() {
         beforeEach(function() {
             config.global.load.andCallFake(function(callback) {
                 callback(null, {
-                    email: 'zelda@nintendo.com',
-                    token: 'abc123'
+                    phonegap: {
+                        email: 'zelda@nintendo.com',
+                        token: 'abc123'
+                    }
                 });
             });
         });
@@ -59,7 +61,7 @@ describe('logout(options, callback)', function() {
             it('should delete the token key', function(done) {
                 logout({}, function(e) {});
                 process.nextTick(function() {
-                    expect(config.global.save.mostRecentCall.args[0].token).not.toBeDefined();
+                    expect(config.global.save.mostRecentCall.args[0].phonegap.token).not.toBeDefined();
                     done();
                 });
             });
@@ -68,7 +70,11 @@ describe('logout(options, callback)', function() {
                 logout({}, function(e) {});
                 process.nextTick(function() {
                     expect(config.global.save.mostRecentCall.args[0]).toEqual(
-                        { email: 'zelda@nintendo.com' }
+                        {
+                            phonegap: {
+                                email: 'zelda@nintendo.com'
+                            }
+                        }
                     );
                     done();
                 });
