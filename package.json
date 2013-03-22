@@ -42,7 +42,12 @@
     "contributors": [{
         "name": "Michael Brooks",
         "email": "michael@michaelbrooks.ca",
-        "url": "http://michaelbrooks.ca/"
+        "url": "http://michaelbrooks.ca"
+    },
+    {
+        "name": "Mathijs de Bruin",
+        "email": "mathijs@mathijsfietst.nl",
+        "url": "http://djangopeople.net/dokterbob"
     },
     {
         "name": "Benn Mapes",
