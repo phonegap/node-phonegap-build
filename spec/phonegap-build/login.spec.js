@@ -35,7 +35,12 @@ describe('login(options, callback)', function() {
     describe('successful token lookup', function() {
         beforeEach(function() {
             config.global.load.andCallFake(function(callback) {
-                callback(null, { 'email': 'zelda@hyrule.org', 'token': 'abc123' });
+                callback(null, {
+                    'phonegap': {
+                        'email': 'zelda@hyrule.org',
+                        'token': 'abc123'
+                    }
+                });
             });
         });
 
@@ -65,7 +70,7 @@ describe('login(options, callback)', function() {
     describe('failed token lookup', function() {
         beforeEach(function() {
             config.global.load.andCallFake(function(callback) {
-                callback(new Error('config not found at ~/.phonegap-build'));
+                callback(new Error('config not found at ~/.cordova'));
             });
         });
 
@@ -100,7 +105,7 @@ describe('login(options, callback)', function() {
         describe('successful authentication', function() {
             beforeEach(function() {
                 client.auth.andCallFake(function(options, callback) {
-                    callback(null, {});
+                    callback(null, { token: 'abc123' });
                 });
             });
 
@@ -108,6 +113,9 @@ describe('login(options, callback)', function() {
                 login(options, function(e, api) {});
                 process.nextTick(function() {
                     expect(config.global.save).toHaveBeenCalled();
+                    expect(
+                        config.global.save.mostRecentCall.args[0].phonegap.token
+                    ).toEqual('abc123');
                 });
             });
 
