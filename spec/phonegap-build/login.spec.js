@@ -37,7 +37,6 @@ describe('login(options, callback)', function() {
             config.global.load.andCallFake(function(callback) {
                 callback(null, {
                     'phonegap': {
-                        'email': 'zelda@hyrule.org',
                         'token': 'abc123'
                     }
                 });

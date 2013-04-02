@@ -36,7 +36,7 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: 'abc123' });
+                    callback(null, { phonegap: { token: 'abc123' } });
                 });
             });
 
@@ -98,7 +98,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
@@ -204,7 +204,7 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: 'abc123' });
+                    callback(null, { phonegap: { token: 'abc123' } });
                 });
             });
 
@@ -222,7 +222,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
@@ -263,7 +263,7 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: 'abc123' });
+                    callback(null, { phonegap: { token: 'abc123' } });
                 });
             });
 
@@ -281,7 +281,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
@@ -322,7 +322,7 @@ describe('$ phonegap-build login', function() {
             beforeEach(function() {
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: 'abc123' });
+                    callback(null, { phonegap: { token: 'abc123' } });
                 });
             });
 
@@ -340,7 +340,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
@@ -382,7 +382,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
@@ -424,7 +424,7 @@ describe('$ phonegap-build login', function() {
                 spyOn(prompt, 'get');
                 spyOn(cli.phonegapbuild, 'login');
                 config.global.load.andCallFake(function(callback) {
-                    callback(null, { token: undefined });
+                    callback(null, { phonegap: { token: undefined } });
                 });
             });
 
