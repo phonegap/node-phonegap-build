@@ -15,7 +15,7 @@
         "cordova"
     ],
     "preferGlobal": "true",
-    "main": "./lib/phonegap-build.js",
+    "main": "./lib/main.js",
     "bin": {
         "phonegap-build": "./bin/phonegap-build.js",
         "pgb": "./bin/phonegap-build.js"
