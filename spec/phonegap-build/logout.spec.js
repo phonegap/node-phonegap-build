@@ -29,6 +29,10 @@ describe('logout(options, callback)', function() {
         }).not.toThrow();
     });
 
+    it('should return itself', function() {
+        expect(phonegapbuild.logout({})).toEqual(phonegapbuild);
+    });
+
     it('should try to load the config', function(done) {
         phonegapbuild.logout({}, function(e) {});
         process.nextTick(function() {
@@ -92,13 +96,6 @@ describe('logout(options, callback)', function() {
                     done();
                 });
             });
-
-            it('should trigger "complete" event', function(done) {
-                var emitter = phonegapbuild.logout({});
-                emitter.on('complete', function() {
-                    done();
-                });
-            });
         });
 
         describe('failed to save config', function() {
@@ -116,11 +113,11 @@ describe('logout(options, callback)', function() {
             });
 
             it('should trigger "error" event', function(done) {
-                var emitter = phonegapbuild.logout({});
-                emitter.on('error', function(e) {
+                phonegapbuild.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
+                phonegapbuild.logout({});
             });
         });
     });
@@ -140,11 +137,11 @@ describe('logout(options, callback)', function() {
         });
 
         it('should trigger "error" event', function(done) {
-            var emitter = phonegapbuild.logout({});
-            emitter.on('error', function(e) {
+            phonegapbuild.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
+            phonegapbuild.logout({});
         });
     });
 });

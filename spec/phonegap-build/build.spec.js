@@ -59,6 +59,10 @@ describe('phonegapbuild.build(options, [callback])', function() {
         }).not.toThrow();
     });
 
+    it('should return itself', function() {
+        expect(phonegapbuild.build(options)).toEqual(phonegapbuild);
+    });
+
     describe('when app exists', function() {
         beforeEach(function() {
             config.local.load.andCallFake(function(callback) {
@@ -94,20 +98,12 @@ describe('phonegapbuild.build(options, [callback])', function() {
                     done();
                 });
             });
-
-            it('should trigger "complete" event', function(done) {
-                var b = phonegapbuild.build(options);
-                b.on('complete', function(data) {
-                    expect(data).toEqual(jasmine.any(Object));
-                    done();
-                });
-            });
         });
 
         describe('failed to build app', function() {
             beforeEach(function() {
                 phonegapbuild.build.build.andCallFake(function(options, callback) {
-                    callback(new Error('Server did not respond'));
+                    callback(new Error('server did not respond'));
                 });
             });
 
@@ -119,11 +115,11 @@ describe('phonegapbuild.build(options, [callback])', function() {
             });
 
             it('should trigger "error" event', function(done) {
-                var b = phonegapbuild.build(options);
-                b.on('error', function(e, data) {
+                phonegapbuild.on('error', function(e, data) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
+                phonegapbuild.build(options);
             });
         });
     });
@@ -163,20 +159,12 @@ describe('phonegapbuild.build(options, [callback])', function() {
                     done();
                 });
             });
-
-            it('should trigger "complete" event', function(done) {
-                var b = phonegapbuild.build(options);
-                b.on('complete', function(data) {
-                    expect(data).toEqual(jasmine.any(Object));
-                    done();
-                });
-            });
         });
 
         describe('failed to create app', function() {
             beforeEach(function() {
                 phonegapbuild.build.create.andCallFake(function(options, callback) {
-                    callback(new Error('Server did not respond'));
+                    callback(new Error('server did not respond'));
                 });
             });
 
@@ -188,11 +176,11 @@ describe('phonegapbuild.build(options, [callback])', function() {
             });
 
             it('should trigger "error" event', function(done) {
-                var b = phonegapbuild.build(options);
-                b.on('error', function(e) {
+                phonegapbuild.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
+                phonegapbuild.build(options);
             });
         });
     });

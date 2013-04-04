@@ -45,6 +45,10 @@ describe('create(options, callback)', function() {
         }).not.toThrow();
     });
 
+    it('should return itself', function() {
+        expect(phonegapbuild.create(options)).toEqual(phonegapbuild);
+    });
+
     it('should try to create local project', function(done) {
         phonegapbuild.create(options, function(e) {});
         process.nextTick(function() {
@@ -69,13 +73,6 @@ describe('create(options, callback)', function() {
                 done();
             });
         });
-
-        it('should trigger "complete" event', function(done) {
-            var emitter = phonegapbuild.create(options);
-            emitter.on('complete', function() {
-                done();
-            });
-        });
     });
 
     describe('failed to create local project', function() {
@@ -93,11 +90,11 @@ describe('create(options, callback)', function() {
         });
 
         it('should trigger "error" event', function(done) {
-            var emitter = phonegapbuild.create(options);
-            emitter.on('error', function(e) {
+            phonegapbuild.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
+            phonegapbuild.create(options);
         });
     });
 });

@@ -27,6 +27,10 @@ describe('phonegapbuild.login(options, [callback])', function() {
         }).not.toThrow();
     });
 
+    it('should return itself', function() {
+        expect(phonegapbuild.login(options)).toEqual(phonegapbuild);
+    });
+
     it('should try to lookup token', function() {
         phonegapbuild.login(options, function(e, api) {});
         process.nextTick(function() {
@@ -54,14 +58,6 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
         it('should trigger callback with an api object', function(done) {
             phonegapbuild.login(options, function(e, api) {
-                expect(api).toBeDefined();
-                done();
-            });
-        });
-
-        it('should trigger "complete" event', function(done) {
-            var emitter = phonegapbuild.login(options);
-            emitter.on('complete', function(api) {
                 expect(api).toBeDefined();
                 done();
             });
@@ -110,13 +106,14 @@ describe('phonegapbuild.login(options, [callback])', function() {
                 });
             });
 
-            it('should try to save token', function() {
+            it('should try to save token', function(done) {
                 phonegapbuild.login(options, function(e, api) {});
                 process.nextTick(function() {
                     expect(config.global.save).toHaveBeenCalled();
                     expect(
                         config.global.save.mostRecentCall.args[0].phonegap.token
                     ).toEqual('abc123');
+                    done();
                 });
             });
 
@@ -136,14 +133,6 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
                 it('should trigger callback with an api object', function(done) {
                     phonegapbuild.login(options, function(e, api) {
-                        expect(api).toBeDefined();
-                        done();
-                    });
-                });
-
-                it('should trigger "complete" event', function(done) {
-                    var emitter = phonegapbuild.login(options);
-                    emitter.on('complete', function(api) {
                         expect(api).toBeDefined();
                         done();
                     });
@@ -172,11 +161,11 @@ describe('phonegapbuild.login(options, [callback])', function() {
                 });
 
                 it('should trigger "error" event', function(done) {
-                    var emitter = phonegapbuild.login(options);
-                    emitter.on('error', function(e) {
+                    phonegapbuild.on('error', function(e) {
                         expect(e).toEqual(jasmine.any(Error));
                         done();
                     });
+                    phonegapbuild.login(options);
                 });
             });
         });
@@ -203,11 +192,11 @@ describe('phonegapbuild.login(options, [callback])', function() {
             });
 
             it('should trigger "error" event', function(done) {
-                var emitter = phonegapbuild.login(options);
-                emitter.on('error', function(e) {
+                phonegapbuild.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
+                phonegapbuild.login(options);
             });
         });
     });
