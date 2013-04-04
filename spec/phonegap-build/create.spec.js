@@ -2,12 +2,13 @@
  * Module dependencies.
  */
 
-var create = require('../../lib/phonegap-build/create'),
+var PhoneGapBuild = require('../../lib/phonegap-build'),
     config = require('../../lib/common/config'),
     zip = require('../../lib/phonegap-build/create/zip'),
     shell = require('shelljs'),
     path = require('path'),
     fs = require('fs'),
+    phonegapbuild,
     options;
 
 /*
@@ -16,37 +17,38 @@ var create = require('../../lib/phonegap-build/create'),
 
 describe('create(options, callback)', function() {
     beforeEach(function() {
+        phonegapbuild = new PhoneGapBuild();
         options = {
             api: {},
             path: '/some/path/to/app/www'
         };
-        spyOn(create, 'local');
+        spyOn(phonegapbuild.create, 'local');
     });
 
     it('should require options', function() {
         expect(function() {
             options = undefined;
-            create(options, function(e) {});
+            phonegapbuild.create(options, function(e) {});
         }).toThrow();
     });
 
     it('should require options.path', function() {
         expect(function() {
             options.path = undefined;
-            create(options, function(e) {});
+            phonegapbuild.create(options, function(e) {});
         }).toThrow();
     });
 
     it('should not require callback', function() {
         expect(function() {
-            create(options);
+            phonegapbuild.create(options);
         }).not.toThrow();
     });
 
     it('should try to create local project', function(done) {
-        create(options, function(e) {});
+        phonegapbuild.create(options, function(e) {});
         process.nextTick(function() {
-            expect(create.local).toHaveBeenCalledWith(
+            expect(phonegapbuild.create.local).toHaveBeenCalledWith(
                 { path: options.path },
                 jasmine.any(Function)
             );
@@ -56,20 +58,20 @@ describe('create(options, callback)', function() {
 
     describe('successfully created local project', function() {
         beforeEach(function() {
-            create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.andCallFake(function(options, callback) {
                 callback(null);
             });
         });
 
         it('should trigger called without an error', function(done) {
-            create(options, function(e) {
+            phonegapbuild.create(options, function(e) {
                 expect(e).toBeNull();
                 done();
             });
         });
 
         it('should trigger "complete" event', function(done) {
-            var emitter = create(options);
+            var emitter = phonegapbuild.create(options);
             emitter.on('complete', function() {
                 done();
             });
@@ -78,20 +80,20 @@ describe('create(options, callback)', function() {
 
     describe('failed to create local project', function() {
         beforeEach(function() {
-            create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.andCallFake(function(options, callback) {
                 callback(new Error('app path already exists'));
             });
         });
 
         it('should trigger callback with an error', function(done) {
-            create(options, function(e) {
+            phonegapbuild.create(options, function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
         });
 
         it('should trigger "error" event', function(done) {
-            var emitter = create(options);
+            var emitter = phonegapbuild.create(options);
             emitter.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
@@ -104,7 +106,7 @@ describe('create(options, callback)', function() {
  * Local create specification.
  */
 
-describe('create.local(options, callback)', function() {
+describe('phonegapbuild.create.local(options, [callback])', function() {
     beforeEach(function() {
         options = { path: '/some/path/to/my/app' };
         spyOn(fs, 'exists');
@@ -116,25 +118,25 @@ describe('create.local(options, callback)', function() {
     it('should require options', function() {
         expect(function() {
             options = undefined;
-            create.local(options, function(e) {});
+            phonegapbuild.create.local(options, function(e) {});
         }).toThrow();
     });
 
     it('should require options.path', function() {
         expect(function() {
             options.path = undefined;
-            create.local(options, function(e) {});
+            phonegapbuild.create.local(options, function(e) {});
         }).toThrow();
     });
 
     it('should not require callback', function() {
         expect(function() {
-            create.local(options);
+            phonegapbuild.create.local(options);
         }).not.toThrow();
     });
 
     it('should check if path exists', function() {
-        create.local(options, function(e) {});
+        phonegapbuild.create.local(options, function(e) {});
         expect(fs.exists).toHaveBeenCalledWith(options.path, jasmine.any(Function));
     });
 
@@ -146,7 +148,7 @@ describe('create.local(options, callback)', function() {
         });
 
         it('should create project from path', function() {
-            create.local(options, function(e) {});
+            phonegapbuild.create.local(options, function(e) {});
             expect(shell.cp).toHaveBeenCalled();
             expect(shell.cp.mostRecentCall.args[0]).toEqual('-R');
         });
@@ -157,7 +159,7 @@ describe('create.local(options, callback)', function() {
             });
 
             it('should trigger callback without an error', function(done) {
-                create.local(options, function(e) {
+                phonegapbuild.create.local(options, function(e) {
                     expect(e).toBeNull();
                     done();
                 });
@@ -171,12 +173,12 @@ describe('create.local(options, callback)', function() {
 
             it('should not throw an error', function() {
                 expect(function() {
-                    create.local(options, function(e) {});
+                    phonegapbuild.create.local(options, function(e) {});
                 }).not.toThrow();
             });
 
             it('should trigger callback with an error', function(done) {
-                create.local(options, function(e) {
+                phonegapbuild.create.local(options, function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
@@ -192,7 +194,7 @@ describe('create.local(options, callback)', function() {
         });
 
         it('should trigger callback with an error', function(done) {
-            create.local(options, function(e) {
+            phonegapbuild.create.local(options, function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });

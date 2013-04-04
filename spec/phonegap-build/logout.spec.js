@@ -2,8 +2,9 @@
  * Module dependencies.
  */
 
-var logout = require('../../lib/phonegap-build/logout'),
-    config = require('../../lib/common/config');
+var PhoneGapBuild = require('../../lib/phonegap-build'),
+    config = require('../../lib/common/config'),
+    phonegapbuild;
 
 /*
  * Specification for logout.
@@ -11,20 +12,25 @@ var logout = require('../../lib/phonegap-build/logout'),
 
 describe('logout(options, callback)', function() {
     beforeEach(function() {
+        phonegapbuild = new PhoneGapBuild();
         spyOn(config.global, 'load');
         spyOn(config.global, 'save');
     });
 
     it('should require options parameter', function() {
-        expect(function() { logout(undefined, function(e) {}); }).toThrow();
+        expect(function() {
+            phonegapbuild.logout(undefined, function(e) {});
+        }).toThrow();
     });
 
     it('should not require callback parameter', function() {
-        expect(function() { logout({}, undefined); }).not.toThrow();
+        expect(function() {
+            phonegapbuild.logout({}, undefined);
+        }).not.toThrow();
     });
 
     it('should try to load the config', function(done) {
-        logout({}, function(e) {});
+        phonegapbuild.logout({}, function(e) {});
         process.nextTick(function() {
             expect(config.global.load).toHaveBeenCalled();
             done();
@@ -44,7 +50,7 @@ describe('logout(options, callback)', function() {
         });
 
         it('should try to save the config', function(done) {
-            logout({}, function(e) {});
+            phonegapbuild.logout({}, function(e) {});
             process.nextTick(function() {
                 expect(config.global.save).toHaveBeenCalled();
                 done();
@@ -59,7 +65,7 @@ describe('logout(options, callback)', function() {
             });
 
             it('should delete the token key', function(done) {
-                logout({}, function(e) {});
+                phonegapbuild.logout({}, function(e) {});
                 process.nextTick(function() {
                     expect(config.global.save.mostRecentCall.args[0].phonegap.token).not.toBeDefined();
                     done();
@@ -67,7 +73,7 @@ describe('logout(options, callback)', function() {
             });
 
             it('should preserve the remaining keys', function(done) {
-                logout({}, function(e) {});
+                phonegapbuild.logout({}, function(e) {});
                 process.nextTick(function() {
                     expect(config.global.save.mostRecentCall.args[0]).toEqual(
                         {
@@ -81,14 +87,14 @@ describe('logout(options, callback)', function() {
             });
 
             it('should trigger callback without an error', function(done) {
-                logout({}, function(e) {
+                phonegapbuild.logout({}, function(e) {
                     expect(e).toBeNull();
                     done();
                 });
             });
 
             it('should trigger "complete" event', function(done) {
-                var emitter = logout({});
+                var emitter = phonegapbuild.logout({});
                 emitter.on('complete', function() {
                     done();
                 });
@@ -103,14 +109,14 @@ describe('logout(options, callback)', function() {
             });
 
             it('should trigger callback with an error', function(done) {
-                logout({}, function(e) {
+                phonegapbuild.logout({}, function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
                 });
             });
 
             it('should trigger "error" event', function(done) {
-                var emitter = logout({});
+                var emitter = phonegapbuild.logout({});
                 emitter.on('error', function(e) {
                     expect(e).toEqual(jasmine.any(Error));
                     done();
@@ -127,14 +133,14 @@ describe('logout(options, callback)', function() {
         });
 
         it('should trigger callback with an error', function(done) {
-            logout({}, function(e) {
+            phonegapbuild.logout({}, function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
             });
         });
 
         it('should trigger "error" event', function(done) {
-            var emitter = logout({});
+            var emitter = phonegapbuild.logout({});
             emitter.on('error', function(e) {
                 expect(e).toEqual(jasmine.any(Error));
                 done();
