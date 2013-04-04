@@ -21,6 +21,13 @@ describe('phonegapbuild.login(options, [callback])', function() {
         spyOn(config.global, 'save');
     });
 
+    it('should require options', function() {
+        expect(function() {
+            options = null;
+            phonegapbuild.login(options);
+        }).toThrow();
+    });
+
     it('should not require callback', function() {
         expect(function() {
             phonegapbuild.login(options);
