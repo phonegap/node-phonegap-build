@@ -38,14 +38,14 @@ describe('phonegapbuild.login(options, [callback])', function() {
         expect(phonegapbuild.login(options)).toEqual(phonegapbuild);
     });
 
-    it('should try to lookup token', function() {
+    it('should try to find auth token', function() {
         phonegapbuild.login(options, function(e, api) {});
         process.nextTick(function() {
             expect(config.global.load).toHaveBeenCalled();
         });
     });
 
-    describe('successful token lookup', function() {
+    describe('successfully found auth token', function() {
         beforeEach(function() {
             config.global.load.andCallFake(function(callback) {
                 callback(null, {
@@ -71,89 +71,108 @@ describe('phonegapbuild.login(options, [callback])', function() {
         });
     });
 
-    describe('failed token lookup', function() {
+    describe('failed to find auth token', function() {
         beforeEach(function() {
             config.global.load.andCallFake(function(callback) {
                 callback(new Error('config not found at ~/.cordova'));
             });
         });
 
-        it('should require option.username', function(done) {
-            options.username = undefined;
-            phonegapbuild.login(options, function(e, api) {
-                expect(e).toBeDefined();
-                expect(api).not.toBeDefined();
-                done();
+        describe('when given username and password', function() {
+            beforeEach(function() {
+                options = {
+                    username: 'zelda@nintendo.com',
+                    password: 'tr1force'
+                };
             });
-        });
 
-        it('should require option.password', function(done) {
-            options.password = undefined;
-            phonegapbuild.login(options, function(e, api) {
-                expect(e).toBeDefined();
-                expect(api).not.toBeDefined();
-                done();
-            });
-        });
-
-        it('should try to authenticate', function() {
-            phonegapbuild.login(options, function() {});
-            process.nextTick(function() {
+            it('should try to authenticate', function() {
+                phonegapbuild.login(options, function() {});
                 expect(client.auth).toHaveBeenCalledWith(
                     options,
                     jasmine.any(Function)
                 );
             });
-        });
 
-        describe('successful authentication', function() {
-            beforeEach(function() {
-                client.auth.andCallFake(function(options, callback) {
-                    callback(null, { token: 'abc123' });
-                });
-            });
-
-            it('should try to save token', function(done) {
-                phonegapbuild.login(options, function(e, api) {});
-                process.nextTick(function() {
-                    expect(config.global.save).toHaveBeenCalled();
-                    expect(
-                        config.global.save.mostRecentCall.args[0].phonegap.token
-                    ).toEqual('abc123');
-                    done();
-                });
-            });
-
-            describe('successfully saved token', function() {
+            describe('successful authentication', function() {
                 beforeEach(function() {
-                    config.global.save.andCallFake(function(data, callback) {
-                        callback(null);
+                    client.auth.andCallFake(function(options, callback) {
+                        callback(null, { token: 'abc123' });
                     });
                 });
 
-                it('should trigger callback without an error', function(done) {
-                    phonegapbuild.login(options, function(e, api) {
-                        expect(e).toBeNull();
+                it('should try to save token', function(done) {
+                    phonegapbuild.login(options, function(e, api) {});
+                    process.nextTick(function() {
+                        expect(config.global.save).toHaveBeenCalled();
+                        expect(
+                            config.global.save.mostRecentCall.args[0].phonegap.token
+                        ).toEqual('abc123');
                         done();
                     });
                 });
 
-                it('should trigger callback with an api object', function(done) {
-                    phonegapbuild.login(options, function(e, api) {
-                        expect(api).toBeDefined();
-                        done();
+                describe('successfully saved token', function() {
+                    beforeEach(function() {
+                        config.global.save.andCallFake(function(data, callback) {
+                            callback(null);
+                        });
+                    });
+
+                    it('should trigger callback without an error', function(done) {
+                        phonegapbuild.login(options, function(e, api) {
+                            expect(e).toBeNull();
+                            done();
+                        });
+                    });
+
+                    it('should trigger callback with an api object', function(done) {
+                        phonegapbuild.login(options, function(e, api) {
+                            expect(api).toBeDefined();
+                            done();
+                        });
+                    });
+                });
+
+                describe('failed to save token', function() {
+                    beforeEach(function() {
+                        config.global.save.andCallFake(function(data, callback) {
+                            callback(new Error('No write permission'));
+                        });
+                    });
+
+                    it('should trigger callback with an error', function(done) {
+                        phonegapbuild.login(options, function(e, api) {
+                            expect(e).toEqual(jasmine.any(Error));
+                            done();
+                        });
+                    });
+
+                    it('should trigger callback without an api object', function(done) {
+                        phonegapbuild.login(options, function(e, api) {
+                            expect(api).not.toBeDefined();
+                            done();
+                        });
+                    });
+
+                    it('should trigger "error" event', function(done) {
+                        phonegapbuild.on('error', function(e) {
+                            expect(e).toEqual(jasmine.any(Error));
+                            done();
+                        });
+                        phonegapbuild.login(options);
                     });
                 });
             });
 
-            describe('failed to save token', function() {
+            describe('failed authentication', function() {
                 beforeEach(function() {
-                    config.global.save.andCallFake(function(data, callback) {
-                        callback(new Error('No write permission'));
+                    client.auth.andCallFake(function(options, callback) {
+                        callback(new Error('account does not exist'));
                     });
                 });
 
-                it('should trigger callback with an error', function(done) {
+                it('should trigger callback an error', function(done) {
                     phonegapbuild.login(options, function(e, api) {
                         expect(e).toEqual(jasmine.any(Error));
                         done();
@@ -177,34 +196,71 @@ describe('phonegapbuild.login(options, [callback])', function() {
             });
         });
 
-        describe('failed authentication', function() {
+        describe('when missing username and/or password', function() {
             beforeEach(function() {
-                client.auth.andCallFake(function(options, callback) {
-                    callback(new Error('account does not exist'));
-                });
+                options = {
+                    username: 'zelda@nintendo.com'
+                };
             });
 
-            it('should trigger callback an error', function(done) {
-                phonegapbuild.login(options, function(e, api) {
-                    expect(e).toEqual(jasmine.any(Error));
-                    done();
-                });
-            });
-
-            it('should trigger callback without an api object', function(done) {
-                phonegapbuild.login(options, function(e, api) {
-                    expect(api).not.toBeDefined();
-                    done();
-                });
-            });
-
-            it('should trigger "error" event', function(done) {
-                phonegapbuild.on('error', function(e) {
-                    expect(e).toEqual(jasmine.any(Error));
+            it('should fire a "login" event', function(done) {
+                phonegapbuild.on('login', function(options, callback) {
+                    expect(options).toEqual(options);
+                    expect(callback).toEqual(jasmine.any(Function));
                     done();
                 });
                 phonegapbuild.login(options);
             });
+
+            describe('successful "login" event callback', function() {
+                it('should try to authenticate', function(done) {
+                    phonegapbuild.on('login', function(options, callback) {
+                        callback(null, { username: 'zelda', password: 'tr1force' });
+                        expect(client.auth).toHaveBeenCalledWith(
+                            { username: 'zelda', password: 'tr1force' },
+                            jasmine.any(Function)
+                        );
+                        done();
+                    });
+                    phonegapbuild.login(options);
+                });
+            });
+
+            describe('failed "login" event callback', function() {
+                beforeEach(function() {
+                    phonegapbuild.on('login', function(options, callback) {
+                        callback(new Error('Ganon stole my username'));
+                    });
+                });
+
+                it('should not try to authenticate', function(done) {
+                    phonegapbuild.login(options);
+                    process.nextTick(function() {
+                        expect(client.auth).not.toHaveBeenCalled();
+                        done();
+                    });
+                });
+
+                it('should trigger callback with an error', function(done) {
+                    phonegapbuild.login(options, function(e) {
+                        expect(e).toEqual(jasmine.any(Error));
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    describe('failed to read config', function() {
+        beforeEach(function() {
+            config.global.load.andCallFake(function(callback) {
+                callback(new Error('cannot read config file'));
+            });
+        });
+
+        it('should try to authenticate', function() {
+            phonegapbuild.login(options);
+            expect(client.auth).toHaveBeenCalled();
         });
     });
 });
