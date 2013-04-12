@@ -43,11 +43,6 @@ describe('$ phonegap-build logout', function() {
                     done();
                 });
             });
-
-            it('should output a success message', function() {
-                cli.argv({ _: ['logout'] });
-                expect(process.stdout.write).toHaveBeenCalled();
-            });
         });
 
         describe('failed logout', function() {
@@ -62,11 +57,6 @@ describe('$ phonegap-build logout', function() {
                     expect(e).not.toBeNull();
                     done();
                 });
-            });
-
-            it('should output a success message', function() {
-                cli.argv({ _: ['logout'] });
-                expect(process.stdout.write).toHaveBeenCalled();
             });
         });
     });
