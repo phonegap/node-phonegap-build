@@ -29,6 +29,14 @@
       -v, --version        output version number
       -h, --help           output usage information
 
+    With no command is specified, a build is assumed. When no platform has
+    been specified, 'android' is used as the default platform for now.
+
+    Hence the following commands are equivalent:
+
+    phonegap-build
+    phonegap-build android
+
 ## Getting Started with Node.js
 
 ### Node.js: Install
