@@ -31,7 +31,7 @@
         "shelljs": "0.0.x",
         "optimist": "0.3.x",
         "qrcode-terminal": "0.8.x",
-        "phonegap-build-api": "0.3.x"
+        "phonegap-build-api": "0.3.3"
     },
     "devDependencies": {
         "jasmine-node": "1.1.x"
