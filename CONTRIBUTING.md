@@ -2,8 +2,8 @@
 
 ## Get the Source
 
-    $ git clone https://github.com/mwbrooks/phonegap-build-cli.git
-    $ cd phonegap-build-cli/
+    $ git clone https://github.com/mwbrooks/node-phonegap-build.git
+    $ cd node-phonegap-build/
 
 ## Install the Dependencies
 

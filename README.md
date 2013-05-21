@@ -1,155 +1,187 @@
-# PhoneGap Build CLI [![Build Status][travis-ci-img]][travis-ci-url]
+# PhoneGap Build Node Library [![Build Status][travis-ci-img]][travis-ci-url]
 
-> PhoneGap Build command-line interface and node.js library.
+> Node module to create and build PhoneGap projects with PhoneGap Build.
 
-## Getting Started on the Command-line (CLI)
+## Getting Started
 
-### CLI: Install
-
-    $ sudo npm install -g phonegap-build
-
-### CLI: Usage
-
-    Usage: phonegap-build [options] [commands]
-
-    Synopsis:
-
-      PhoneGap Build command-line environment.
-
-    Commands:
-
-      login                login to phonegap build
-      logout               logout of phonegap build
-      create <path>        create a phonegap project
-      build <platform>     build a specific platform
-      help [commands]      output usage information
-
-    Options:
-
-      -v, --version        output version number
-      -h, --help           output usage information
-
-## Getting Started with Node.js
-
-### Node.js: Install
+### Install
 
 `package.json`:
 
     {
         "dependencies": {
-            "phonegap-build-cli": "*"
+            "phonegap-build": "*"
         }
     }
 
 ### Require
 
-    var build = require('phonegap-build-cli');
+    var phonegapbuild = require('phonegap-build');
 
 ### Login
 
 Authenticates with PhoneGap Build, saves the token, and return an API object.
 When the save token exists, the authentication step is skipped.
 
-__Options:__
+Options:
 
   - `options` {Object} contains the login credentials.
-  - `options.username` {String} is the username.
-  - `options.password` {String} is the password.
+  - [`options.username`] {String} is the username.
+  - [`options.password`] {String} is the password.
   - [`callback`] {Function} is called after the login.
     - `e` {Error} is null on a successful login attempt.
     - `api` {Object} the API object defined by phonegap-build-rest
 
-__Events:__
+Events:
 
+  - `login` is triggered when login credentials are required.
   - `error` is triggered on an error.
     - `e` {Error} details the error.
-  - `complete` is trigger when there is no error.
-    - `api` {API} is instance of phonegap-build-api object.
+  - `log` is triggered with log messages.
+  - `warn` is triggered with warning messages.
 
-__Example:__
+Examples:
 
-    build.login({ username: 'zelda', password: 'tr1force' }, function(e, api) {
-        // pass `api` to other phonegap build commands
+    //
+    // given the login credentials
+    //
+
+    var options = { username: 'mwbrooks@adobe.com', password: 'abc123' };
+
+    phonegapbuild.login(data, function(e, api) {
+        // now logged in
+    });
+
+    //
+    // get login credentials on demand
+    //
+
+    phonegapbuild.on('login', function(options, callback) {
+        options.username = options.username || 'mwbrooks@adobe.com';
+        options.password = options.password || 'abc123';
+        callback(null, options);
+    });
+
+    phonegapbuild.login(function(e, api) {
+        // now logged in
+    });
+
+### Login Event
+
+This event is called whenever a task must authenticate with PhoneGap/Build
+and the credentials are unknown. If only the username or only the password
+is known, the it is passed into the event as the `options` object.
+
+The developer should listen on this event and correctly retrieve the login
+credentials: looking them up from storage or prompting the user. Once
+the credentials are found, the `callback` can be fired with the correct
+credentials.
+
+Options:
+
+  - `options` {Object} contains the known login credentials.
+  - [`options.username`] {String} is null or the username.
+  - [`options.password`] {String} is null or the password.
+  - `callback` {Function} is called with the correct credentials.
+    - `e` {Error} is null or the error that occured.
+    - `options` {Object} is the correct username and password.
+
+Examples:
+
+    phonegapbuild.on('login', function(options, callback) {
+        options.username = options.username || 'mwbrooks@adobe.com';
+        options.password = options.password || 'abc123';
+        callback(null, options);
     });
 
 ### Logout
 
 Logout the user by deleting the token key from the config file.
 
-__Options:__
+Options:
 
   - `args` {Object} is unused and should be `{}`.
   - [`callback`] {Function} is a callback function.
     - `e` {Error} is null unless there is an error.
 
-__Events:__
+Events:
 
   - `error` is trigger on an error.
     - `e` {Error} details the error.
-  - `complete` is trigger when there is no error.
 
-__Example:__
+Examples:
 
-    build.logout({}, function(e) {
-        console.log('now logged out.');
+    phonegapbuild.logout({}, function(e) {
+        // now logged out unless e is defined
     });
 
-### Create a New App
+### Create an App
 
-Creates an application on the local filesystem and also remotely on
-PhoneGap Build. The remote application is linked by storing the app ID
-inside the application's config file.
+Creates an application on the local filesystem.
+The remote application is created on-demand during the first build.
 
-__Options:__
+Options:
 
   - `options` {Object} is data required to create an app
     - `path` {String} is a directory path for the app.
   - [`callback`] {Function} is triggered after creating the app.
     - `e` {Error} is null unless there is an error.
 
-__Events:__
+Events:
 
-  - `error` is trigger on an error.
+  - `error` is triggered on an error.
     - `e` {Error} details the error.
-  - `complete` is trigger when no error occurs.
 
-__Example:__
+Examples:
 
-    build.create({ path: 'path/to/new/app' }, function(e) {
+    var options = { path: '~/development/my-app' };
+
+    phonegapbuild.create(options, function(e) {
+        if (e) {
+            console.error('failed to create the project:', e.message);
+        }
+        else {
+            console.log('created the project:', path);
+        }
     });
 
 ### Build an App
 
-The build task will compress the application, upload it to PhoneGap Build,
-and poll until the platform's build status is complete or an error is
-encountered.
+Builds the application using PhoneGap/Build. If the application does not
+exist, then it is first created. Currently, the build task only supports
+file transfers (zip) but will be extended to git repositories in the future.
 
-__Options:__
+Options:
 
   - `options` {Object} is data required for building a platform.
-  - `options.api` {Object} is the phonegap-build-api API object.
   - `options.platforms` {Array} is a collection of platform names {String} that
                         specify the platforms to build.
   - [`callback`] {Function} is triggered after the build is complete.
     - `e` {Error} is null unless there is an error.
+    - `data` {Object} describes the built app.
 
-__Events:__
+Events:
 
   - `error` is trigger on an error.
     - `e` {Error} details the error.
-  - `complete` is trigger when no error occurs.
 
-__Example:__
+Examples:
 
-    build.build({ api: api, platforms: ['android'] }, function(e) {
+    var options = { platforms: ['android'] };
+
+    phonegapbuild.build(options, function(e, data) {
+        if (e) {
+            console.error('failed to build the app:', e);
+        }
+        else {
+            console.log('successfully built the app:', data);
+        }
     });
 
 ## Related Projects
 
-- [phonegap-app-site](https://github.com/nitobi/phonegap-app-site)
-- [phonegap-app](https://github.com/mwbrooks/phonegap-app)
 - [phonegap-cli](https://github.com/mwbrooks/phonegap-cli)
 
-[travis-ci-img]: https://secure.travis-ci.org/mwbrooks/phonegap-build-cli.png
-[travis-ci-url]: http://travis-ci.org/mwbrooks/phonegap-build-cli
+[travis-ci-img]: https://secure.travis-ci.org/mwbrooks/node-phonegap-build.png
+[travis-ci-url]: http://travis-ci.org/mwbrooks/node-phonegap-build
 

@@ -1,24 +1,20 @@
 {
     "name": "phonegap-build",
-    "description": "PhoneGap Build command-line interface and node.js library.",
-    "version": "0.7.0",
-    "homepage": "http://github.com/mwbrooks/phonegap-build-cli",
+    "description": "PhoneGap Build node library.",
+    "version": "0.8.0",
+    "homepage": "http://github.com/mwbrooks/node-phonegap-build",
     "repository": {
         "type": "git",
-        "url": "git://github.com/mwbrooks/phonegap-build-cli.git"
+        "url": "git://github.com/mwbrooks/node-phonegap-build.git"
     },
     "keywords": [
         "phonegap",
-        "build",
+        "phonegap build",
         "phonegap-build",
         "phonegapbuild",
         "cordova"
     ],
-    "preferGlobal": "true",
     "main": "./lib/main.js",
-    "bin": {
-        "phonegap-build": "./bin/phonegap-build.js"
-    },
     "scripts": {
         "test": "./node_modules/.bin/jasmine-node --color --verbose spec"
     },
