@@ -18,10 +18,12 @@
 
     var phonegapbuild = require('phonegap-build');
 
+## API
+
 ### Login
 
-Authenticates with PhoneGap Build, saves the token, and return an API object.
-When the save token exists, the authentication step is skipped.
+> Authenticates with PhoneGap Build, saves the token, and return an API object.
+> When the save token exists, the authentication step is skipped.
 
 Options:
 
@@ -68,14 +70,14 @@ Examples:
 
 ### Login Event
 
-This event is called whenever a task must authenticate with PhoneGap/Build
-and the credentials are unknown. If only the username or only the password
-is known, the it is passed into the event as the `options` object.
+> This event is called whenever a task must authenticate with PhoneGap/Build
+> and the credentials are unknown. If only the username or only the password
+> is known, the it is passed into the event as the `options` object.
 
-The developer should listen on this event and correctly retrieve the login
-credentials: looking them up from storage or prompting the user. Once
-the credentials are found, the `callback` can be fired with the correct
-credentials.
+> The developer should listen on this event and correctly retrieve the login
+> credentials: looking them up from storage or prompting the user. Once
+> the credentials are found, the `callback` can be fired with the correct
+> credentials.
 
 Options:
 
@@ -96,7 +98,7 @@ Examples:
 
 ### Logout
 
-Logout the user by deleting the token key from the config file.
+> Logout the user by deleting the token key from the config file.
 
 Options:
 
@@ -117,8 +119,8 @@ Examples:
 
 ### Create an App
 
-Creates an application on the local filesystem.
-The remote application is created on-demand during the first build.
+> Creates an application on the local filesystem.
+> The remote application is created on-demand during the first build.
 
 Options:
 
@@ -147,9 +149,9 @@ Examples:
 
 ### Build an App
 
-Builds the application using PhoneGap/Build. If the application does not
-exist, then it is first created. Currently, the build task only supports
-file transfers (zip) but will be extended to git repositories in the future.
+> Builds the application using PhoneGap/Build. If the application does not
+> exist, then it is first created. Currently, the build task only supports
+> file transfers (zip) but will be extended to git repositories in the future.
 
 Options:
 
@@ -182,6 +184,6 @@ Examples:
 
 - [phonegap-cli](https://github.com/mwbrooks/phonegap-cli)
 
-[travis-ci-img]: https://secure.travis-ci.org/mwbrooks/node-phonegap-build.png
-[travis-ci-url]: http://travis-ci.org/mwbrooks/node-phonegap-build
+[travis-ci-img]: https://travis-ci.org/mwbrooks/node-phonegap-build.png?branch=master
+[travis-ci-url]: https://travis-ci.org/mwbrooks/node-phonegap-build
 
