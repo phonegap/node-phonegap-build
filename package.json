@@ -16,7 +16,7 @@
     ],
     "main": "./lib/main.js",
     "scripts": {
-        "test": "./node_modules/.bin/jasmine-node --color --verbose spec"
+        "test": "jasmine-node --color --verbose spec"
     },
     "engines": {
         "node": ">=0.8.0"
