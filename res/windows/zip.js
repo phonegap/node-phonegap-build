@@ -53,11 +53,11 @@ if (zipFolder !== null) {
             WScript.Sleep(100);
         }
         else {
-            Log('Failed to create .zip file.', true);
+            WScript.StdErr.WriteLine('wscript failed while adding files.');
             break;
         }
     }
 }
 else {
-    Log('Failed to create .zip file.', true);
+    WScript.StdErr.WriteLine('wscript failed to create a zip file.');
 }
