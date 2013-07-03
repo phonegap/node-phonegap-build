@@ -5,6 +5,7 @@
 var zip = require('../../lib/phonegap-build/create/zip'),
     shell = require('shelljs'),
     fs = require('fs'),
+    os = require('os'),
     p = require('path');
 
 /*
@@ -65,6 +66,34 @@ describe('zip', function() {
                 expect(shell.exec).toHaveBeenCalled();
             });
 
+            describe('on Windows', function() {
+                beforeEach(function() {
+                    spyOn(os, 'type').andReturn('Windows_NT');
+                });
+
+                it('should use the Windows zip script', function() {
+                    zip.compress('./www', './build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch('wscript');
+                });
+
+                it('should use absolute paths', function() {
+                    zip.compress('./www', './build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./www'));
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build'));
+                });
+            });
+
+            describe('on non-Windows', function() {
+                beforeEach(function() {
+                    spyOn(os, 'type').andReturn('Darwin');
+                });
+
+                it('should use the zip command', function() {
+                    zip.compress('./www', './build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(/^zip/);
+                });
+            });
+
             describe('successful zip', function() {
                 beforeEach(function() {
                     shell.exec.andReturn({ code: 0 });
@@ -79,7 +108,7 @@ describe('zip', function() {
 
                 it('should trigger callback with a zip path', function(done) {
                     zip.compress('./www', './build', function(e, path) {
-                        expect(path).toEqual(p.join('build', 'www.zip'));
+                        expect(path).toMatch(p.join('build', 'www.zip'));
                         done();
                     });
                 });
