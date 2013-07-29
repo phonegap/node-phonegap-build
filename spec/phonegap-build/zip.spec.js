@@ -81,6 +81,20 @@ describe('zip', function() {
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./www'));
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build'));
                 });
+
+                it('should support spaces in input path', function() {
+                    zip.compress('./path/to the/www', './build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                        p.resolve('./path/to the/www')
+                    );
+                });
+
+                it('should support spaces in output path', function() {
+                    zip.compress('./www', './path/to the/build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                        p.resolve('./path/to the/build')
+                    );
+                });
             });
 
             describe('on non-Windows', function() {
@@ -91,6 +105,20 @@ describe('zip', function() {
                 it('should use the zip command', function() {
                     zip.compress('./www', './build', function(e, path) {});
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(/^zip/);
+                });
+
+                it('should support spaces in input path', function() {
+                    zip.compress('./path/to the/www', './build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                        p.resolve('./path/to the/www')
+                    );
+                });
+
+                it('should support spaces in output path', function() {
+                    zip.compress('./www', './path/to the/build', function(e, path) {});
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                        p.resolve('./path/to the/build')
+                    );
                 });
             });
 
