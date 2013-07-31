@@ -1,4 +1,4 @@
-# PhoneGap Build Node Library [![Build Status][travis-ci-img]][travis-ci-url]
+# PhoneGap Build Node Module [![Build Status][travis-ci-img]][travis-ci-url]
 
 > Node module to create and build PhoneGap projects with PhoneGap Build.
 
@@ -180,10 +180,6 @@ Examples:
         }
     });
 
-## Related Projects
-
-- [phonegap-cli](https://github.com/mwbrooks/phonegap-cli)
-
-[travis-ci-img]: https://travis-ci.org/mwbrooks/node-phonegap-build.png?branch=master
-[travis-ci-url]: https://travis-ci.org/mwbrooks/node-phonegap-build
+[travis-ci-img]: https://travis-ci.org/phonegap/node-phonegap-build.png?branch=master
+[travis-ci-url]: https://travis-ci.org/phonegap/node-phonegap-build
 
