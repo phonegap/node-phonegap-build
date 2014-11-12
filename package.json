@@ -15,6 +15,9 @@
         "cordova"
     ],
     "main": "./lib/main.js",
+    "bin": {
+        "pgbuild": "./bin/pgbuild.js"
+    },
     "scripts": {
         "test": "jasmine-node --color --verbose spec"
     },
@@ -27,7 +30,8 @@
         "shelljs": "0.0.x",
         "optimist": "0.3.x",
         "qrcode-terminal": "0.8.x",
-        "phonegap-build-api": "0.3.3"
+        "phonegap-build-api": "0.3.3",
+        "minimist": "0.1.0"
     },
     "devDependencies": {
         "jasmine-node": "1.10.1"
