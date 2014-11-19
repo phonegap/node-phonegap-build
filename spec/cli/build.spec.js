@@ -44,7 +44,16 @@ describe("", function () {
 
     });
 
-    describe("", function () {
+    describe("build with failed login", function () {
+        beforeEach(function() {
+            login.andCallFake(function(options, callback) {
+                callback(new Error("login failue"));
+            });
+        });
+
+        it("should", function () {
+
+        }); 
 
     });
 
