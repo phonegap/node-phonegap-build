@@ -83,7 +83,7 @@ describe('create.remote(options, callback)', function() {
         });
 
         it('should fallback to my-app/config.xml', function() {
-            spyOn(path, 'existsSync').andReturn(true);
+            spyOn(fs, 'existsSync').andReturn(true);
             create(options, function(e, data) {});
             expect(fs.readFile).toHaveBeenCalled();
             expect(fs.readFile.mostRecentCall.args[0]).not.toMatch('www/config.xml');
