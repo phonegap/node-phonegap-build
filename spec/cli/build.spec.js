@@ -3,7 +3,7 @@ var console = require('../../lib/cli/console');
 var rewire = require('rewire');
 
 
-var build = rewire('../../lib/cli/remote.build.js');
+var build = rewire('../../lib/cli/build.js');
 
 
 describe("", function () {
