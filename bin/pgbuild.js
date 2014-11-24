@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var cli = require('../lib/cli/argv');
+var cli = require('../lib/cli/cli');
 
 /*!
  * Run the command-line client.
