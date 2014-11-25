@@ -154,15 +154,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
                             done();
                         });
                     });
-
-                    it('should trigger "error" event', function(done) {
-                        phonegapbuild.on('error', function(e) {
-                            expect(e).toEqual(jasmine.any(Error));
-                            done();
-                        });
-                        phonegapbuild.login(options);
-                    });
-                });
+               });
             });
 
             describe('failed authentication', function() {
@@ -185,22 +177,20 @@ describe('phonegapbuild.login(options, [callback])', function() {
                         done();
                     });
                 });
-
-                it('should trigger "error" event', function(done) {
-                    phonegapbuild.on('error', function(e) {
-                        expect(e).toEqual(jasmine.any(Error));
-                        done();
-                    });
-                    phonegapbuild.login(options);
-                });
-            });
+           });
         });
 
         describe('when missing username and/or password', function() {
+            var flag;
+
             beforeEach(function() {
+                client.auth.andCallFake(function(options, callback) {
+                    callback(new Error('account does not exist'));
+                });
                 options = {
                     username: 'zelda@nintendo.com'
                 };
+                flag = false;
             });
 
             it('should fire a "login" event', function(done) {
@@ -214,15 +204,26 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
             describe('successful "login" event callback', function() {
                 it('should try to authenticate', function(done) {
-                    phonegapbuild.on('login', function(options, callback) {
-                        callback(null, { username: 'zelda', password: 'tr1force' });
-                        expect(client.auth).toHaveBeenCalledWith(
+                    var options = { username: 'zelda', password: 'tr1force' };
+
+                    runs(function() {
+                        phonegapbuild.login(options, function(err, result) {
+                            flag = true;
+                        });
+                    });
+
+                    waitsFor(function() {
+                        return flag;
+                    }, "", 1000);
+
+                    runs(function() {
+                         expect(client.auth).toHaveBeenCalledWith(
                             { username: 'zelda', password: 'tr1force' },
                             jasmine.any(Function)
                         );
                         done();
+                        
                     });
-                    phonegapbuild.login(options);
                 });
             });
 
