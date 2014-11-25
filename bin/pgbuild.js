@@ -11,6 +11,7 @@ var cli = require('../lib/cli/cli');
  */
 cli(process.argv, function(e) {
     if (e) {
+        console.log(e);
         process.exit(e.exitCode || 1);
     }
 });
