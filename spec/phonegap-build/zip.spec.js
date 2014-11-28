@@ -21,9 +21,13 @@ describe('zip', function() {
     describe('compress(path, callback)', function() {
         beforeEach(function() {
             spyOn(fs, 'exists');
+            spyOn(fs, 'existsSync');
             spyOn(zip, 'cleanup');
             spyOn(shell, 'mkdir');
+            spyOn(shell, 'cp');
             spyOn(shell, 'exec').andReturn({ code: 0 });
+            spyOn(shell, 'rm');
+            spyOn(shell, 'cd');
         });
 
         it('should require a wwwPath parameter', function() {
@@ -61,6 +65,33 @@ describe('zip', function() {
                 expect(shell.mkdir).toHaveBeenCalledWith('-p', './build');
             });
 
+            it('should copy the www/ contents to the build directory', function() {
+                zip.compress('./www', './build', function(e, path) {});
+                expect(shell.cp).toHaveBeenCalledWith(
+                    '-r',
+                    p.resolve('./www'),
+                    './build' // @TODO we should resolve this path
+                );
+            });
+
+            it('should copy my-app/config.xml when it exists', function() {
+                fs.existsSync.andReturn(true);
+                zip.compress('./www', './build', function(e, path) {});
+                expect(shell.cp).toHaveBeenCalledWith(
+                    p.resolve('./config.xml'),
+                    p.resolve('./build/www')
+                );
+            });
+
+            it('should not copy my-app/config.xml when it does not exist', function() {
+                fs.existsSync.andReturn(false);
+                zip.compress('./www', './build', function(e, path) {});
+                expect(shell.cp).not.toHaveBeenCalledWith(
+                    p.resolve('./config.xml'),
+                    p.resolve('./build/www')
+                );
+            });
+
             it('should try to zip the www directory', function() {
                 zip.compress('./www', './build', function(e, path) {});
                 expect(shell.exec).toHaveBeenCalled();
@@ -78,14 +109,14 @@ describe('zip', function() {
 
                 it('should use absolute paths', function() {
                     zip.compress('./www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./www'));
+                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build/www'));
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build'));
                 });
 
                 it('should support spaces in input path', function() {
                     zip.compress('./path/to the/www', './build', function(e, path) {});
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(
-                        p.resolve('./path/to the/www')
+                        p.resolve('build/www.zip')
                     );
                 });
 
@@ -110,7 +141,7 @@ describe('zip', function() {
                 it('should support spaces in input path', function() {
                     zip.compress('./path/to the/www', './build', function(e, path) {});
                     expect(shell.exec.mostRecentCall.args[0]).toMatch(
-                        p.resolve('./path/to the/www')
+                        p.resolve('build/www.zip')
                     );
                 });
 
