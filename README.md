@@ -1,4 +1,4 @@
-# PhoneGap Build Node Module [![Build Status][travis-ci-img]][travis-ci-url]
+# PhoneGap Build Node Module [![Build Status][travis-ci-img]][travis-ci-url] [![bitHound Score][bithound-img]][bithound-url]
 
 > Node module to create and build PhoneGap projects with PhoneGap Build.
 
@@ -180,6 +180,8 @@ Examples:
         }
     });
 
-[travis-ci-img]: https://travis-ci.org/phonegap/node-phonegap-build.png?branch=master
+[travis-ci-img]: https://travis-ci.org/phonegap/node-phonegap-build.svg?branch=master
 [travis-ci-url]: https://travis-ci.org/phonegap/node-phonegap-build
+[bithound-img]: https://www.bithound.io/github/phonegap/node-phonegap-build/badges/score.svg
+[bithound-url]: https://www.bithound.io/github/phonegap/node-phonegap-build
 
