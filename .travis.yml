@@ -1,8 +1,8 @@
 language: node_js
 notifications:
   slack:
-    secure: gOLhxq+TWTimXRJKr7SNiQ5PxAM8Yhk8sa8X5kpEXYtYdqKuoXvhxpRWtSdhQV/dN1fVEPEGSteWETb1wePt7957MkEvrSy/N+ao2QsCSYQ09Gus/3w2JBwcRYi8M6EOWignztqzObaYXPBXbR6PXtFHIB76ZiYCastei0Vt/9M=
+    secure: F1DFQkZEC+6l7iXA6Yzb4Smorhu1PlvKbS7wu1IqjT8dG6Vo6zHG8dwoCnb532A1ubpb7lP57eQU8Ov0kggM1IdhCzpfwBYyQQWuPwnCvq5q6rhl0PcRjUZYmCTw31ZxJhwu9IpUA462GcN1auR/WAfVSWHffwYz1T2Lzyawrp8=
   email:
   - PhoneGapCI@adobe.com
 node_js:
-- "0.10"
+- '0.12'
