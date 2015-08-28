@@ -1,7 +1,7 @@
 {
     "name": "phonegap-build",
     "description": "PhoneGap Build node library.",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "homepage": "http://github.com/phonegap/node-phonegap-build",
     "repository": {
         "type": "git",
