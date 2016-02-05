@@ -69,6 +69,48 @@ describe('phonegapbuild.login(options, [callback])', function() {
                 done();
             });
         });
+
+        describe('optional arguments', function() {
+            it('should support options.protocol', function(done) {
+                options.protocol = 'http:';
+                phonegapbuild.login(options, function(e, api) {
+                    expect(api.protocol).toEqual('http:');
+                    done();
+                });
+            });
+
+            it('should support options.host', function(done) {
+                options.host = 'stage.build.phonegap.com';
+                phonegapbuild.login(options, function(e, api) {
+                    expect(api.host).toEqual('stage.build.phonegap.com');
+                    done();
+                });
+            });
+
+            it('should support options.port', function(done) {
+                options.port = '1337';
+                phonegapbuild.login(options, function(e, api) {
+                    expect(api.port).toEqual('1337');
+                    done();
+                });
+            });
+
+            it('should support options.path', function(done) {
+                options.path = '/api/v1';
+                phonegapbuild.login(options, function(e, api) {
+                    expect(api.path).toEqual('/api/v1');
+                    done();
+                });
+            });
+
+            it('should support options.proxy', function(done) {
+                options.proxy = 'my.proxy.com';
+                phonegapbuild.login(options, function(e, api) {
+                    expect(api.proxy).toEqual('my.proxy.com');
+                    done();
+                });
+            });
+        });
     });
 
     describe('failed to find auth token', function() {

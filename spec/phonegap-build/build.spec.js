@@ -60,6 +60,48 @@ describe('phonegapbuild.build(options, [callback])', function() {
         expect(phonegapbuild.login).toHaveBeenCalled();
     });
 
+    describe('optional arguments', function() {
+        it('should support options.protocol', function() {
+            options.protocol = 'http:';
+            phonegapbuild.build(options);
+            expect(
+                phonegapbuild.login.mostRecentCall.args[0].protocol
+            ).toEqual('http:');
+        });
+
+        it('should support options.host', function() {
+            options.host = 'stage.build.phonegap.com';
+            phonegapbuild.build(options);
+            expect(
+                phonegapbuild.login.mostRecentCall.args[0].host
+            ).toEqual('stage.build.phonegap.com');
+        });
+
+        it('should support options.port', function() {
+            options.port = '1337';
+            phonegapbuild.build(options);
+            expect(
+                phonegapbuild.login.mostRecentCall.args[0].port
+            ).toEqual('1337');
+        });
+
+        it('should support options.path', function() {
+            options.path = '/api/v1';
+            phonegapbuild.build(options);
+            expect(
+                phonegapbuild.login.mostRecentCall.args[0].path
+            ).toEqual('/api/v1');
+        });
+
+        it('should support options.proxy', function() {
+            options.proxy = 'my.proxy.com';
+            phonegapbuild.build(options);
+            expect(
+                phonegapbuild.login.mostRecentCall.args[0].proxy
+            ).toEqual('my.proxy.com');
+        });
+    });
+
     describe('when login is successful', function() {
         beforeEach(function() {
             phonegapbuild.login.andCallFake(function(options, callback) {

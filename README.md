@@ -30,6 +30,11 @@ Options:
   - `options` {Object} contains the login credentials.
   - [`options.username`] {String} is the username.
   - [`options.password`] {String} is the password.
+  - [`options.protocol`] `{String}` optional server protocol. e.g. 'https:'.
+  - [`options.host`] `{String}` optional server host. e.g. 'build.phonegap.com:'.
+  - [`options.port`] `{String}` optional server port. e.g. '443'.
+  - [`options.path`] `{String}` optional server path prefix. e.g. '/api/v1'.
+  - [`options.proxy`] `{String}` specifies an optional proxy server. e.g. 'http://myproxy.com:8181'.
   - [`callback`] {Function} is called after the login.
     - `e` {Error} is null on a successful login attempt.
     - `api` {Object} the API object defined by phonegap-build-rest
@@ -157,6 +162,11 @@ Options:
 
   - `options` {Object} is data required for building a platform.
   - `options.platforms` {Array} is a collection of platform names {String} that
+  - [`options.protocol`] `{String}` optional server protocol. e.g. 'https:'.
+  - [`options.host`] `{String}` optional server host. e.g. 'build.phonegap.com:'.
+  - [`options.port`] `{String}` optional server port. e.g. '443'.
+  - [`options.path`] `{String}` optional server path prefix. e.g. '/api/v1'.
+  - [`options.proxy`] `{String}` specifies an optional proxy server. e.g. 'http://myproxy.com:8181'.
                         specify the platforms to build.
   - [`callback`] {Function} is triggered after the build is complete.
     - `e` {Error} is null unless there is an error.

@@ -16,7 +16,7 @@
     ],
     "main": "./lib/main.js",
     "scripts": {
-        "test": "jasmine-node --color --verbose spec"
+        "test": "jasmine-node --color spec"
     },
     "engines": {
         "node": ">=0.8.0"
@@ -27,7 +27,7 @@
         "shelljs": "0.0.x",
         "optimist": "0.3.x",
         "qrcode-terminal": "0.8.x",
-        "phonegap-build-api": "0.3.3"
+        "phonegap-build-api": "0.4.0"
     },
     "devDependencies": {
         "jasmine-node": "1.10.1"
