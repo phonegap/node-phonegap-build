@@ -79,21 +79,21 @@ describe('create.remote(options, callback)', function() {
         it('should try to open my-app/www/config.xml', function() {
             create(options, function(e, data) {});
             expect(fs.readFile).toHaveBeenCalled();
-            expect(fs.readFile.mostRecentCall.args[0]).toMatch('www/config.xml');
+            expect(fs.readFile.calls.mostRecent().args[0]).toMatch('www/config.xml');
         });
 
         it('should fallback to my-app/config.xml', function() {
-            spyOn(fs, 'existsSync').andReturn(true);
+            spyOn(fs, 'existsSync').and.returnValue(true);
             create(options, function(e, data) {});
             expect(fs.readFile).toHaveBeenCalled();
-            expect(fs.readFile.mostRecentCall.args[0]).not.toMatch('www/config.xml');
-            expect(fs.readFile.mostRecentCall.args[0]).toMatch('/config.xml');
+            expect(fs.readFile.calls.mostRecent().args[0]).not.toMatch('www/config.xml');
+            expect(fs.readFile.calls.mostRecent().args[0]).toMatch('/config.xml');
         });
 
         it('should try to read app name', function() {
             create(options, function(e, data) {});
             expect(fs.readFile).toHaveBeenCalled();
-            expect(fs.readFile.mostRecentCall.args[0]).toMatch(/config\.xml$/);
+            expect(fs.readFile.calls.mostRecent().args[0]).toMatch(/config\.xml$/);
         });
     });
 

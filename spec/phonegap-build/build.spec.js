@@ -65,7 +65,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.protocol = 'http:';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].protocol
+                phonegapbuild.login.calls.mostRecent().args[0].protocol
             ).toEqual('http:');
         });
 
@@ -73,7 +73,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.host = 'stage.build.phonegap.com';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].host
+                phonegapbuild.login.calls.mostRecent().args[0].host
             ).toEqual('stage.build.phonegap.com');
         });
 
@@ -81,7 +81,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.port = '1337';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].port
+                phonegapbuild.login.calls.mostRecent().args[0].port
             ).toEqual('1337');
         });
 
@@ -89,7 +89,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.path = '/api/v1';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].path
+                phonegapbuild.login.calls.mostRecent().args[0].path
             ).toEqual('/api/v1');
         });
 
@@ -97,7 +97,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.proxy = 'my.proxy.com';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].proxy
+                phonegapbuild.login.calls.mostRecent().args[0].proxy
             ).toEqual('my.proxy.com');
         });
     });

@@ -25,7 +25,7 @@ describe('zip', function() {
             spyOn(zip, 'cleanup');
             spyOn(shell, 'mkdir');
             spyOn(shell, 'cp');
-            spyOn(shell, 'exec').andReturn({ code: 0 });
+            spyOn(shell, 'exec').and.returnValue({ code: 0 });
             spyOn(shell, 'rm');
             spyOn(shell, 'cd');
         });
@@ -75,7 +75,7 @@ describe('zip', function() {
             });
 
             it('should copy my-app/config.xml when it exists', function() {
-                fs.existsSync.andReturn(true);
+                fs.existsSync.and.returnValue(true);
                 zip.compress('./www', './build', function(e, path) {});
                 expect(shell.cp).toHaveBeenCalledWith(
                     p.resolve('./config.xml'),
@@ -84,7 +84,7 @@ describe('zip', function() {
             });
 
             it('should not copy my-app/config.xml when it does not exist', function() {
-                fs.existsSync.andReturn(false);
+                fs.existsSync.and.returnValue(false);
                 zip.compress('./www', './build', function(e, path) {});
                 expect(shell.cp).not.toHaveBeenCalledWith(
                     p.resolve('./config.xml'),
@@ -99,30 +99,30 @@ describe('zip', function() {
 
             describe('on Windows', function() {
                 beforeEach(function() {
-                    spyOn(os, 'type').andReturn('Windows_NT');
+                    spyOn(os, 'type').and.returnValue('Windows_NT');
                 });
 
                 it('should use the Windows zip script', function() {
                     zip.compress('./www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch('wscript');
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch('wscript');
                 });
 
                 it('should use absolute paths', function() {
                     zip.compress('./www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build/www'));
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(p.resolve('./build'));
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(p.resolve('./build/www'));
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(p.resolve('./build'));
                 });
 
                 it('should support spaces in input path', function() {
                     zip.compress('./path/to the/www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(
                         p.resolve('build/www.zip')
                     );
                 });
 
                 it('should support spaces in output path', function() {
                     zip.compress('./www', './path/to the/build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(
                         p.resolve('./path/to the/build')
                     );
                 });
@@ -130,24 +130,24 @@ describe('zip', function() {
 
             describe('on non-Windows', function() {
                 beforeEach(function() {
-                    spyOn(os, 'type').andReturn('Darwin');
+                    spyOn(os, 'type').and.returnValue('Darwin');
                 });
 
                 it('should use the zip command', function() {
                     zip.compress('./www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(/^zip/);
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(/^zip/);
                 });
 
                 it('should support spaces in input path', function() {
                     zip.compress('./path/to the/www', './build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(
                         p.resolve('build/www.zip')
                     );
                 });
 
                 it('should support spaces in output path', function() {
                     zip.compress('./www', './path/to the/build', function(e, path) {});
-                    expect(shell.exec.mostRecentCall.args[0]).toMatch(
+                    expect(shell.exec.calls.mostRecent().args[0]).toMatch(
                         p.resolve('./path/to the/build')
                     );
                 });
@@ -155,7 +155,7 @@ describe('zip', function() {
 
             describe('successful zip', function() {
                 beforeEach(function() {
-                    shell.exec.andReturn({ code: 0 });
+                    shell.exec.and.returnValue({ code: 0 });
                 });
 
                 it('should trigger callback without an error', function(done) {
@@ -175,7 +175,7 @@ describe('zip', function() {
 
             describe('failed zip', function() {
                 beforeEach(function() {
-                    shell.exec.andReturn({ code: 1 });
+                    shell.exec.and.returnValue({ code: 1 });
                 });
 
                 it('should cleanup the build directory', function() {
@@ -221,7 +221,7 @@ describe('zip', function() {
 
         describe('zip file exists', function() {
             beforeEach(function() {
-                fs.existsSync.andReturn(true);
+                fs.existsSync.and.returnValue(true);
             });
 
             it('should remove zip file', function() {
@@ -232,7 +232,7 @@ describe('zip', function() {
 
         describe('zip file does not exists', function() {
             beforeEach(function() {
-                fs.existsSync.andReturn(false);
+                fs.existsSync.and.returnValue(false);
             });
 
             it('should not throw error', function() {
@@ -244,7 +244,7 @@ describe('zip', function() {
 
         describe('zip directory exists', function() {
             beforeEach(function() {
-                fs.existsSync.andReturn(true);
+                fs.existsSync.and.returnValue(true);
             });
 
             it('should try to remove zip directory', function() {
@@ -255,7 +255,7 @@ describe('zip', function() {
 
         describe('zip directory does not exists', function() {
             beforeEach(function() {
-                fs.existsSync.andReturn(false);
+                fs.existsSync.and.returnValue(false);
             });
 
             it('should not throw error', function() {

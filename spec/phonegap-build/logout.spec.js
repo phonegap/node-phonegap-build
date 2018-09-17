@@ -71,7 +71,7 @@ describe('logout(options, callback)', function() {
             it('should delete the token key', function(done) {
                 phonegapbuild.logout({}, function(e) {});
                 process.nextTick(function() {
-                    expect(config.global.save.mostRecentCall.args[0].phonegap.token).not.toBeDefined();
+                    expect(config.global.save.calls.mostRecent().args[0].phonegap.token).not.toBeDefined();
                     done();
                 });
             });
@@ -79,7 +79,7 @@ describe('logout(options, callback)', function() {
             it('should preserve the remaining keys', function(done) {
                 phonegapbuild.logout({}, function(e) {});
                 process.nextTick(function() {
-                    expect(config.global.save.mostRecentCall.args[0]).toEqual(
+                    expect(config.global.save.calls.mostRecent().args[0]).toEqual(
                         {
                             phonegap: {
                                 email: 'zelda@nintendo.com'

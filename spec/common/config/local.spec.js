@@ -77,7 +77,7 @@ describe('config.local', function() {
         });
     });
 
-    fdescribe('config.local.save(data, callback)', function() {
+    describe('config.local.save(data, callback)', function() {
         var data;
 
         beforeEach(function() {

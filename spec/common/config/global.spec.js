@@ -29,7 +29,7 @@ describe('config.global', function() {
             spyOn(fs, 'exists');
             config.global.load(function(e, data) {});
             expect(fs.exists).toHaveBeenCalled();
-            expect(fs.exists.mostRecentCall.args[0]).toEqual(
+            expect(fs.exists.calls.mostRecent().args[0]).toEqual(
                 path.join(config.global.path, 'config.json')
             );
         });
@@ -45,7 +45,7 @@ describe('config.global', function() {
                 spyOn(fs, 'readFile');
                 config.global.load(function(e, data) {});
                 expect(fs.readFile).toHaveBeenCalled();
-                expect(fs.readFile.mostRecentCall.args[0]).toEqual(
+                expect(fs.readFile.calls.mostRecent().args[0]).toEqual(
                     path.join(config.global.path, 'config.json')
                 );
             });
@@ -117,7 +117,7 @@ describe('config.global', function() {
 
                 it('should save an empty object', function() {
                     config.global.load(function(e, data) {});
-                    expect(config.global.save.mostRecentCall.args[0]).toEqual({ phonegap: {} });
+                    expect(config.global.save.calls.mostRecent().args[0]).toEqual({ phonegap: {} });
                 });
 
                 it('should trigger callback without an error', function(done) {
@@ -177,13 +177,13 @@ describe('config.global', function() {
         it('should recursively create directories', function() {
             config.global.save(data, function(e) {});
             expect(shell.mkdir).toHaveBeenCalled();
-            expect(shell.mkdir.mostRecentCall.args[0]).toEqual('-p');
+            expect(shell.mkdir.calls.mostRecent().args[0]).toEqual('-p');
         });
 
         it('should try to write', function() {
             config.global.save(data, function(e) {});
             expect(fs.writeFile).toHaveBeenCalled();
-            expect(fs.writeFile.mostRecentCall.args[0]).toEqual(
+            expect(fs.writeFile.calls.mostRecent().args[0]).toEqual(
                 path.join(config.global.path, 'config.json')
             );
         });
@@ -197,14 +197,14 @@ describe('config.global', function() {
 
             it('should write to the config file', function() {
                 config.global.save(data, function(e) {});
-                expect(fs.writeFile.mostRecentCall.args[0]).toEqual(
+                expect(fs.writeFile.calls.mostRecent().args[0]).toEqual(
                     path.join(config.global.path, 'config.json')
                 );
             });
 
             it('should write the json data', function(done) {
                 config.global.save({ phonegap: { token: 'def456', username: 'link' } }, function(e) {
-                    var data = JSON.parse(fs.writeFile.mostRecentCall.args[1]);
+                    var data = JSON.parse(fs.writeFile.calls.mostRecent().args[1]);
                     expect(data).toEqual({ phonegap: { token: 'def456', username: 'link' } });
                     done();
                 });
