@@ -65,7 +65,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.protocol = 'http:';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].protocol
+                phonegapbuild.login.calls.mostRecent().args[0].protocol
             ).toEqual('http:');
         });
 
@@ -73,7 +73,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.host = 'stage.build.phonegap.com';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].host
+                phonegapbuild.login.calls.mostRecent().args[0].host
             ).toEqual('stage.build.phonegap.com');
         });
 
@@ -81,7 +81,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.port = '1337';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].port
+                phonegapbuild.login.calls.mostRecent().args[0].port
             ).toEqual('1337');
         });
 
@@ -89,7 +89,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.path = '/api/v1';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].path
+                phonegapbuild.login.calls.mostRecent().args[0].path
             ).toEqual('/api/v1');
         });
 
@@ -97,21 +97,21 @@ describe('phonegapbuild.build(options, [callback])', function() {
             options.proxy = 'my.proxy.com';
             phonegapbuild.build(options);
             expect(
-                phonegapbuild.login.mostRecentCall.args[0].proxy
+                phonegapbuild.login.calls.mostRecent().args[0].proxy
             ).toEqual('my.proxy.com');
         });
     });
 
     describe('when login is successful', function() {
         beforeEach(function() {
-            phonegapbuild.login.andCallFake(function(options, callback) {
+            phonegapbuild.login.and.callFake(function(options, callback) {
                 callback(null, { /* api */ });
             });
         });
 
         describe('when app exists', function() {
             beforeEach(function() {
-                config.local.load.andCallFake(function(callback) {
+                config.local.load.and.callFake(function(callback) {
                     callback(null, { 'phonegap': { 'id': 12345 } });
                 });
             });
@@ -133,7 +133,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
             describe('when build successful', function() {
                 beforeEach(function() {
-                    phonegapbuild.build.build.andCallFake(function(options, callback) {
+                    phonegapbuild.build.build.and.callFake(function(options, callback) {
                         callback(null, appData);
                     });
                 });
@@ -155,7 +155,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
             describe('when build failed', function() {
                 beforeEach(function() {
-                    phonegapbuild.build.build.andCallFake(function(options, callback) {
+                    phonegapbuild.build.build.and.callFake(function(options, callback) {
                         callback(new Error('server did not respond'));
                     });
                 });
@@ -179,7 +179,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
         describe('when app does not exist', function() {
             beforeEach(function() {
-                config.local.load.andCallFake(function(callback) {
+                config.local.load.and.callFake(function(callback) {
                     callback(null, {});
                 });
             });
@@ -194,7 +194,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
             describe('when create succuessful', function() {
                 beforeEach(function() {
-                    phonegapbuild.build.create.andCallFake(function(options, callback) {
+                    phonegapbuild.build.create.and.callFake(function(options, callback) {
                         callback(null, appData);
                     });
                 });
@@ -216,7 +216,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
             describe('when create fails', function() {
                 beforeEach(function() {
-                    phonegapbuild.build.create.andCallFake(function(options, callback) {
+                    phonegapbuild.build.create.and.callFake(function(options, callback) {
                         callback(new Error('server did not respond'));
                     });
                 });
@@ -241,7 +241,7 @@ describe('phonegapbuild.build(options, [callback])', function() {
 
     describe('when login is failure', function() {
         beforeEach(function() {
-            phonegapbuild.login.andCallFake(function(options, callback) {
+            phonegapbuild.login.and.callFake(function(options, callback) {
                 var e = new Error('incorrect username or password');
                 phonegapbuild.emit('error', e);
                 callback(e);

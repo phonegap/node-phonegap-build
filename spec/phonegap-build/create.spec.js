@@ -62,7 +62,7 @@ describe('create(options, callback)', function() {
 
     describe('successfully created local project', function() {
         beforeEach(function() {
-            phonegapbuild.create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.and.callFake(function(options, callback) {
                 callback(null);
             });
         });
@@ -77,7 +77,7 @@ describe('create(options, callback)', function() {
 
     describe('failed to create local project', function() {
         beforeEach(function() {
-            phonegapbuild.create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.and.callFake(function(options, callback) {
                 callback(new Error('app path already exists'));
             });
         });
@@ -139,7 +139,7 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
 
     describe('path is available', function() {
         beforeEach(function() {
-            fs.exists.andCallFake(function(path, callback) {
+            fs.exists.and.callFake(function(path, callback) {
                 callback(false);
             });
         });
@@ -147,12 +147,12 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
         it('should create project from path', function() {
             phonegapbuild.create.local(options, function(e) {});
             expect(shell.cp).toHaveBeenCalled();
-            expect(shell.cp.mostRecentCall.args[0]).toEqual('-R');
+            expect(shell.cp.calls.mostRecent().args[0]).toEqual('-R');
         });
 
         describe('successful create', function() {
             beforeEach(function() {
-                spyOn(shell, 'error').andReturn(null);
+                spyOn(shell, 'error').and.returnValue(null);
             });
 
             it('should trigger callback without an error', function(done) {
@@ -165,12 +165,14 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
 
         describe('failed create', function() {
             beforeEach(function() {
-                spyOn(shell, 'error').andReturn('no write access to path');
+                spyOn(shell, 'error').and.returnValue('no write access to path');
             });
 
-            it('should not throw an error', function() {
+            it('should not throw an error', function(done) {
                 expect(function() {
-                    phonegapbuild.create.local(options, function(e) {});
+                    phonegapbuild.create.local(options, function(e) {
+                        done();
+                    });
                 }).not.toThrow();
             });
 
@@ -185,7 +187,7 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
 
     describe('path is not available', function() {
         beforeEach(function() {
-            fs.exists.andCallFake(function(path, callback) {
+            fs.exists.and.callFake(function(path, callback) {
                 callback(true);
             });
         });

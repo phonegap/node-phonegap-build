@@ -1,7 +1,7 @@
 {
     "name": "phonegap-build",
     "description": "PhoneGap Build node library.",
-    "version": "0.10.0",
+    "version": "1.0.0",
     "homepage": "http://github.com/phonegap/node-phonegap-build",
     "repository": {
         "type": "git",
@@ -16,37 +16,41 @@
     ],
     "main": "./lib/main.js",
     "scripts": {
-        "test": "jasmine-node --color spec"
+        "test": "jasmine"
     },
     "engines": {
-        "node": ">=0.8.0"
+        "node": ">=6.0.0"
     },
     "dependencies": {
         "colors": "0.6.x",
-        "prompt": "0.2.x",
-        "shelljs": "0.0.x",
+        "jasmine": "^3.2.0",
         "optimist": "0.3.x",
+        "phonegap-build-api": "1.0.0",
+        "prompt": "0.2.x",
         "qrcode-terminal": "0.8.x",
-        "phonegap-build-api": "0.4.0"
+        "shelljs": "0.0.x"
     },
-    "devDependencies": {
-        "jasmine-node": "1.10.1"
-    },
-    "optionalDependencies": {
-    },
-    "contributors": [{
-        "name": "Michael Brooks",
-        "email": "michael@michaelbrooks.ca",
-        "url": "http://michaelbrooks.ca"
-    },
-    {
-        "name": "Mathijs de Bruin",
-        "email": "mathijs@mathijsfietst.nl",
-        "url": "http://djangopeople.net/dokterbob"
-    },
-    {
-        "name": "Benn Mapes",
-        "email": "benn.mapes@gmail.com",
-        "url": "http://github.com/bennmapes"
-    }]
+    "devDependencies": {},
+    "optionalDependencies": {},
+    "contributors": [
+        {
+            "name": "Michael Brooks",
+            "email": "michael@michaelbrooks.ca",
+            "url": "http://michaelbrooks.ca"
+        },
+        {
+            "name": "Mathijs de Bruin",
+            "email": "mathijs@mathijsfietst.nl",
+            "url": "http://djangopeople.net/dokterbob"
+        },
+        {
+            "name": "Benn Mapes",
+            "email": "benn.mapes@gmail.com",
+            "url": "http://github.com/bennmapes"
+        },
+        {
+            "name": "Jesse MacFadyen",
+            "url": "https://github.com/purplecabbage"
+        }
+    ]
 }
