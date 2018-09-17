@@ -168,9 +168,11 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
                 spyOn(shell, 'error').and.returnValue('no write access to path');
             });
 
-            it('should not throw an error', function() {
+            it('should not throw an error', function(done) {
                 expect(function() {
-                    phonegapbuild.create.local(options, function(e) {});
+                    phonegapbuild.create.local(options, function(e) {
+                        done();
+                    });
                 }).not.toThrow();
             });
 

@@ -1,7 +1,7 @@
 {
     "name": "phonegap-build",
     "description": "PhoneGap Build node library.",
-    "version": "0.10.0",
+    "version": "1.0.0",
     "homepage": "http://github.com/phonegap/node-phonegap-build",
     "repository": {
         "type": "git",
@@ -25,7 +25,7 @@
         "colors": "0.6.x",
         "jasmine": "^3.2.0",
         "optimist": "0.3.x",
-        "phonegap-build-api": "0.4.0",
+        "phonegap-build-api": "1.0.0",
         "prompt": "0.2.x",
         "qrcode-terminal": "0.8.x",
         "shelljs": "0.0.x"
@@ -47,6 +47,10 @@
             "name": "Benn Mapes",
             "email": "benn.mapes@gmail.com",
             "url": "http://github.com/bennmapes"
+        },
+        {
+            "name": "Jesse MacFadyen",
+            "url": "https://github.com/purplecabbage"
         }
     ]
 }
