@@ -43,7 +43,7 @@ describe('logout(options, callback)', function() {
 
     describe('successfully load config', function() {
         beforeEach(function() {
-            config.global.load.andCallFake(function(callback) {
+            config.global.load.and.callFake(function(callback) {
                 callback(null, {
                     phonegap: {
                         email: 'zelda@nintendo.com',
@@ -63,7 +63,7 @@ describe('logout(options, callback)', function() {
 
         describe('successfully saved config', function() {
             beforeEach(function() {
-                config.global.save.andCallFake(function(data, callback) {
+                config.global.save.and.callFake(function(data, callback) {
                     callback(null);
                 });
             });
@@ -100,7 +100,7 @@ describe('logout(options, callback)', function() {
 
         describe('failed to save config', function() {
             beforeEach(function() {
-                config.global.save.andCallFake(function(data, callback) {
+                config.global.save.and.callFake(function(data, callback) {
                     callback(new Error('no write access'));
                 });
             });
@@ -124,7 +124,7 @@ describe('logout(options, callback)', function() {
 
     describe('failed to load config', function() {
         beforeEach(function() {
-            config.global.load.andCallFake(function(callback) {
+            config.global.load.and.callFake(function(callback) {
                 callback(new Error('no read access'));
             });
         });

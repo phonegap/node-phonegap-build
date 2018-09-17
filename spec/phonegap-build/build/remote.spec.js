@@ -87,11 +87,11 @@ describe('build(options, callback)', function() {
 
     describe('successful zip', function() {
         beforeEach(function() {
-            zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
+            zip.compress.and.callFake(function(wwwPath, buildPath, callback) {
                 callback(null, '/path/to/build/www.zip');
             });
 
-            config.local.load.andCallFake(function(callback) {
+            config.local.load.and.callFake(function(callback) {
                 callback(null, {
                     'phonegap': {
                         'id': 12345
@@ -111,7 +111,7 @@ describe('build(options, callback)', function() {
 
         describe('successful upload', function() {
             beforeEach(function() {
-                options.api.put.andCallFake(function(path, headers, callback) {
+                options.api.put.and.callFake(function(path, headers, callback) {
                     callback(null, {});
                 });
             });
@@ -128,7 +128,7 @@ describe('build(options, callback)', function() {
 
             describe('on build complete', function() {
                 beforeEach(function() {
-                    build.waitForComplete.andCallFake(function(options, callback) {
+                    build.waitForComplete.and.callFake(function(options, callback) {
                         callback(null, appData);
                     });
                 });
@@ -150,7 +150,7 @@ describe('build(options, callback)', function() {
 
             describe('on build error', function() {
                 beforeEach(function() {
-                    build.waitForComplete.andCallFake(function(options, callback) {
+                    build.waitForComplete.and.callFake(function(options, callback) {
                         callback(new Error('server did not respond'));
                     });
                 });
@@ -166,7 +166,7 @@ describe('build(options, callback)', function() {
 
         describe('failed upload', function() {
             beforeEach(function() {
-                options.api.put.andCallFake(function(path, headers, callback) {
+                options.api.put.and.callFake(function(path, headers, callback) {
                     callback(new Error('Server did not respond'));
                 });
             });

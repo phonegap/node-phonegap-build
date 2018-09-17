@@ -12,8 +12,10 @@ var config = require('../../../lib/common/config'),
 
 describe('config.local', function() {
     describe('config.local.load(callback)', function() {
+        let readFileSpy;
+
         beforeEach(function() {
-            spyOn(fs, 'readFile');
+            readFileSpy = spyOn(fs, 'readFile');
         });
 
         it('should require the callback parameter', function() {
@@ -25,14 +27,14 @@ describe('config.local', function() {
         it('should try to read the configuration file', function() {
             config.local.load(function(e, data) {});
             expect(fs.readFile).toHaveBeenCalled();
-            expect(fs.readFile.mostRecentCall.args[0]).toEqual(
+            expect(fs.readFile.calls.argsFor(0)[0]).toEqual(
                 path.join(process.cwd(), '.cordova', 'config.json')
             );
         });
 
         describe('successfully read configuration file', function() {
             beforeEach(function() {
-                fs.readFile.andCallFake(function(path, callback) {
+                readFileSpy.and.callFake(function(path, callback) {
                     callback(null, '{}');
                 });
             });
@@ -54,7 +56,7 @@ describe('config.local', function() {
 
         describe('failed to read configuration file', function() {
             beforeEach(function() {
-                fs.readFile.andCallFake(function(path, callback) {
+                fs.readFile.and.callFake(function(path, callback) {
                     callback(new Error('file not found'));
                 });
             });
@@ -75,7 +77,7 @@ describe('config.local', function() {
         });
     });
 
-    describe('config.local.save(data, callback)', function() {
+    fdescribe('config.local.save(data, callback)', function() {
         var data;
 
         beforeEach(function() {
@@ -101,12 +103,12 @@ describe('config.local', function() {
         it('should try to write the data to the file', function() {
             config.local.save(data, function(e) {});
             expect(fs.writeFile).toHaveBeenCalled();
-            expect(fs.writeFile.mostRecentCall.args[1]).toEqual(JSON.stringify(data));
+            expect(fs.writeFile.calls.mostRecent().args[1]).toEqual(JSON.stringify(data));
         });
 
         describe('successful file write', function() {
             beforeEach(function() {
-                fs.writeFile.andCallFake(function(filepath, data, callback) {
+                fs.writeFile.and.callFake(function(filepath, data, callback) {
                     callback(null);
                 });
             });
@@ -121,7 +123,7 @@ describe('config.local', function() {
 
         describe('failed file write', function() {
             beforeEach(function() {
-                fs.writeFile.andCallFake(function(filepath, data, callback) {
+                fs.writeFile.and.callFake(function(filepath, data, callback) {
                     callback(new Error('permission denied'));
                 });
             });

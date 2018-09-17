@@ -1,0 +1,8 @@
+{
+    "spec_dir": "spec",
+    "spec_files": [
+    	"phonegap-build/login.spec.js"
+    ],
+    "stopSpecOnExpectationFailure": false,
+    "random": false
+}

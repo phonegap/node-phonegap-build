@@ -99,7 +99,7 @@ describe('create.remote(options, callback)', function() {
 
     describe('successfully read app name', function() {
         beforeEach(function() {
-            fs.readFile.andCallFake(function(path, encoding, callback) {
+            fs.readFile.and.callFake(function(path, encoding, callback) {
                 callback(null, '<widget><name>My App</name></widget>');
             });
         });
@@ -115,7 +115,7 @@ describe('create.remote(options, callback)', function() {
 
         describe('successful zip', function() {
             beforeEach(function() {
-                zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
+                zip.compress.and.callFake(function(wwwPath, buildPath, callback) {
                     callback(null, '/path/to/build/www.zip');
                 });
             });
@@ -131,7 +131,7 @@ describe('create.remote(options, callback)', function() {
 
             describe('successful post request', function() {
                 beforeEach(function() {
-                    options.api.post.andCallFake(function(path, headers, callback) {
+                    options.api.post.and.callFake(function(path, headers, callback) {
                         callback(null, { id: '10' });
                     });
                 });
@@ -148,7 +148,7 @@ describe('create.remote(options, callback)', function() {
 
                 describe('successful load config.json', function() {
                     beforeEach(function() {
-                        config.local.load.andCallFake(function(callback) {
+                        config.local.load.and.callFake(function(callback) {
                             callback(null, {});
                         });
                     });
@@ -160,7 +160,7 @@ describe('create.remote(options, callback)', function() {
 
                     describe('successful save config.json', function() {
                         beforeEach(function() {
-                            config.local.save.andCallFake(function(data, callback) {
+                            config.local.save.and.callFake(function(data, callback) {
                                 callback(null);
                             });
                         });
@@ -172,7 +172,7 @@ describe('create.remote(options, callback)', function() {
 
                         describe('on build complete', function() {
                             beforeEach(function() {
-                                create.waitForComplete.andCallFake(function(options, callback) {
+                                create.waitForComplete.and.callFake(function(options, callback) {
                                     callback(null, appData);
                                 });
                             });
@@ -193,7 +193,7 @@ describe('create.remote(options, callback)', function() {
 
                         describe('on build error', function() {
                             beforeEach(function() {
-                                create.waitForComplete.andCallFake(function(options, callback) {
+                                create.waitForComplete.and.callFake(function(options, callback) {
                                     callback(new Error('server did not respond'));
                                 });
                             });
@@ -209,7 +209,7 @@ describe('create.remote(options, callback)', function() {
 
                     describe('failed save config.json', function() {
                         beforeEach(function() {
-                            config.local.save.andCallFake(function(data, callback) {
+                            config.local.save.and.callFake(function(data, callback) {
                                 callback(new Error('could not write config.json'));
                             });
                         });
@@ -225,7 +225,7 @@ describe('create.remote(options, callback)', function() {
 
                 describe('failed to load config.json', function() {
                     beforeEach(function() {
-                        config.local.load.andCallFake(function(callback) {
+                        config.local.load.and.callFake(function(callback) {
                             callback(new Error('could not read config.json'));
                         });
                     });
@@ -246,7 +246,7 @@ describe('create.remote(options, callback)', function() {
 
             describe('failed post request', function() {
                 beforeEach(function() {
-                    options.api.post.andCallFake(function(path, headers, callback) {
+                    options.api.post.and.callFake(function(path, headers, callback) {
                         callback(new Error('PhoneGap Build did not respond'));
                     });
                 });
@@ -267,7 +267,7 @@ describe('create.remote(options, callback)', function() {
 
         describe('failed zip', function() {
             beforeEach(function() {
-                zip.compress.andCallFake(function(wwwPath, buildPath, callback) {
+                zip.compress.and.callFake(function(wwwPath, buildPath, callback) {
                     callback(new Error('Write access denied'));
                 });
             });
@@ -289,7 +289,7 @@ describe('create.remote(options, callback)', function() {
     describe('failure reading app name', function() {
         describe('missing config.xml', function() {
             beforeEach(function() {
-                fs.readFile.andCallFake(function(path, encoding, callback) {
+                fs.readFile.and.callFake(function(path, encoding, callback) {
                     callback(new Error('could not open file'));
                 });
             });
@@ -304,7 +304,7 @@ describe('create.remote(options, callback)', function() {
 
         describe('missing <name> element', function() {
             beforeEach(function() {
-                fs.readFile.andCallFake(function(path, encoding, callback) {
+                fs.readFile.and.callFake(function(path, encoding, callback) {
                     callback(null, '<widget></widget>');
                 });
             });

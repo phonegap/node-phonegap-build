@@ -36,7 +36,7 @@ describe('config.global', function() {
 
         describe('successfully found config file', function() {
             beforeEach(function() {
-                spyOn(fs, 'exists').andCallFake(function(filepath, callback) {
+                spyOn(fs, 'exists').and.callFake(function(filepath, callback) {
                     callback(true);
                 });
             });
@@ -52,7 +52,7 @@ describe('config.global', function() {
 
             describe('successfully read config file', function() {
                 beforeEach(function() {
-                    spyOn(fs, 'readFile').andCallFake(function(filepath, callback) {
+                    spyOn(fs, 'readFile').and.callFake(function(filepath, callback) {
                         callback(null, '{ "phonegap" : { "token": "abc123" } }');
                     });
                 });
@@ -74,7 +74,7 @@ describe('config.global', function() {
 
             describe('failed reading config file', function() {
                 beforeEach(function() {
-                    spyOn(fs, 'readFile').andCallFake(function(filepath, callback) {
+                    spyOn(fs, 'readFile').and.callFake(function(filepath, callback) {
                         callback(new Error('file does not exist'));
                     });
                 });
@@ -97,7 +97,7 @@ describe('config.global', function() {
 
         describe('config file missing', function() {
             beforeEach(function() {
-                spyOn(fs, 'exists').andCallFake(function(filepath, callback) {
+                spyOn(fs, 'exists').and.callFake(function(filepath, callback) {
                     callback(false);
                 });
             });
@@ -110,7 +110,7 @@ describe('config.global', function() {
 
             describe('successfully save config file', function() {
                 beforeEach(function() {
-                    spyOn(config.global, 'save').andCallFake(function(data, callback) {
+                    spyOn(config.global, 'save').and.callFake(function(data, callback) {
                         callback(null);
                     });
                 });
@@ -137,7 +137,7 @@ describe('config.global', function() {
 
             describe('failed to save config file', function() {
                 beforeEach(function() {
-                    spyOn(config.global, 'save').andCallFake(function(data, callback) {
+                    spyOn(config.global, 'save').and.callFake(function(data, callback) {
                         callback(new Error('no write access'));
                     });
                 });
@@ -190,7 +190,7 @@ describe('config.global', function() {
 
         describe('successful write', function() {
             beforeEach(function() {
-                fs.writeFile.andCallFake(function(filepath, data, callback) {
+                fs.writeFile.and.callFake(function(filepath, data, callback) {
                     callback(null);
                 });
             });
@@ -220,7 +220,7 @@ describe('config.global', function() {
 
         describe('failed write', function() {
             beforeEach(function() {
-                fs.writeFile.andCallFake(function(filepath, data, callback) {
+                fs.writeFile.and.callFake(function(filepath, data, callback) {
                     callback(new Error('no write access'));
                 });
             });

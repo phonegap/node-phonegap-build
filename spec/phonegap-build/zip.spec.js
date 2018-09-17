@@ -55,7 +55,7 @@ describe('zip', function() {
 
         describe('path exists', function() {
             beforeEach(function() {
-                fs.exists.andCallFake(function(path, callback) {
+                fs.exists.and.callFake(function(path, callback) {
                     callback(true);
                 });
             });
@@ -194,7 +194,7 @@ describe('zip', function() {
 
         describe('path does not exist', function() {
             beforeEach(function() {
-                fs.exists.andCallFake(function(path, callback) {
+                fs.exists.and.callFake(function(path, callback) {
                     callback(false);
                 });
             });

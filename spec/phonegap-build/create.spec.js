@@ -62,7 +62,7 @@ describe('create(options, callback)', function() {
 
     describe('successfully created local project', function() {
         beforeEach(function() {
-            phonegapbuild.create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.and.callFake(function(options, callback) {
                 callback(null);
             });
         });
@@ -77,7 +77,7 @@ describe('create(options, callback)', function() {
 
     describe('failed to create local project', function() {
         beforeEach(function() {
-            phonegapbuild.create.local.andCallFake(function(options, callback) {
+            phonegapbuild.create.local.and.callFake(function(options, callback) {
                 callback(new Error('app path already exists'));
             });
         });
@@ -139,7 +139,7 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
 
     describe('path is available', function() {
         beforeEach(function() {
-            fs.exists.andCallFake(function(path, callback) {
+            fs.exists.and.callFake(function(path, callback) {
                 callback(false);
             });
         });
@@ -185,7 +185,7 @@ describe('phonegapbuild.create.local(options, [callback])', function() {
 
     describe('path is not available', function() {
         beforeEach(function() {
-            fs.exists.andCallFake(function(path, callback) {
+            fs.exists.and.callFake(function(path, callback) {
                 callback(true);
             });
         });

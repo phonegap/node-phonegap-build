@@ -38,16 +38,17 @@ describe('phonegapbuild.login(options, [callback])', function() {
         expect(phonegapbuild.login(options)).toEqual(phonegapbuild);
     });
 
-    it('should try to find auth token', function() {
+    it('should try to find auth token', function(done) {
         phonegapbuild.login(options, function(e, api) {});
         process.nextTick(function() {
             expect(config.global.load).toHaveBeenCalled();
+            done();
         });
     });
 
     describe('successfully found auth token', function() {
         beforeEach(function() {
-            config.global.load.andCallFake(function(callback) {
+            config.global.load.and.callFake(function(callback) {
                 callback(null, {
                     'phonegap': {
                         'token': 'abc123'
@@ -115,7 +116,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
     describe('failed to find auth token', function() {
         beforeEach(function() {
-            config.global.load.andCallFake(function(callback) {
+            config.global.load.and.callFake(function(callback) {
                 callback(new Error('config not found at ~/.cordova'));
             });
         });
@@ -138,7 +139,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
             describe('successful authentication', function() {
                 beforeEach(function() {
-                    client.auth.andCallFake(function(options, callback) {
+                    client.auth.and.callFake(function(options, callback) {
                         callback(null, { token: 'abc123' });
                     });
                 });
@@ -148,7 +149,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
                     process.nextTick(function() {
                         expect(config.global.save).toHaveBeenCalled();
                         expect(
-                            config.global.save.mostRecentCall.args[0].phonegap.token
+                            config.global.save.calls.mostRecent().args[0].phonegap.token
                         ).toEqual('abc123');
                         done();
                     });
@@ -156,7 +157,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
                 describe('successfully saved token', function() {
                     beforeEach(function() {
-                        config.global.save.andCallFake(function(data, callback) {
+                        config.global.save.and.callFake(function(data, callback) {
                             callback(null);
                         });
                     });
@@ -178,7 +179,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
                 describe('failed to save token', function() {
                     beforeEach(function() {
-                        config.global.save.andCallFake(function(data, callback) {
+                        config.global.save.and.callFake(function(data, callback) {
                             callback(new Error('No write permission'));
                         });
                     });
@@ -209,7 +210,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
             describe('failed authentication', function() {
                 beforeEach(function() {
-                    client.auth.andCallFake(function(options, callback) {
+                    client.auth.and.callFake(function(options, callback) {
                         callback(new Error('account does not exist'));
                     });
                 });
@@ -295,7 +296,7 @@ describe('phonegapbuild.login(options, [callback])', function() {
 
     describe('failed to read config', function() {
         beforeEach(function() {
-            config.global.load.andCallFake(function(callback) {
+            config.global.load.and.callFake(function(callback) {
                 callback(new Error('cannot read config file'));
             });
         });
