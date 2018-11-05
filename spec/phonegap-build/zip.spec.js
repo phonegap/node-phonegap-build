@@ -249,7 +249,7 @@ describe('zip', function() {
 
             it('should try to remove zip directory', function() {
                 zip.cleanup('build/www.zip');
-                expect(fs.rmdir).toHaveBeenCalledWith('build');
+                expect(fs.rmdir).toHaveBeenCalledWith('build', function () {});
             });
         });
 
