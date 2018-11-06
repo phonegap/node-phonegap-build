@@ -215,7 +215,7 @@ describe('zip', function() {
     describe('cleanup(zipPath)', function() {
         beforeEach(function() {
             spyOn(fs, 'existsSync');
-            spyOn(fs, 'rmdir');
+            spyOn(fs, 'rmdirSync');
             spyOn(shell, 'rm');
         });
 
@@ -249,7 +249,7 @@ describe('zip', function() {
 
             it('should try to remove zip directory', function() {
                 zip.cleanup('build/www.zip');
-                expect(fs.rmdir).toHaveBeenCalledWith('build');
+                expect(fs.rmdirSync).toHaveBeenCalledWith('build');
             });
         });
 
