@@ -215,7 +215,7 @@ describe('zip', function() {
     describe('cleanup(zipPath)', function() {
         beforeEach(function() {
             spyOn(fs, 'existsSync');
-            spyOn(fs, 'rmdir');
+            spyOn(fs, 'rmdirSync');
             spyOn(shell, 'rm');
         });
 
